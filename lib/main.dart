@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'login/access_authority.dart';
+import 'package:luxrobo_publish/login/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: AccessAuthority(),
+      home: Login(),
     );
   }
 }
