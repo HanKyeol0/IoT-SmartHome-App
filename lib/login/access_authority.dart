@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo_publish/styles.dart';
+import '../widgets/button.dart';
 
 class AccessAuthority extends StatefulWidget {
   const AccessAuthority({super.key});
@@ -28,7 +29,9 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                   '액세스 권한 설정',
                   style: TextStyle(
                     color: wColor,
-                    fontSize: 20,
+                    fontSize: 18,
+                    fontFamily: 'NanumSquareNeo',
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
                 SizedBox(
@@ -39,21 +42,41 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                   style: TextStyle(
                     color: wColor,
                     fontSize: 14,
+                    fontFamily: 'NanumSquareNeo',
+                    fontWeight: FontWeight.w400,
+                    height: 1.5,
                   ),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 39,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CancelButton(),
+                    RoundButton(
+                      text: '취소',
+                      bgColor: grey,
+                      textColor: wColor,
+                      buttonWidth: 142.5,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                     SizedBox(
                       width: 10,
                     ),
-                    ConfirmButton()
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: 142.5,
+                      buttonHeight: 46,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _showSecondPopup(context);
+                      },
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -62,58 +85,46 @@ class _AccessAuthorityState extends State<AccessAuthority> {
       backgroundColor: const Color(0xFF282828),
     );
   }
-}
 
-class CancelButton extends StatelessWidget {
-  const CancelButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 142.5,
-      height: 46,
-      decoration: BoxDecoration(
-        color: const Color(0xFF262626),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: const Center(
-        child: Text(
-          '취소',
-          style: TextStyle(
-            fontSize: 16,
-            color: wColor,
+  Future<void> _accessAuthority2(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('액세스 권한'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _accessAuthority3(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('항상 허용'),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _accessAuthority3(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('항상 허용'),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class ConfirmButton extends StatelessWidget {
-  const ConfirmButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 142.5,
-      height: 46,
-      decoration: BoxDecoration(
-        color: bColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: const Center(
-        child: Text(
-          '확인',
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xFF1C1C1C),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
