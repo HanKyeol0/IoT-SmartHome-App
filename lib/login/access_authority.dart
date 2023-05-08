@@ -3,7 +3,7 @@ import 'package:luxrobo_publish/styles.dart';
 import '../widgets/button.dart';
 
 class AccessAuthority extends StatefulWidget {
-  const AccessAuthority({super.key});
+  const AccessAuthority({Key? key}) : super(key: key);
 
   @override
   State<AccessAuthority> createState() => _AccessAuthorityState();
@@ -23,9 +23,9 @@ class _AccessAuthorityState extends State<AccessAuthority> {
             ),
             margin: const EdgeInsets.all(20),
             padding: const EdgeInsets.all(30),
-            child: const Column(
+            child: Column(
               children: [
-                Text(
+                const Text(
                   '액세스 권한 설정',
                   style: TextStyle(
                     color: wColor,
@@ -34,10 +34,10 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
-                Text(
+                const Text(
                   "공동 현관문 출입, 주차 위치 저장 기능 등 기타 저장 기능을 위한 블루투스 위치 정보의 액세스 권한 설정이 반드시 필요합니다.",
                   style: TextStyle(
                     color: wColor,
@@ -47,7 +47,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     height: 1.5,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 39,
                 ),
                 Row(
@@ -61,7 +61,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       buttonHeight: 46,
                       onPressed: () => Navigator.of(context).pop(),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     RoundButton(
@@ -72,7 +72,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       buttonHeight: 46,
                       onPressed: () {
                         Navigator.of(context).pop();
-                        _showSecondPopup(context);
+                        _accessAuthority2(context);
                       },
                     ),
                   ],
@@ -105,7 +105,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     vertical: 8,
                     horizontal: 16,
                   ),
-                  child: const Text('항상 허용'),
+                  child: const Text('앱 사용 중에만 허용'),
                 ),
               ),
               InkWell(
@@ -119,6 +119,65 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     horizontal: 16,
                   ),
                   child: const Text('항상 허용'),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _accessAuthority3(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('허용 안 함'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _accessAuthority3(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('액세스 권한'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('앱 사용 중에만 허용'),
+                ),
+              ),
+              InkWell(
+                onTap: () => Navigator.pushNamed(context, '/login'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('항상 허용'),
+                ),
+              ),
+              InkWell(
+                onTap: () => Navigator.pushNamed(context, '/login'),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  child: const Text('허용 안 함'),
                 ),
               ),
             ],
