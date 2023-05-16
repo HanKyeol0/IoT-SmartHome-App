@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo_publish/styles.dart';
+import '../widgets/navigation.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -17,60 +18,41 @@ class _LoginState extends State<Login> {
           const SizedBox(
             height: 111,
           ),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  const Text(
+                  Text(
                     '로그인',
-                    style: TextStyle(color: Color(0xFFFFFFFF), fontSize: 21),
+                    style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 21,
+                      fontFamily: 'NanumSquareNeo',
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 12,
                   ),
                   Row(
                     children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: bColor,
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '1',
-                            style: TextStyle(
-                              color: Color(0xFF1C1C1C),
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
+                      CircleNav(
+                        text: '1',
+                        bgColor: bColor,
+                        textColor: black,
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 7,
                       ),
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFF262626),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '2',
-                            style: TextStyle(
-                              color: Color(0xFF767676),
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
+                      CircleNav(
+                        text: '2',
+                        bgColor: grey,
+                        textColor: lightGrey,
                       ),
                     ],
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 20,
                   ),
                 ],
