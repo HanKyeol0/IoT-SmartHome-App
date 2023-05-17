@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo_publish/styles.dart';
+import 'package:luxrobo_publish/widgets/field.dart';
 import '../widgets/navigation.dart';
 
 class Login extends StatefulWidget {
@@ -13,7 +14,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(
             height: 111,
@@ -76,7 +77,17 @@ class _LoginState extends State<Login> {
                 ),
               ],
             ),
-          )
+          ),
+          const SizedBox(
+            height: 54,
+            child: DropdownInput(
+              items: [
+                'A',
+                'B',
+                'D',
+              ],
+            ),
+          ),
         ],
       ),
       backgroundColor: const Color(0xFF1C1C1C),
