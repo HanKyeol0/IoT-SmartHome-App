@@ -11,25 +11,12 @@ class AccessAuthority extends StatefulWidget {
 
 class _AccessAuthorityState extends State<AccessAuthority> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _accessAuthority1(context));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color(0xFF282828),
-    );
-  }
-
-  Future<void> _accessAuthority1(BuildContext context) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Container(
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
             decoration: BoxDecoration(
               color: const Color(0xFF3E3E3E),
               borderRadius: BorderRadius.circular(7),
@@ -37,7 +24,6 @@ class _AccessAuthorityState extends State<AccessAuthority> {
             margin: const EdgeInsets.all(20),
             padding: const EdgeInsets.all(30),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   '액세스 권한 설정',
@@ -94,8 +80,9 @@ class _AccessAuthorityState extends State<AccessAuthority> {
               ],
             ),
           ),
-        );
-      },
+        ],
+      ),
+      backgroundColor: const Color(0xFF282828),
     );
   }
 
