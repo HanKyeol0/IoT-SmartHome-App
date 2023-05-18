@@ -1,50 +1,135 @@
 import 'package:flutter/material.dart';
-
 import '../styles.dart';
 
-class DropdownInput extends StatelessWidget {
+class DropdownInput extends StatefulWidget {
   final String placeholder;
-  final List<String>? items;
+  final List<String> items;
+  final String searchIconOn;
+  final String searchIconOff;
 
   const DropdownInput({
-    super.key,
+    Key? key,
     required this.placeholder,
-    this.items,
-  });
+    required this.items,
+    required this.searchIconOn,
+    required this.searchIconOff,
+  }) : super(key: key);
+
+  @override
+  State<DropdownInput> createState() => _DropdownInputState();
+}
+
+class _DropdownInputState extends State<DropdownInput> {
+  String? selectedValue;
+  TextEditingController textEditingController = TextEditingController();
+  bool showDropdown = false;
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = null;
+  }
+
+  void toggleDropdown() {
+    setState(() {
+      showDropdown = !showDropdown;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      height: 54,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: dialogColor),
+        border: textEditingController.text.isEmpty
+            ? Border.all(color: dialogColor, width: 1)
+            : Border.all(color: wColor, width: 1),
         color: grey,
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          isExpanded: true,
-          hint: Text(
-            placeholder,
-            style: const TextStyle(
-                fontFamily: 'luxFont',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: lightGrey),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 54,
+            child: TextField(
+              controller: textEditingController,
+              style: const TextStyle(color: wColor),
+              decoration: InputDecoration(
+                hintText: widget.placeholder,
+                hintStyle: contentText(color: lightGrey),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 19.5,
+                  horizontal: 15,
+                ),
+                border: InputBorder.none,
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      textEditingController.clear();
+                      toggleDropdown();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: Image.asset(
+                      textEditingController.text.isEmpty
+                          ? widget.searchIconOn
+                          : widget.searchIconOff,
+                      width: 10,
+                      height: 10,
+                    ),
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  selectedValue = null; // Clear the selected value
+                });
+                if (value.isNotEmpty) {
+                  setState(() {
+                    showDropdown = true;
+                  });
+                } else {
+                  setState(() {
+                    showDropdown = false;
+                  });
+                }
+              },
+            ),
           ),
-          value: null, // You can set the default value here
-          onChanged: (String? value) {},
-          items: items != null
-              ? items!.map((String item) {
-                  return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  );
-                }).toList()
-              : null,
-        ),
+          if (showDropdown)
+            ListView.separated(
+              shrinkWrap: true,
+              itemCount: widget.items.length,
+              separatorBuilder: (context, index) => const Divider(
+                color: lightGrey,
+                thickness: 0.5,
+              ),
+              itemBuilder: (context, index) {
+                final item = widget.items[index];
+                return ListTile(
+                  title: Text(
+                    item,
+                    style: contentText(color: lightGrey),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectedValue = item;
+                      textEditingController.text = item;
+                      showDropdown = false;
+                    });
+                  },
+                );
+              },
+            ),
+        ],
       ),
     );
   }

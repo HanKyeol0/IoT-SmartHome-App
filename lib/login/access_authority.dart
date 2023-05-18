@@ -46,26 +46,19 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    const Text(
+                    Text(
                       '액세스 권한 설정',
-                      style: TextStyle(
-                        color: wColor,
-                        fontSize: 18,
-                        fontFamily: 'luxFont',
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: titleText(),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
+                    Text(
                       "공동 현관문 출입, 주차 위치 저장 기능 등 기타 저장 기능을 위한 블루투스 위치 정보의 액세스 권한 설정이 반드시 필요합니다.",
-                      style: TextStyle(
+                      style: contentText(
                         color: textGrey,
                         fontSize: 14,
-                        fontFamily: 'luxFont',
                         fontWeight: FontWeight.w400,
-                        height: 1.5,
                       ),
                     ),
                     const SizedBox(
@@ -137,14 +130,9 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
+                    Text(
                       '액세스 권한',
-                      style: TextStyle(
-                        color: wColor,
-                        fontSize: 18,
-                        fontFamily: 'luxFont',
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: titleText(),
                     ),
                     const SizedBox(
                       height: 33,
@@ -153,13 +141,12 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       height: 53,
                       width: MediaQuery.of(context).size.width - 40,
                       child: TextButton(
-                        child: const Text(
+                        child: Text(
                           '앱 사용 중에만 허용',
-                          style: TextStyle(
+                          style: contentText(
                             color: textGrey,
                             fontSize: 16,
-                            fontFamily: 'luxFont',
-                            fontWeight: FontWeight.w200,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         onPressed: () {
@@ -176,13 +163,12 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       height: 53,
                       width: MediaQuery.of(context).size.width - 40,
                       child: TextButton(
-                        child: const Text(
+                        child: Text(
                           '항상 허용',
-                          style: TextStyle(
+                          style: contentText(
                             color: textGrey,
                             fontSize: 16,
-                            fontFamily: 'luxFont',
-                            fontWeight: FontWeight.w200,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         onPressed: () {
@@ -250,14 +236,9 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
+                    Text(
                       '근처 기기 액세스 권한',
-                      style: TextStyle(
-                        color: wColor,
-                        fontSize: 18,
-                        fontFamily: 'luxFont',
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: titleText(),
                     ),
                     const SizedBox(
                       height: 33,
@@ -266,13 +247,12 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       height: 53,
                       width: MediaQuery.of(context).size.width - 40,
                       child: TextButton(
-                        child: const Text(
+                        child: Text(
                           '앱 사용 중에만 허용',
-                          style: TextStyle(
+                          style: contentText(
                             color: textGrey,
                             fontSize: 16,
-                            fontFamily: 'luxFont',
-                            fontWeight: FontWeight.w200,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         onPressed: () => Navigator.pushNamed(context, '/login'),
@@ -286,13 +266,12 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       height: 53,
                       width: MediaQuery.of(context).size.width - 40,
                       child: TextButton(
-                        child: const Text(
+                        child: Text(
                           '항상 허용',
-                          style: TextStyle(
+                          style: contentText(
                             color: textGrey,
                             fontSize: 16,
-                            fontFamily: 'luxFont',
-                            fontWeight: FontWeight.w200,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         onPressed: () => Navigator.pushNamed(context, '/login'),
@@ -306,13 +285,12 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                       height: 53,
                       width: MediaQuery.of(context).size.width - 40,
                       child: TextButton(
-                        child: const Text(
+                        child: Text(
                           '허용 안 함',
-                          style: TextStyle(
+                          style: contentText(
                             color: textGrey,
                             fontSize: 16,
-                            fontFamily: 'luxFont',
-                            fontWeight: FontWeight.w200,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         onPressed: () => Navigator.of(context).pop(),

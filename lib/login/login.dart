@@ -15,7 +15,9 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 111),
           const Row(
@@ -54,7 +56,10 @@ class _LoginState extends State<Login> {
             ],
           ),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.only(
+              left: 20,
+              bottom: 10,
+            ),
             child: const Column(
               children: [
                 Row(
@@ -71,13 +76,21 @@ class _LoginState extends State<Login> {
               ],
             ),
           ),
-          const DropdownInput(
-            placeholder: '아파트 명을 입력해주세요.',
-            items: [
-              'A',
-              'B',
-              'C',
-            ],
+          const Expanded(
+            child: Column(
+              children: [
+                DropdownInput(
+                  placeholder: '아파트 명을 입력해주세요.',
+                  items: [
+                    'A',
+                    'B',
+                    'C',
+                  ],
+                  searchIconOn: 'assets/searchIconOn.png',
+                  searchIconOff: 'assets/searchIconOff.png',
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 11),
           Padding(
@@ -89,6 +102,7 @@ class _LoginState extends State<Login> {
                   padding: EdgeInsets.only(right: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BlueCheckbox(),
                       SizedBox(width: 11),
@@ -108,14 +122,14 @@ class _LoginState extends State<Login> {
             ),
           ),
           const Positioned(
-            left: 20,
-            right: 20,
-            bottom: 20,
+            left: 25,
+            right: 25,
+            bottom: 30,
             child: RoundNextButton(),
           ),
         ],
       ),
-      backgroundColor: const Color(0xFF1C1C1C),
+      backgroundColor: black,
     );
   }
 }
