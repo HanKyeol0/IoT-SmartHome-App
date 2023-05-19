@@ -6,6 +6,8 @@ class DropdownInput extends StatefulWidget {
   final List<String> items;
   final String searchIconOn;
   final String searchIconOff;
+  final TextEditingController textEditingController;
+  final Function(String) onTextChanged;
 
   const DropdownInput({
     Key? key,
@@ -13,6 +15,8 @@ class DropdownInput extends StatefulWidget {
     required this.items,
     required this.searchIconOn,
     required this.searchIconOff,
+    required this.textEditingController,
+    required this.onTextChanged,
   }) : super(key: key);
 
   @override
@@ -21,14 +25,7 @@ class DropdownInput extends StatefulWidget {
 
 class _DropdownInputState extends State<DropdownInput> {
   String? selectedValue;
-  TextEditingController textEditingController = TextEditingController();
   bool showDropdown = false;
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -48,7 +45,7 @@ class _DropdownInputState extends State<DropdownInput> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: textEditingController.text.isEmpty
+        border: widget.textEditingController.text.isEmpty
             ? Border.all(color: dialogColor, width: 1)
             : Border.all(color: wColor, width: 1),
         color: grey,
@@ -59,7 +56,7 @@ class _DropdownInputState extends State<DropdownInput> {
           SizedBox(
             height: 54,
             child: TextField(
-              controller: textEditingController,
+              controller: widget.textEditingController,
               style: const TextStyle(color: wColor),
               decoration: InputDecoration(
                 hintText: widget.placeholder,
@@ -72,14 +69,14 @@ class _DropdownInputState extends State<DropdownInput> {
                 suffixIcon: GestureDetector(
                   onTap: () {
                     setState(() {
-                      textEditingController.clear();
+                      widget.textEditingController.clear();
                       toggleDropdown();
                     });
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Image.asset(
-                      textEditingController.text.isEmpty
+                      widget.textEditingController.text.isEmpty
                           ? widget.searchIconOn
                           : widget.searchIconOff,
                       width: 10,
@@ -92,6 +89,7 @@ class _DropdownInputState extends State<DropdownInput> {
                 setState(() {
                   selectedValue = null; // Clear the selected value
                 });
+                widget.onTextChanged(value);
                 if (value.isNotEmpty) {
                   setState(() {
                     showDropdown = true;
@@ -122,7 +120,7 @@ class _DropdownInputState extends State<DropdownInput> {
                   onTap: () {
                     setState(() {
                       selectedValue = item;
-                      textEditingController.text = item;
+                      widget.textEditingController.text = item;
                       showDropdown = false;
                     });
                   },
@@ -130,6 +128,41 @@ class _DropdownInputState extends State<DropdownInput> {
               },
             ),
         ],
+      ),
+    );
+  }
+}
+
+class InputField extends StatelessWidget {
+  final String placeholder;
+
+  const InputField({
+    super.key,
+    required this.placeholder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: dialogColor,
+          width: 1.5,
+        ),
+        color: grey,
+      ),
+      height: 54,
+      child: TextField(
+        style: contentText(color: wColor),
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: contentText(),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 19.5,
+            horizontal: 15,
+          ),
+        ),
       ),
     );
   }

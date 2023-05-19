@@ -4,38 +4,47 @@ import '../widgets/button.dart';
 import '../widgets/field.dart';
 import '../widgets/navigation.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class Login01 extends StatefulWidget {
+  const Login01({Key? key}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Login01> createState() => _Login01State();
 }
 
-class _LoginState extends State<Login> {
+class _Login01State extends State<Login01> {
+  TextEditingController textEditingController = TextEditingController();
+  bool isTextEmpty = true;
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  void onTextChanged(String value) {
+    setState(() {
+      isTextEmpty = value.isEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 111),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 children: [
                   Text(
                     '로그인',
-                    style: TextStyle(
-                      color: Color(0xFFFFFFFF),
-                      fontSize: 21,
-                      fontFamily: 'NanumSquareNeo',
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: titleText(fontSize: 21),
                   ),
-                  SizedBox(height: 12),
-                  Row(
+                  const SizedBox(height: 12),
+                  const Row(
                     children: [
                       CircleNav(
                         text: '1',
@@ -50,7 +59,7 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ],
@@ -60,59 +69,56 @@ class _LoginState extends State<Login> {
               left: 20,
               bottom: 10,
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Row(
                   children: [
                     Text(
                       '단지 입력',
-                      style: TextStyle(
-                        color: Color(0xFFFFFFFF),
-                        fontSize: 15,
-                      ),
+                      style: fieldTitle(),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Column(
               children: [
                 DropdownInput(
                   placeholder: '아파트 명을 입력해주세요.',
-                  items: [
+                  items: const [
                     'A',
                     'B',
                     'C',
                   ],
                   searchIconOn: 'assets/searchIconOn.png',
                   searchIconOff: 'assets/searchIconOff.png',
+                  textEditingController: textEditingController,
+                  onTextChanged: onTextChanged,
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 11),
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Row(
-              children: [
-                Expanded(child: Container()),
-                const Padding(
-                  padding: EdgeInsets.only(right: 10),
+                const SizedBox(height: 11),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BlueCheckbox(),
-                      SizedBox(width: 11),
-                      Text(
-                        '내용 저장',
-                        style: TextStyle(
-                          fontFamily: 'luxFont',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                          color: textGrey,
+                      Expanded(child: Container()),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Row(
+                          children: [
+                            BlueCheckbox(),
+                            SizedBox(width: 11),
+                            Text(
+                              '내용 저장',
+                              style: TextStyle(
+                                fontFamily: 'luxFont',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                color: textGrey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -121,11 +127,11 @@ class _LoginState extends State<Login> {
               ],
             ),
           ),
-          const Positioned(
-            left: 25,
-            right: 25,
-            bottom: 30,
-            child: RoundNextButton(),
+          RoundNextButton(
+            buttonColor: isTextEmpty ? grey : bColor,
+            textColor: isTextEmpty ? lightGrey : black,
+            isClickable: !isTextEmpty,
+            onPressed: () => Navigator.pushNamed(context, '/login02'),
           ),
         ],
       ),

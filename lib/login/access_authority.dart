@@ -255,7 +255,8 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        onPressed: () => Navigator.pushNamed(context, '/login'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/login01'),
                       ),
                     ),
                     const Divider(
@@ -274,7 +275,8 @@ class _AccessAuthorityState extends State<AccessAuthority> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        onPressed: () => Navigator.pushNamed(context, '/login'),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/login01'),
                       ),
                     ),
                     const Divider(

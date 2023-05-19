@@ -45,14 +45,29 @@ class RoundButton extends StatelessWidget {
   }
 }
 
-class RoundNextButton extends StatelessWidget {
+class RoundNextButton extends StatefulWidget {
+  final Color buttonColor;
+  final Color textColor;
+  final bool isClickable;
+  final VoidCallback onPressed;
+
   const RoundNextButton({
     super.key,
+    required this.buttonColor,
+    required this.textColor,
+    this.isClickable = false,
+    required this.onPressed,
   });
 
   @override
+  State<RoundNextButton> createState() => _RoundNextButtonState();
+}
+
+class _RoundNextButtonState extends State<RoundNextButton> {
+  @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: widget.isClickable ? widget.onPressed : null,
       borderRadius: BorderRadius.circular(30),
       child: Align(
         alignment: Alignment.bottomCenter,
@@ -64,15 +79,15 @@ class RoundNextButton extends StatelessWidget {
             bottom: 20,
           ),
           decoration: BoxDecoration(
-            color: grey,
+            color: widget.buttonColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '다음',
-              style: TextStyle(
+              style: contentText(
                 fontSize: 16,
-                color: lightGrey,
+                color: widget.textColor,
               ),
             ),
           ),
@@ -117,7 +132,7 @@ class _BlueCheckboxState extends State<BlueCheckbox> {
         child: isChecked
             ? const Icon(
                 Icons.check_outlined,
-                color: Colors.black,
+                color: black,
                 size: 17,
                 weight: 20.0,
               )

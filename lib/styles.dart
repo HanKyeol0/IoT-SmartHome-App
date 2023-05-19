@@ -29,3 +29,12 @@ TextStyle titleText({double fontSize = 18}) {
     fontWeight: FontWeight.w800,
   );
 }
+
+TextStyle fieldTitle() {
+  return const TextStyle(
+    fontFamily: 'luxFont',
+    fontWeight: FontWeight.w700,
+    color: wColor,
+    fontSize: 15,
+  );
+}
