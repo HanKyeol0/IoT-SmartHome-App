@@ -13,11 +13,46 @@ class Login02 extends StatefulWidget {
 }
 
 class _Login02State extends State<Login02> {
-  bool isTextEmpty = false;
+  bool isTextEmpty1 = true;
+  bool isTextEmpty2 = true;
+  bool isTextEmpty3 = true;
+  bool isTextEmpty4 = true;
+  TextEditingController textEditingController1 = TextEditingController();
+  TextEditingController textEditingController2 = TextEditingController();
+  TextEditingController textEditingController3 = TextEditingController();
+  TextEditingController textEditingController4 = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    isTextEmpty1 = textEditingController1.text.isEmpty;
+    isTextEmpty2 = textEditingController2.text.isEmpty;
+    isTextEmpty3 = textEditingController3.text.isEmpty;
+    isTextEmpty4 = textEditingController4.text.isEmpty;
+  }
 
   void onText1(String value) {
     setState(() {
-      isTextEmpty = value.isEmpty;
+      isTextEmpty1 = value.isEmpty;
+    });
+  }
+
+  void onText2(String value) {
+    setState(() {
+      isTextEmpty2 = value.isEmpty;
+    });
+  }
+
+  void onText3(String value) {
+    setState(() {
+      isTextEmpty3 = value.isEmpty;
+    });
+  }
+
+  void onText4(String value) {
+    setState(() {
+      isTextEmpty4 = value.isEmpty;
     });
   }
 
@@ -79,7 +114,8 @@ class _Login02State extends State<Login02> {
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: InputField(
               placeholder: '아파트 동을 입력해주세요.',
-              onText1: onText1,
+              onTextChanged: onText1,
+              textEditingController: textEditingController1,
             ),
           ),
           const SizedBox(height: 20),
@@ -101,9 +137,13 @@ class _Login02State extends State<Login02> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(placeholder: '아파트 호수를 입력해주세요.'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: InputField(
+              placeholder: '아파트 호수를 입력해주세요.',
+              onTextChanged: onText2,
+              textEditingController: textEditingController2,
+            ),
           ),
           const SizedBox(height: 20),
           Container(
@@ -124,9 +164,13 @@ class _Login02State extends State<Login02> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(placeholder: '인증번호를 입력해주세요.'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: InputField(
+              placeholder: '인증번호를 입력해주세요.',
+              onTextChanged: onText3,
+              textEditingController: textEditingController3,
+            ),
           ),
           const SizedBox(height: 20),
           Container(
@@ -147,9 +191,13 @@ class _Login02State extends State<Login02> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(placeholder: '이름을 입력해주세요.'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: InputField(
+              placeholder: '이름을 입력해주세요.',
+              onTextChanged: onText4,
+              textEditingController: textEditingController4,
+            ),
           ),
           const SizedBox(height: 11),
           Row(
@@ -188,6 +236,21 @@ class _Login02State extends State<Login02> {
                 ),
               )
             ],
+          ),
+          RoundLoginButton(
+            buttonColor: (!isTextEmpty1 &&
+                    !isTextEmpty2 &&
+                    !isTextEmpty3 &&
+                    !isTextEmpty4)
+                ? bColor
+                : grey,
+            textColor:
+                (isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4)
+                    ? lightGrey
+                    : black,
+            isClickable:
+                !(isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4),
+            onPressed: () => Navigator.pushNamed(context, '/login01'),
           ),
         ],
       ),

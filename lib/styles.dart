@@ -7,6 +7,7 @@ const Color grey = Color(0xFF262626);
 const Color lightGrey = Color(0xFF767676);
 const Color dialogColor = Color(0xFF3E3E3E);
 const Color textGrey = Color(0xFFECF1F1);
+const Color thickBlue = Color(0xFF00B8CF);
 
 TextStyle contentText(
     {FontWeight fontWeight = FontWeight.w700,
@@ -30,11 +31,11 @@ TextStyle titleText({double fontSize = 18}) {
   );
 }
 
-TextStyle fieldTitle() {
-  return const TextStyle(
+TextStyle fieldTitle({double fontSize = 15}) {
+  return TextStyle(
+    color: wColor,
+    fontSize: fontSize,
     fontFamily: 'luxFont',
     fontWeight: FontWeight.w700,
-    color: wColor,
-    fontSize: 15,
   );
 }

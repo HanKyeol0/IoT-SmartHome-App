@@ -133,36 +133,49 @@ class _DropdownInputState extends State<DropdownInput> {
   }
 }
 
-class InputField extends StatelessWidget {
+class InputField extends StatefulWidget {
   final String placeholder;
+  final Function(String) onTextChanged;
+  final TextEditingController textEditingController;
 
   const InputField({
     super.key,
     required this.placeholder,
+    required this.onTextChanged,
+    required this.textEditingController,
   });
 
+  @override
+  State<InputField> createState() => _InputFieldState();
+}
+
+class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(
-          color: dialogColor,
-          width: 1.5,
-        ),
+        border: widget.textEditingController.text.isEmpty
+            ? Border.all(color: dialogColor, width: 1.5)
+            : Border.all(color: wColor, width: 1.5),
         color: grey,
       ),
       height: 54,
       child: TextField(
+        controller: widget.textEditingController,
         style: contentText(color: wColor),
         decoration: InputDecoration(
-          hintText: placeholder,
+          hintText: widget.placeholder,
           hintStyle: contentText(),
           contentPadding: const EdgeInsets.symmetric(
             vertical: 19.5,
             horizontal: 15,
           ),
+          border: InputBorder.none,
         ),
+        onChanged: (value) {
+          widget.onTextChanged(value);
+        },
       ),
     );
   }
