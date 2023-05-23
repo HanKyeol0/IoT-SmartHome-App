@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo_publish/styles.dart';
 import 'package:luxrobo_publish/widgets/field.dart';
-import '../widgets/bottom_navigation.dart';
 import '../widgets/button.dart';
 
 class Door01 extends StatefulWidget {
@@ -77,9 +76,12 @@ class _Door01State extends State<Door01> {
             bgColor: darkGrey,
             isPhone: true,
           ),
+          const SizedBox(height: 60),
+          const DoorAccess(
+            isOpened: true,
+          ),
         ],
       ),
-      bottomNavigationBar: const BottomNavigation(),
       backgroundColor: black,
     );
   }

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo_publish/styles.dart';
-import '../bell/bell.dart';
 import '../door/door01.dart';
-import '../parking/parking01.dart';
-import '../setting/setting01.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -17,14 +14,11 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   final screens = [
     const Door01(),
-    const Parking(),
-    const Bell(),
-    const Setting(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(value) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = value;
     });
   }
 
@@ -65,6 +59,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
           onTap: _onItemTapped,
         ),
       ),
+      backgroundColor: black,
     );
   }
 }

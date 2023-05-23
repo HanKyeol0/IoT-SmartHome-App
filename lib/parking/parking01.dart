@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:luxrobo_publish/widgets/bottom_navigation.dart';
 
-class Parking extends StatefulWidget {
+class Parking extends StatelessWidget {
   const Parking({super.key});
 
   @override
-  State<Parking> createState() => _ParkingState();
-}
-
-class _ParkingState extends State<Parking> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold(
+      body: Column(),
+      bottomNavigationBar: BottomNavigation(),
+    );
   }
 }

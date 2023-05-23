@@ -289,3 +289,46 @@ class _SeeMoreButtonState extends State<SeeMoreButton> {
     );
   }
 }
+
+class DoorAccess extends StatelessWidget {
+  final bool isOpened;
+
+  const DoorAccess({
+    super.key,
+    required this.isOpened,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            //padding: const EdgeInsets.all(33.5),
+            height: 118,
+            width: 118,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isOpened ? bColor : lightGrey,
+              ),
+            ),
+            child: Icon(
+              isOpened ? Icons.door_sliding_outlined : Icons.door_sliding,
+              color: isOpened ? bColor : lightGrey,
+              size: 51,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            isOpened ? '터치해서 현관문 출입' : '출입문이 감지되지 않습니다.',
+            style: fieldTitle(
+              fontSize: 16,
+              color: isOpened ? wColor : lightGrey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

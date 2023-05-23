@@ -31,9 +31,9 @@ TextStyle titleText({double fontSize = 18}) {
   );
 }
 
-TextStyle fieldTitle({double fontSize = 15}) {
+TextStyle fieldTitle({double fontSize = 15, Color color = wColor}) {
   return TextStyle(
-    color: wColor,
+    color: color,
     fontSize: fontSize,
     fontFamily: 'luxFont',
     fontWeight: FontWeight.w700,
