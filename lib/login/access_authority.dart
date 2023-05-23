@@ -34,7 +34,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
             widthFactor: 1,
             heightFactor: 1,
             child: Dialog(
-              backgroundColor: dialogColor,
+              backgroundColor: darkGrey,
               elevation: 0.0, // No shadow
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -112,7 +112,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
           child: FractionallySizedBox(
             widthFactor: 1,
             child: Dialog(
-              backgroundColor: dialogColor,
+              backgroundColor: darkGrey,
               elevation: 0.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -218,7 +218,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
           child: FractionallySizedBox(
             widthFactor: 1,
             child: Dialog(
-              backgroundColor: dialogColor,
+              backgroundColor: darkGrey,
               elevation: 0.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),

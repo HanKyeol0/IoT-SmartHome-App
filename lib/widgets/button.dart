@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../styles.dart';
 
@@ -194,7 +193,7 @@ class _BlueCheckboxState extends State<BlueCheckbox> {
     );
   }
 }
-/*
+
 class AutoAccessToggle extends StatefulWidget {
   const AutoAccessToggle({super.key});
 
@@ -203,61 +202,89 @@ class AutoAccessToggle extends StatefulWidget {
 }
 
 class _AutoAccessToggleState extends State<AutoAccessToggle> {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [],
-    ),);
-  }
-
-  widget customSwitch(bool val, Function onChanged) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,)
-  }
-}
-*/
-
-class ToggleSwitch extends StatefulWidget {
-  final bool value;
-  final ValueChanged<bool>? onChanged;
-
-  const ToggleSwitch({
-    Key? key,
-    required this.value,
-    this.onChanged,
-  }) : super(key: key);
-
-  @override
-  State<ToggleSwitch> createState() => _ToggleSwitchState();
-}
-
-class _ToggleSwitchState extends State<ToggleSwitch> {
   bool _value = false;
 
   @override
-  void initState() {
-    super.initState();
-    _value = widget.value;
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _value = !_value;
+        });
+      },
+      child: Container(
+        width: 45,
+        height: 26,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
+          color: _value ? bColor : lightGrey,
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.ease,
+              left: _value ? 20.0 : 0.0,
+              right: _value ? 0.0 : 20.0,
+              top: 3.2,
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _value = !_value;
+                  });
+                },
+                child: Container(
+                  width: 20.0,
+                  height: 20.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _value ? thickBlue : black,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+}
+
+class SeeMoreButton extends StatefulWidget {
+  final VoidCallback onPressed;
+
+  const SeeMoreButton({
+    super.key,
+    required this.onPressed,
+  });
 
   @override
+  State<SeeMoreButton> createState() => _SeeMoreButtonState();
+}
+
+class _SeeMoreButtonState extends State<SeeMoreButton> {
+  @override
   Widget build(BuildContext context) {
-    return Transform.scale(
-      child: CupertinoSwitch(
-        value: _value,
-        onChanged: (value) {
-          setState(() {
-            _value = value;
-          });
-          if (widget.onChanged != null) {
-            widget.onChanged!(value);
-          }
-        },
-        activeColor: bColor,
-        trackColor: lightGrey,
-        thumbColor: _value ? thickBlue : black,
+    return InkWell(
+      onTap: widget.onPressed,
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        width: 58,
+        height: 23,
+        decoration: BoxDecoration(
+          color: bColor,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: const Center(
+          child: Text(
+            '더보기',
+            style: TextStyle(
+              fontSize: 12,
+              color: black,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
       ),
     );
   }

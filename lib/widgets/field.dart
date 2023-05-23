@@ -46,7 +46,7 @@ class _DropdownInputState extends State<DropdownInput> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         border: widget.textEditingController.text.isEmpty
-            ? Border.all(color: dialogColor, width: 1)
+            ? Border.all(color: darkGrey, width: 1)
             : Border.all(color: wColor, width: 1),
         color: grey,
       ),
@@ -156,7 +156,7 @@ class _InputFieldState extends State<InputField> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         border: widget.textEditingController.text.isEmpty
-            ? Border.all(color: dialogColor, width: 1.5)
+            ? Border.all(color: darkGrey, width: 1.5)
             : Border.all(color: wColor, width: 1.5),
         color: grey,
       ),
@@ -176,6 +176,101 @@ class _InputFieldState extends State<InputField> {
         onChanged: (value) {
           widget.onTextChanged(value);
         },
+      ),
+    );
+  }
+}
+
+class AccessLog extends StatelessWidget {
+  final Color bgColor;
+  final String
+      accessTime; // change this to DateTime, and receive real access time.
+  final String gate; // change this to real gate
+  final bool isPhone;
+
+  const AccessLog({
+    super.key,
+    required this.bgColor,
+    this.accessTime = '22.12.28  20 : 22',
+    this.gate = 'G-05',
+    required this.isPhone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 5,
+      ),
+      child: Container(
+        height: 54,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: bgColor,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: const EdgeInsets.all(10),
+              height: 34,
+              width: 34,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: black,
+              ),
+              child: Icon(
+                isPhone ? Icons.phone_android_outlined : Icons.credit_card,
+                color: bColor,
+              ),
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 17,
+                  bottom: 17,
+                  right: 20,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(
+                        right: 15,
+                      ),
+                      child: Text(
+                        accessTime,
+                        style: contentText(
+                          color: wColor,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const VerticalDivider(
+                      thickness: 1,
+                      width: 19,
+                      color: lightGrey,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(
+                        left: 12,
+                      ),
+                      child: Text(
+                        gate,
+                        style: contentText(
+                          color: wColor,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

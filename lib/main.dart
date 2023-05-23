@@ -13,14 +13,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/Door01',
+      initialRoute: '/door01',
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/login01':
             return MaterialPageRoute(builder: (_) => const Login01());
           case '/login02':
             return MaterialPageRoute(builder: (_) => const Login02());
-          case '/Door01':
+          case '/door01':
             return MaterialPageRoute(builder: (_) => const Door01());
           default:
             return null;
