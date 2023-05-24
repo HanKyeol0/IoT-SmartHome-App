@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/main.dart';
-import 'package:luxrobo_publish/styles.dart';
-import 'package:luxrobo_publish/widgets/button.dart';
+import 'package:luxrobo/main.dart';
+import 'package:luxrobo/styles.dart';
+import 'package:luxrobo/widgets/button.dart';
 
 class Door02 extends StatefulWidget {
   const Door02({super.key});
@@ -34,6 +34,9 @@ class _Door02State extends State<Door02> {
             ),
           ),
           const SizedBox(height: 29),
+          const SizedBox(
+            height: 1,
+          ),
         ],
       ),
     );
