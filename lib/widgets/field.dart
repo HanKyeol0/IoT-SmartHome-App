@@ -104,7 +104,7 @@ class _DropdownInputState extends State<DropdownInput> {
           ),
           Container(
             height: 0.5,
-            color: lightGrey,
+            color: showDropdown ? lightGrey : null,
           ),
           if (showDropdown)
             ListView.separated(
