@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/styles.dart';
+import 'package:luxrobo/styles.dart';
 import '../door/door01.dart';
 
 class BottomNavigation extends StatefulWidget {

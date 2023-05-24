@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/main.dart';
-import 'package:luxrobo_publish/styles.dart';
-import 'package:luxrobo_publish/widgets/button.dart';
+import 'package:luxrobo/main.dart';
+import 'package:luxrobo/styles.dart';
+import 'package:luxrobo/widgets/button.dart';
 
 class Bell extends StatefulWidget {
   const Bell({Key? key}) : super(key: key);

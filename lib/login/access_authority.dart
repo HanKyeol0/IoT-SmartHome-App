@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/styles.dart';
+import 'package:luxrobo/styles.dart';
 import '../widgets/button.dart';
 
 class AccessAuthority extends StatefulWidget {
@@ -14,7 +14,7 @@ class _AccessAuthorityState extends State<AccessAuthority> {
   void initState() {
     super.initState();
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => _accessAuthority1(context));
+        .addPostFrameCallback((_) => _accessAuthority1(context),);
   }
 
   @override

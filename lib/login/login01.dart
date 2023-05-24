@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/styles.dart';
+import 'package:luxrobo/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/field.dart';
 import '../widgets/navigation.dart';

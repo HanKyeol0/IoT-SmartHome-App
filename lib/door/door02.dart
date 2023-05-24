@@ -34,9 +34,6 @@ class _Door02State extends State<Door02> {
             ),
           ),
           const SizedBox(height: 29),
-          const SizedBox(
-            height: 1,
-          ),
         ],
       ),
     );

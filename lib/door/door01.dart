@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/main.dart';
-import 'package:luxrobo_publish/styles.dart';
-import 'package:luxrobo_publish/widgets/field.dart';
+import 'package:luxrobo/main.dart';
+import 'package:luxrobo/styles.dart';
+import 'package:luxrobo/widgets/field.dart';
 import '../widgets/button.dart';
 
 class Door01 extends StatefulWidget {

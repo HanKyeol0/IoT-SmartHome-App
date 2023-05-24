@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/styles.dart';
-import 'package:luxrobo_publish/widgets/button.dart';
-import 'package:luxrobo_publish/widgets/navigation.dart';
+import 'package:luxrobo/styles.dart';
+import 'package:luxrobo/widgets/button.dart';
+import 'package:luxrobo/widgets/navigation.dart';
 
 import '../widgets/field.dart';
 

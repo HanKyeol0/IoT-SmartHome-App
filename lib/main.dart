@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:luxrobo_publish/bell/bell.dart';
-import 'package:luxrobo_publish/parking/parking.dart';
-import 'package:luxrobo_publish/setting/setting01.dart';
-import 'package:luxrobo_publish/setting/setting02.dart';
-import 'package:luxrobo_publish/styles.dart';
+import 'package:luxrobo/bell/bell.dart';
+import 'package:luxrobo/parking/parking.dart';
+import 'package:luxrobo/setting/setting01.dart';
+import 'package:luxrobo/setting/setting02.dart';
+import 'package:luxrobo/styles.dart';
 import 'door/door01.dart';
 import 'door/door02.dart';
 import 'login/login01.dart';
