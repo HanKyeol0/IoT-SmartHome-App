@@ -250,7 +250,7 @@ class _Login02State extends State<Login02> {
                     : black,
             isClickable:
                 !(isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4),
-            onPressed: () => Navigator.pushNamed(context, '/login01'),
+            onPressed: () => Navigator.pushNamed(context, '/'),
           ),
         ],
       ),

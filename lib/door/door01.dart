@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luxrobo_publish/main.dart';
 import 'package:luxrobo_publish/styles.dart';
 import 'package:luxrobo_publish/widgets/field.dart';
 import '../widgets/button.dart';
@@ -15,7 +16,8 @@ class _Door01State extends State<Door01> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LuxroboScaffold(
+      currentIndex: 0,
       body: Column(
         children: [
           const SizedBox(height: 91),
@@ -54,11 +56,9 @@ class _Door01State extends State<Door01> {
                   style: fieldTitle(),
                 ),
                 const Spacer(),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
-                  child: SeeMoreButton(
-                    onPressed: () => Navigator.pushNamed(context, '/door01'),
-                  ),
+                  child: SeeMoreButton(),
                 )
               ],
             ),
@@ -77,12 +77,13 @@ class _Door01State extends State<Door01> {
             isPhone: true,
           ),
           const SizedBox(height: 60),
-          const DoorAccess(
-            isOpened: true,
+          const GateAccess(
+            isDetected: true,
           ),
+          const Spacer(),
+          const GateDetection(isDetected: true),
         ],
       ),
-      backgroundColor: black,
     );
   }
 }

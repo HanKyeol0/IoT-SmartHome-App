@@ -251,11 +251,8 @@ class _AutoAccessToggleState extends State<AutoAccessToggle> {
 }
 
 class SeeMoreButton extends StatefulWidget {
-  final VoidCallback onPressed;
-
   const SeeMoreButton({
     super.key,
-    required this.onPressed,
   });
 
   @override
@@ -266,7 +263,7 @@ class _SeeMoreButtonState extends State<SeeMoreButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.onPressed,
+      onTap: () => Navigator.pushNamed(context, '/door02'),
       borderRadius: BorderRadius.circular(14),
       child: Container(
         width: 58,
@@ -290,12 +287,12 @@ class _SeeMoreButtonState extends State<SeeMoreButton> {
   }
 }
 
-class DoorAccess extends StatelessWidget {
-  final bool isOpened;
+class GateAccess extends StatelessWidget {
+  final bool isDetected;
 
-  const DoorAccess({
+  const GateAccess({
     super.key,
-    required this.isOpened,
+    required this.isDetected,
   });
 
   @override
@@ -310,24 +307,129 @@ class DoorAccess extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isOpened ? bColor : lightGrey,
+                color: isDetected ? bColor : lightGrey,
               ),
             ),
             child: Icon(
-              isOpened ? Icons.door_sliding_outlined : Icons.door_sliding,
-              color: isOpened ? bColor : lightGrey,
+              isDetected ? Icons.door_sliding_outlined : Icons.door_sliding,
+              color: isDetected ? bColor : lightGrey,
               size: 51,
             ),
           ),
           const SizedBox(height: 20),
           Text(
-            isOpened ? '터치해서 현관문 출입' : '출입문이 감지되지 않습니다.',
+            isDetected ? '터치해서 현관문 출입' : '출입문이 감지되지 않습니다.',
             style: fieldTitle(
               fontSize: 16,
-              color: isOpened ? wColor : lightGrey,
+              color: isDetected ? wColor : lightGrey,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TouchParking extends StatelessWidget {
+  const TouchParking({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            //padding: const EdgeInsets.all(33.5),
+            height: 118,
+            width: 118,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: bColor,
+              ),
+            ),
+            child: const Icon(
+              Icons.local_parking_rounded,
+              color: bColor,
+              size: 51,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            '터치해서 주차하기',
+            style: fieldTitle(
+              fontSize: 16,
+              color: wColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EmergencyBell extends StatelessWidget {
+  const EmergencyBell({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            //padding: const EdgeInsets.all(33.5),
+            height: 118,
+            width: 118,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: bColor,
+              ),
+            ),
+            child: const Icon(
+              Icons.notification_important,
+              color: bColor,
+              size: 51,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            '터치해서 비상벨 울리기',
+            style: fieldTitle(
+              fontSize: 16,
+              color: wColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GoBack extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const GoBack({
+    super.key,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        height: 26,
+        width: 26,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: bColor,
+        ),
+        child: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 15,
+          color: black,
+        ),
       ),
     );
   }

@@ -102,6 +102,10 @@ class _DropdownInputState extends State<DropdownInput> {
               },
             ),
           ),
+          Container(
+            height: 0.5,
+            color: lightGrey,
+          ),
           if (showDropdown)
             ListView.separated(
               shrinkWrap: true,
@@ -270,6 +274,235 @@ class AccessLog extends StatelessWidget {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class GateDetection extends StatefulWidget {
+  final bool isDetected;
+
+  const GateDetection({
+    super.key,
+    required this.isDetected,
+  });
+
+  @override
+  State<GateDetection> createState() => _GateDetectionState();
+}
+
+class _GateDetectionState extends State<GateDetection> {
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 20,
+          bottom: 20,
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 34,
+              width: 34,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.isDetected ? bColor : lightGrey,
+              ),
+              child: Center(
+                child: SizedBox(
+                  height: 18,
+                  child: Image.asset('assets/doorDetection.png'),
+                ),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              widget.isDetected ? '출입문 감지' : '출입문 감지 실패',
+              style: contentText(
+                color: wColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CarInput extends StatefulWidget {
+  final String placeholder;
+  final List<String> items;
+  final TextEditingController textEditingController;
+  final Function(String) onTextChanged;
+
+  const CarInput({
+    Key? key,
+    required this.placeholder,
+    required this.items,
+    required this.textEditingController,
+    required this.onTextChanged,
+  }) : super(key: key);
+
+  @override
+  State<CarInput> createState() => _CarInputState();
+}
+
+class _CarInputState extends State<CarInput> {
+  String? selectedValue;
+  bool showDropdown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedValue = null;
+  }
+
+  void toggleDropdown() {
+    setState(() {
+      showDropdown = !showDropdown;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: showDropdown
+            ? Border.all(color: wColor, width: 1)
+            : Border.all(color: darkGrey, width: 1),
+        color: grey,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 54,
+            child: TextField(
+              controller: widget.textEditingController,
+              style: const TextStyle(color: wColor),
+              decoration: InputDecoration(
+                hintText: widget.placeholder,
+                hintStyle: contentText(color: lightGrey),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 19.5,
+                  horizontal: 15,
+                ),
+                border: InputBorder.none,
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      widget.textEditingController.clear();
+                      toggleDropdown();
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: showDropdown ? lightGrey : bColor,
+                      ),
+                      height: 20,
+                      width: 20,
+                      child: Icon(
+                        showDropdown
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        color: showDropdown ? bColor : black,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  selectedValue = null; // Clear the selected value
+                });
+                widget.onTextChanged(value);
+                if (value.isNotEmpty) {
+                  setState(() {
+                    showDropdown = true;
+                  });
+                } else {
+                  setState(() {
+                    showDropdown = false;
+                  });
+                }
+              },
+            ),
+          ),
+          Container(
+            height: 0.5,
+            color: showDropdown ? lightGrey : null,
+          ),
+          if (showDropdown)
+            ListView.separated(
+              shrinkWrap: true,
+              itemCount: widget.items.length,
+              separatorBuilder: (context, index) => const Divider(
+                color: lightGrey,
+                thickness: 0.5,
+              ),
+              itemBuilder: (context, index) {
+                final item = widget.items[index];
+                return ListTile(
+                  title: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item,
+                      style: contentText(color: wColor),
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectedValue = item;
+                      widget.textEditingController.text = item;
+                      showDropdown = false;
+                    });
+                  },
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class InfoField extends StatelessWidget {
+  final String value;
+
+  const InfoField({
+    super.key,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: darkGrey,
+          width: 1.5,
+        ),
+        color: grey,
+      ),
+      height: 54,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20.0),
+        child: Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            value,
+            style: contentText(color: wColor),
+          ),
         ),
       ),
     );

@@ -39,3 +39,12 @@ TextStyle fieldTitle({double fontSize = 15, Color color = wColor}) {
     fontWeight: FontWeight.w700,
   );
 }
+
+TextStyle emergencyBellContent() {
+  return const TextStyle(
+    fontFamily: 'luxFont',
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: Color(0xFFD3D3D3),
+  );
+}

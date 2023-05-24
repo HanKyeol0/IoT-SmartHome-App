@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:luxrobo_publish/bell/bell.dart';
+import 'package:luxrobo_publish/parking/parking.dart';
+import 'package:luxrobo_publish/setting/setting01.dart';
+import 'package:luxrobo_publish/setting/setting02.dart';
+import 'package:luxrobo_publish/styles.dart';
 import 'door/door01.dart';
+import 'door/door02.dart';
 import 'login/login01.dart';
 import 'login/login02.dart';
-import 'styles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,99 +21,80 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => const Bell(),
         '/login01': (context) => const Login01(),
         '/login02': (context) => const Login02(),
         '/door01': (context) => const Door01(),
+        '/door02': (context) => const Door02(),
+        '/parking': (context) => const Parking(),
+        '/bell': (context) => const Bell(),
+        '/setting01': (context) => const Setting01(),
+        '/setting02': (context) => const Setting02(),
       },
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class LuxroboScaffold extends StatelessWidget {
+  final Widget body;
+  final int currentIndex;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const Door01(),
-    const Login01(),
-    const Login02(),
-  ];
+  const LuxroboScaffold({
+    Key? key,
+    required this.body,
+    required this.currentIndex,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: const BottomNavigation(),
-    );
-  }
-}
-
-class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
-
-  @override
-  State<BottomNavigation> createState() => _BottomNavigationState();
-}
-
-class _BottomNavigationState extends State<BottomNavigation> {
-  int _selectedIndex = 0;
-
-  final screens = [
-    const Door01(),
-  ];
-
-  void _onItemTapped(value) {
-    setState(() {
-      _selectedIndex = value;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: screens[_selectedIndex],
-      bottomNavigationBar: Container(
-        color: black,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: black,
-            elevation: 0.0,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.door_sliding_outlined,
-                  ),
-                  label: '공동현관'),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.directions_car_filled_outlined,
-                  ),
-                  label: '주차위치'),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.notifications_outlined,
-                  ),
-                  label: '비상벨'),
-              BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.settings_outlined,
-                  ),
-                  label: '설정'),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: bColor,
-            unselectedItemColor: wColor,
-            onTap: _onItemTapped,
-          ),
+      body: body,
+      backgroundColor: black,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: black,
+          selectedItemColor: bColor,
+          unselectedItemColor: wColor,
+          elevation: 0,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.door_sliding_outlined),
+              label: '공동현관',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.directions_car_filled_outlined),
+              label: '주차위치',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.notifications_outlined,
+                ),
+                label: '비상벨'),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.settings_outlined,
+                ),
+                label: '설정'),
+          ],
+          currentIndex: currentIndex,
+          onTap: (index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/door01');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/parking');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/bell');
+                break;
+              case 3:
+                Navigator.pushNamed(context, '/setting01');
+                break;
+            }
+          },
         ),
       ),
     );
