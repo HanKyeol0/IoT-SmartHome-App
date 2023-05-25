@@ -44,7 +44,7 @@ class _Door01State extends State<Bell> {
                     style: emergencyBellContent(),
                   ),
                   const SizedBox(
-                    height: 150,
+                    height: 50,
                   ),
                 ],
               ),

@@ -92,150 +92,159 @@ class _Login02State extends State<Login02> {
               )
             ],
           ),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 20,
-              bottom: 10,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      bottom: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '동 입력',
+                              style: fieldTitle(),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: InputField(
+                      placeholder: '아파트 동을 입력해주세요.',
+                      onTextChanged: onText1,
+                      textEditingController: textEditingController1,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      bottom: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '호수 입력',
+                              style: fieldTitle(),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: InputField(
+                      placeholder: '아파트 호수를 입력해주세요.',
+                      onTextChanged: onText2,
+                      textEditingController: textEditingController2,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      bottom: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '로그인 코드 입력',
+                              style: fieldTitle(),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: InputField(
+                      placeholder: '인증번호를 입력해주세요.',
+                      onTextChanged: onText3,
+                      textEditingController: textEditingController3,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      bottom: 10,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '이름 입력',
+                              style: fieldTitle(),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: InputField(
+                      placeholder: '이름을 입력해주세요.',
+                      onTextChanged: onText4,
+                      textEditingController: textEditingController4,
+                    ),
+                  ),
+                  const SizedBox(height: 11),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 32),
+                        child: Row(
+                          children: [
+                            const BlueCheckbox(),
+                            const SizedBox(width: 11),
+                            Text(
+                              '내용 저장',
+                              style: contentText(color: wColor),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 20),
+                        child: Row(
+                          children: [
+                            const BlueCheckbox(),
+                            const SizedBox(width: 11),
+                            Text(
+                              '자동 로그인',
+                              style: contentText(color: wColor),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '동 입력',
-                      style: fieldTitle(),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(
-              placeholder: '아파트 동을 입력해주세요.',
-              onTextChanged: onText1,
-              textEditingController: textEditingController1,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 20,
-              bottom: 10,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '호수 입력',
-                      style: fieldTitle(),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(
-              placeholder: '아파트 호수를 입력해주세요.',
-              onTextChanged: onText2,
-              textEditingController: textEditingController2,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 20,
-              bottom: 10,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '로그인 코드 입력',
-                      style: fieldTitle(),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(
-              placeholder: '인증번호를 입력해주세요.',
-              onTextChanged: onText3,
-              textEditingController: textEditingController3,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.only(
-              left: 20,
-              bottom: 10,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      '이름 입력',
-                      style: fieldTitle(),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: InputField(
-              placeholder: '이름을 입력해주세요.',
-              onTextChanged: onText4,
-              textEditingController: textEditingController4,
-            ),
-          ),
-          const SizedBox(height: 11),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 32),
-                child: Row(
-                  children: [
-                    const BlueCheckbox(),
-                    const SizedBox(width: 11),
-                    Text(
-                      '내용 저장',
-                      style: contentText(color: wColor),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 20),
-                child: Row(
-                  children: [
-                    const BlueCheckbox(),
-                    const SizedBox(width: 11),
-                    Text(
-                      '자동 로그인',
-                      style: contentText(color: wColor),
-                    )
-                  ],
-                ),
-              )
-            ],
           ),
           RoundLoginButton(
             buttonColor: (!isTextEmpty1 &&

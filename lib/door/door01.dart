@@ -47,41 +47,49 @@ class _Door01State extends State<Door01> {
             ),
           ),
           const SizedBox(height: 51),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              children: [
-                Text(
-                  '출입기록',
-                  style: fieldTitle(),
-                ),
-                const Spacer(),
-                const Align(
-                  alignment: Alignment.centerRight,
-                  child: SeeMoreButton(),
-                )
-              ],
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          '출입기록',
+                          style: fieldTitle(),
+                        ),
+                        const Spacer(),
+                        const Align(
+                          alignment: Alignment.centerRight,
+                          child: SeeMoreButton(),
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const AccessLog(
+                    bgColor: darkGrey,
+                    isPhone: true,
+                  ),
+                  const AccessLog(
+                    bgColor: darkGrey,
+                    isPhone: false,
+                  ),
+                  const AccessLog(
+                    bgColor: darkGrey,
+                    isPhone: true,
+                  ),
+                  const SizedBox(height: 60),
+                  const GateAccess(
+                    isDetected: true,
+                  ),
+                  const Spacer(),
+                  const GateDetection(isDetected: true),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 10),
-          const AccessLog(
-            bgColor: darkGrey,
-            isPhone: true,
-          ),
-          const AccessLog(
-            bgColor: darkGrey,
-            isPhone: false,
-          ),
-          const AccessLog(
-            bgColor: darkGrey,
-            isPhone: true,
-          ),
-          const SizedBox(height: 60),
-          const GateAccess(
-            isDetected: true,
-          ),
-          const Spacer(),
-          const GateDetection(isDetected: true),
         ],
       ),
     );
