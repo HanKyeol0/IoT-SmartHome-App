@@ -1,4 +1,4 @@
-# luxrobo_publish
+# luxrobo
 
 A new Flutter project.
 

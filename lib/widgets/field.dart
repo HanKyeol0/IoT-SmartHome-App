@@ -451,21 +451,24 @@ class _CarInputState extends State<CarInput> {
               ),
               itemBuilder: (context, index) {
                 final item = widget.items[index];
-                return ListTile(
-                  title: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      item,
-                      style: contentText(color: wColor),
+                return SizedBox(
+                  height: 48,
+                  child: ListTile(
+                    title: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item,
+                        style: contentText(color: wColor),
+                      ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        selectedValue = item;
+                        widget.textEditingController.text = item;
+                        showDropdown = false;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    setState(() {
-                      selectedValue = item;
-                      widget.textEditingController.text = item;
-                      showDropdown = false;
-                    });
-                  },
                 );
               },
             ),
