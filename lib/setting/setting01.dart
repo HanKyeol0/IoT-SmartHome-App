@@ -176,24 +176,28 @@ void showExitDialog(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RoundButton(
-                    text: '취소',
-                    bgColor: grey,
-                    textColor: wColor,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '취소',
+                      bgColor: grey,
+                      textColor: wColor,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  RoundButton(
-                    text: '확인',
-                    bgColor: bColor,
-                    textColor: black,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ],
               ),
@@ -241,24 +245,28 @@ void terminateAllFunctions(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RoundButton(
-                    text: '취소',
-                    bgColor: grey,
-                    textColor: wColor,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '취소',
+                      bgColor: grey,
+                      textColor: wColor,
+                      buttonWidth: 130,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  RoundButton(
-                    text: '확인',
-                    bgColor: bColor,
-                    textColor: black,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: 130,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ],
               ),
@@ -299,24 +307,28 @@ void showLogoutDialog(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  RoundButton(
-                    text: '취소',
-                    bgColor: grey,
-                    textColor: wColor,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '취소',
+                      bgColor: grey,
+                      textColor: wColor,
+                      buttonWidth: 130,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  RoundButton(
-                    text: '확인',
-                    bgColor: bColor,
-                    textColor: black,
-                    buttonWidth: 130,
-                    buttonHeight: 46,
-                    onPressed: () => Navigator.of(context).pop(),
+                  Expanded(
+                    child: RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: 130,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
                   ),
                 ],
               ),

@@ -84,15 +84,12 @@ class _Door01State extends State<Door01> {
                   const GateAccess(
                     isDetected: true,
                   ),
+                  const SizedBox(height: 50),
                 ],
               ),
             ],
           ),
-          const Positioned(
-            left: 20,
-            bottom: 20,
-            child: GateDetection(isDetected: true),
-          ),
+          const GateDetection(isDetected: true),
         ],
       ),
     );
