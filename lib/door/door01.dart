@@ -18,38 +18,38 @@ class _Door01State extends State<Door01> {
   Widget build(BuildContext context) {
     return LuxroboScaffold(
       currentIndex: 0,
-      body: Column(
+      body: Stack(
         children: [
-          const SizedBox(height: 91),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              children: [
-                Text(
-                  '공동현관',
-                  style: titleText(fontSize: 21),
-                ),
-                const Spacer(),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Row(
-                    children: [
-                      Text(
-                        '자동출입',
-                        style: fieldTitle(fontSize: 14),
+          Column(
+            children: [
+              const SizedBox(height: 91),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  children: [
+                    Text(
+                      '공동현관',
+                      style: titleText(fontSize: 21),
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        children: [
+                          Text(
+                            '자동출입',
+                            style: fieldTitle(fontSize: 14),
+                          ),
+                          const SizedBox(width: 7),
+                          const AutoAccessToggle(),
+                        ],
                       ),
-                      const SizedBox(width: 7),
-                      const AutoAccessToggle(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 51),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
+              ),
+              const SizedBox(height: 51),
+              Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -84,11 +84,14 @@ class _Door01State extends State<Door01> {
                   const GateAccess(
                     isDetected: true,
                   ),
-                  const Spacer(),
-                  const GateDetection(isDetected: true),
                 ],
               ),
-            ),
+            ],
+          ),
+          const Positioned(
+            left: 20,
+            bottom: 20,
+            child: GateDetection(isDetected: true),
           ),
         ],
       ),

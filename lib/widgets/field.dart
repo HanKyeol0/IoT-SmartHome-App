@@ -295,13 +295,13 @@ class GateDetection extends StatefulWidget {
 class _GateDetectionState extends State<GateDetection> {
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 20,
-          bottom: 20,
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 20,
+        bottom: 20,
+      ),
+      child: Align(
+        alignment: Alignment.bottomLeft,
         child: Row(
           children: [
             Container(
