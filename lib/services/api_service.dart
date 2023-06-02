@@ -13,18 +13,16 @@ class ApiService {
     final url = Uri.parse('$baseurl/$getApartment');
     final response = await http.get(url);
 
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final data = responseData['data'][0] as List<dynamic>;
+    final responseData = jsonDecode(response.body);
+    final data = responseData['data'][0] as List<dynamic>;
 
-      final apartment = data.firstWhere(
-        (item) => item['name'] == value,
-        orElse: () => null,
-      );
+    final apartment = data.firstWhere(
+      (item) => item['name'] == value,
+      orElse: () => null,
+    );
 
-      if (apartment != null) {
-        final apartmentID = apartment['id'] as int;
-      }
+    if (apartment != null) {
+      final apartmentID = apartment['id'] as int;
       return true;
     } else {
       return false;

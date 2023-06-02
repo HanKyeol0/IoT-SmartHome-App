@@ -33,6 +33,8 @@ class _Login01State extends State<Login01> {
     final value = apartmentController.text;
     final bool isValid = await ApiService.checkApartment(value);
 
+    print(isValid);
+
     if (isValid) {
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/login02');
