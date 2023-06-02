@@ -6,54 +6,74 @@ import 'package:luxrobo/services/api_service.dart';
 import '../widgets/field.dart';
 
 class Login02 extends StatefulWidget {
-  const Login02({super.key});
+  final int? apartmentID;
+
+  const Login02({super.key, this.apartmentID});
 
   @override
   State<Login02> createState() => _Login02State();
 }
 
 class _Login02State extends State<Login02> {
-  bool isTextEmpty1 = true;
-  bool isTextEmpty2 = true;
-  bool isTextEmpty3 = true;
-  bool isTextEmpty4 = true;
-  TextEditingController textEditingController1 = TextEditingController();
-  TextEditingController textEditingController2 = TextEditingController();
-  TextEditingController textEditingController3 = TextEditingController();
-  TextEditingController textEditingController4 = TextEditingController();
+  bool isDongEmpty = true;
+  bool isHoEmpty = true;
+  bool isNameEmpty = true;
+  bool isLoginCodeEmpty = true;
+  TextEditingController dongController = TextEditingController();
+  TextEditingController hoController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController loginCodeController = TextEditingController();
+
+  bool isValid = false;
 
   @override
   void initState() {
     super.initState();
 
-    isTextEmpty1 = textEditingController1.text.isEmpty;
-    isTextEmpty2 = textEditingController2.text.isEmpty;
-    isTextEmpty3 = textEditingController3.text.isEmpty;
-    isTextEmpty4 = textEditingController4.text.isEmpty;
+    isDongEmpty = dongController.text.isEmpty;
+    isHoEmpty = hoController.text.isEmpty;
+    isNameEmpty = nameController.text.isEmpty;
+    isLoginCodeEmpty = loginCodeController.text.isEmpty;
   }
 
   void onText1(String value) {
     setState(() {
-      isTextEmpty1 = value.isEmpty;
+      isDongEmpty = value.isEmpty;
     });
   }
 
   void onText2(String value) {
     setState(() {
-      isTextEmpty2 = value.isEmpty;
+      isHoEmpty = value.isEmpty;
     });
   }
 
   void onText3(String value) {
     setState(() {
-      isTextEmpty3 = value.isEmpty;
+      isNameEmpty = value.isEmpty;
     });
   }
 
   void onText4(String value) {
     setState(() {
-      isTextEmpty4 = value.isEmpty;
+      isLoginCodeEmpty = value.isEmpty;
     });
+  }
+
+  void onPressedLogin() async {
+    if (await ApiService.login(
+          widget.apartmentID!,
+          dongController.text,
+          hoController.text,
+          nameController.text,
+          loginCodeController.text,
+        ) ==
+        true) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/door01');
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -114,12 +134,13 @@ class _Login02State extends State<Login02> {
                       ],
                     ),
                   ),
+                  //Dong entering field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
                       placeholder: '아파트 동을 입력해주세요.',
                       onTextChanged: onText1,
-                      textEditingController: textEditingController1,
+                      textEditingController: dongController,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -141,12 +162,13 @@ class _Login02State extends State<Login02> {
                       ],
                     ),
                   ),
+                  //Ho entering field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
                       placeholder: '아파트 호수를 입력해주세요.',
                       onTextChanged: onText2,
-                      textEditingController: textEditingController2,
+                      textEditingController: hoController,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -168,12 +190,13 @@ class _Login02State extends State<Login02> {
                       ],
                     ),
                   ),
+                  //Name entering field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
                       placeholder: '이름을 입력해주세요.',
                       onTextChanged: onText4,
-                      textEditingController: textEditingController3,
+                      textEditingController: nameController,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -195,12 +218,13 @@ class _Login02State extends State<Login02> {
                       ],
                     ),
                   ),
+                  //Login code entering field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
                       placeholder: '인증번호를 입력해주세요.',
                       onTextChanged: onText3,
-                      textEditingController: textEditingController4,
+                      textEditingController: loginCodeController,
                     ),
                   ),
                   const SizedBox(height: 11),
@@ -247,29 +271,19 @@ class _Login02State extends State<Login02> {
             ),
           ),
           RoundLoginButton(
-            buttonColor: (!isTextEmpty1 &&
-                    !isTextEmpty2 &&
-                    !isTextEmpty3 &&
-                    !isTextEmpty4)
+            buttonColor: (!isDongEmpty &&
+                    !isHoEmpty &&
+                    !isNameEmpty &&
+                    !isLoginCodeEmpty)
                 ? bColor
                 : grey,
             textColor:
-                (isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4)
+                (isDongEmpty || isHoEmpty || isNameEmpty || isLoginCodeEmpty)
                     ? lightGrey
                     : black,
             isClickable:
-                !(isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4),
-            onPressed: () {
-              ApiService.login(
-                1,
-                textEditingController1.text,
-                textEditingController2.text,
-                textEditingController3.text,
-                textEditingController4.text,
-              ).then((_) {
-                Navigator.pushNamed(context, '/door01');
-              });
-            },
+                !(isDongEmpty || isHoEmpty || isNameEmpty || isLoginCodeEmpty),
+            onPressed: onPressedLogin,
           ),
         ],
       ),

@@ -4,12 +4,13 @@ import 'package:http/http.dart' as http;
 class ApiService {
   static const String baseurl = 'http://43.201.14.39:8080';
 
-  static const String postAuth = 'api/auth';
-
-  //아파트 조회
+  //Check Apartment
   static const String getApartment = 'api/apartment';
 
-  static Future<bool> checkApartment(String value) async {
+  //Login
+  static const String postAuth = 'api/auth';
+
+  static Future<int?> checkApartment(String value) async {
     final url = Uri.parse('$baseurl/$getApartment');
     final response = await http.get(url);
 
@@ -22,14 +23,14 @@ class ApiService {
     );
 
     if (apartment != null) {
-      final apartmentID = apartment['id'] as int;
-      return true;
+      final int apartmentID = apartment['id'] as int;
+      return apartmentID;
     } else {
-      return false;
+      return null;
     }
   }
 
-  static Future<void> login(
+  static Future<bool> login(
     int apartmentID,
     String dong,
     String ho,
@@ -38,11 +39,12 @@ class ApiService {
   ) async {
     final url = Uri.parse('$baseurl/$postAuth');
 
-    var requestBody = jsonEncode({
-      'apartmentID': apartmentID,
+    final requestBody = jsonEncode({
+      'apartmentId': apartmentID,
       'dong': dong,
       'ho': ho,
       'name': name,
+      'loginCode': loginCode,
     });
 
     final response = await http.post(
@@ -50,12 +52,16 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
     );
+    //print(requestBody);
+    //print(response.body);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       var responseBody = jsonDecode(response.body);
       print('Logged in successfully: $responseBody');
+      return true;
     } else {
       print('Login failed with status code: ${response.statusCode}');
+      return false;
     }
   }
 }

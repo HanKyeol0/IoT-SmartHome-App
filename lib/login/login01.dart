@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luxrobo/login/login02.dart';
 import 'package:luxrobo/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/field.dart';
@@ -16,6 +17,7 @@ class _Login01State extends State<Login01> {
   TextEditingController apartmentController = TextEditingController();
   bool isTextEmpty = true;
   bool isClickable = false;
+  int? apartmentID;
 
   @override
   void dispose() {
@@ -31,13 +33,25 @@ class _Login01State extends State<Login01> {
 
   void onPressedNext() async {
     final value = apartmentController.text;
-    final bool isValid = await ApiService.checkApartment(value);
+    final int? apartmentID = await ApiService.checkApartment(value);
 
-    print(isValid);
+    // ignore: avoid_print
+    print(apartmentID); //check apartmentID
 
-    if (isValid) {
+    if (apartmentID == null) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/login02');
+      return null;
+    } else {
+      setState(() {
+        this.apartmentID = apartmentID;
+      });
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Login02(apartmentID: apartmentID),
+        ),
+      );
     }
   }
 
