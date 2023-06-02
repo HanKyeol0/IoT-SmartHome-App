@@ -339,6 +339,7 @@ class CarInput extends StatefulWidget {
   final List<String> items;
   final TextEditingController textEditingController;
   final Function(String) onTextChanged;
+  final Function(BuildContext)? onItemSelected;
 
   const CarInput({
     Key? key,
@@ -346,6 +347,7 @@ class CarInput extends StatefulWidget {
     required this.items,
     required this.textEditingController,
     required this.onTextChanged,
+    this.onItemSelected,
   }) : super(key: key);
 
   @override
@@ -383,58 +385,41 @@ class _CarInputState extends State<CarInput> {
         children: [
           SizedBox(
             height: 54,
-            child: TextField(
-              controller: widget.textEditingController,
-              style: const TextStyle(color: wColor),
-              decoration: InputDecoration(
-                hintText: widget.placeholder,
-                hintStyle: contentText(color: lightGrey),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 19.5,
-                  horizontal: 15,
-                ),
-                border: InputBorder.none,
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      widget.textEditingController.clear();
-                      toggleDropdown();
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: showDropdown ? lightGrey : bColor,
-                      ),
-                      height: 20,
-                      width: 20,
-                      child: Icon(
-                        showDropdown
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: showDropdown ? bColor : black,
+            child: GestureDetector(
+              onTap: toggleDropdown, // Show the dropdown on tap
+              child: AbsorbPointer(
+                child: TextField(
+                  readOnly: true, // Make the TextField read-only
+                  controller: widget.textEditingController,
+                  style: const TextStyle(color: wColor),
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    hintStyle: contentText(color: lightGrey),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 19.5,
+                      horizontal: 15,
+                    ),
+                    border: InputBorder.none,
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: showDropdown ? lightGrey : bColor,
+                        ),
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          showDropdown
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: showDropdown ? bColor : black,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              onChanged: (value) {
-                setState(() {
-                  selectedValue = null; // Clear the selected value
-                });
-                widget.onTextChanged(value);
-                if (value.isNotEmpty) {
-                  setState(() {
-                    showDropdown = true;
-                  });
-                } else {
-                  setState(() {
-                    showDropdown = false;
-                  });
-                }
-              },
             ),
           ),
           Container(
@@ -467,6 +452,10 @@ class _CarInputState extends State<CarInput> {
                         widget.textEditingController.text = item;
                         showDropdown = false;
                       });
+
+                      if (widget.onItemSelected != null) {
+                        widget.onItemSelected!(context);
+                      }
                     },
                   ),
                 );

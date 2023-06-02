@@ -12,25 +12,41 @@ class Parking extends StatefulWidget {
 }
 
 class _ParkingState extends State<Parking> with TickerProviderStateMixin {
-  TextEditingController textEditingController = TextEditingController();
-  bool isTextEmpty = true;
+  TextEditingController parkingCarController = TextEditingController();
+  TextEditingController preferredParkingLotController = TextEditingController();
+  bool isCarTextEmpty = true;
+  bool isParkingLotTextEmpty = true;
+
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+  }
 
   @override
   void dispose() {
-    textEditingController.dispose();
+    parkingCarController.dispose();
+    preferredParkingLotController.dispose();
+    tabController.dispose();
     super.dispose();
   }
 
-  void onTextChanged(String value) {
+  void onCarChanged(String value) {
     setState(() {
-      isTextEmpty = value.isEmpty;
+      isCarTextEmpty = value.isEmpty;
+    });
+  }
+
+  void onParkingLotChanged(String value) {
+    setState(() {
+      isParkingLotTextEmpty = value.isEmpty;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    TabController tabController = TabController(length: 3, vsync: this);
-
     return LuxroboScaffold(
       currentIndex: 1,
       body: Column(
@@ -110,6 +126,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
             child: TabBarView(
               controller: tabController,
               children: [
+                //위치 저장 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
@@ -128,14 +145,16 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                           'B',
                         ],
                         placeholder: '주차하실 차량을 선택해주세요.',
-                        onTextChanged: onTextChanged,
-                        textEditingController: textEditingController,
+                        onTextChanged: onCarChanged,
+                        textEditingController: parkingCarController,
+                        onItemSelected: showParkingLocationSavingDialog,
                       ),
                       const SizedBox(height: 74),
                       const Expanded(child: TouchParking()),
                     ],
                   ),
                 ),
+                //위치 확인 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
@@ -181,6 +200,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
+                //선호 구역 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
@@ -196,14 +216,15 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                         height: 10,
                       ),
                       CarInput(
-                          placeholder: '선호 주차장을 선택해주세요.',
-                          items: const [
-                            '1단지 101-103동 주차장',
-                            '1단지 104-105동 주차장',
-                            '2단지 201-103동 주차장',
-                          ],
-                          textEditingController: textEditingController,
-                          onTextChanged: onTextChanged),
+                        placeholder: '선호 주차장을 선택해주세요.',
+                        items: const [
+                          '1단지 101-103동 주차장',
+                          '1단지 104-105동 주차장',
+                          '2단지 201-103동 주차장',
+                        ],
+                        textEditingController: preferredParkingLotController,
+                        onTextChanged: onParkingLotChanged,
+                      ),
                       const SizedBox(height: 30),
                       Align(
                         alignment: Alignment.centerLeft,
@@ -224,4 +245,66 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+void showParkingLocationSavingDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: darkGrey,
+        elevation: 0.0, // No shadow
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.only(
+            top: 40,
+            bottom: 30,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                '주차 위치를 저장하시겠습니까?',
+                style: titleText(),
+              ),
+              const SizedBox(
+                height: 39,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: RoundButton(
+                      text: '취소',
+                      bgColor: grey,
+                      textColor: wColor,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

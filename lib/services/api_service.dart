@@ -10,6 +10,10 @@ class ApiService {
   //Login
   static const String postAuth = 'api/auth';
 
+  //car
+  static const String postCar = 'api/car';
+
+  //getApartment
   static Future<int?> checkApartment(String value) async {
     final url = Uri.parse('$baseurl/$getApartment');
     final response = await http.get(url);
@@ -30,6 +34,7 @@ class ApiService {
     }
   }
 
+  //postAuth
   static Future<bool> login(
     int apartmentID,
     String dong,
@@ -52,16 +57,32 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
     );
-    //print(requestBody);
-    //print(response.body);
 
     if (response.statusCode == 201) {
-      var responseBody = jsonDecode(response.body);
+      final responseBody = jsonDecode(response.body);
       print('Logged in successfully: $responseBody');
       return true;
     } else {
       print('Login failed with status code: ${response.statusCode}');
       return false;
+    }
+  }
+
+  //postCar
+  static Future<void> saveCar(String carNumber) async {
+    final url = Uri.parse('$baseurl/$postCar');
+
+    final requestBody = jsonEncode({'number': carNumber});
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    );
+
+    if (response.statusCode == 201) {
+      final responseBody = jsonDecode(response.body);
+      print('saved successfully: $responseBody');
     }
   }
 }
