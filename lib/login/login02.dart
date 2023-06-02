@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
-
+import 'package:luxrobo/services/api_service.dart';
 import '../widgets/field.dart';
 
 class Login02 extends StatefulWidget {
@@ -160,7 +160,7 @@ class _Login02State extends State<Login02> {
                         Row(
                           children: [
                             Text(
-                              '로그인 코드 입력',
+                              '이름 입력',
                               style: fieldTitle(),
                             )
                           ],
@@ -171,8 +171,8 @@ class _Login02State extends State<Login02> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
-                      placeholder: '인증번호를 입력해주세요.',
-                      onTextChanged: onText3,
+                      placeholder: '이름을 입력해주세요.',
+                      onTextChanged: onText4,
                       textEditingController: textEditingController3,
                     ),
                   ),
@@ -187,7 +187,7 @@ class _Login02State extends State<Login02> {
                         Row(
                           children: [
                             Text(
-                              '이름 입력',
+                              '로그인 코드 입력',
                               style: fieldTitle(),
                             )
                           ],
@@ -198,8 +198,8 @@ class _Login02State extends State<Login02> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: InputField(
-                      placeholder: '이름을 입력해주세요.',
-                      onTextChanged: onText4,
+                      placeholder: '인증번호를 입력해주세요.',
+                      onTextChanged: onText3,
                       textEditingController: textEditingController4,
                     ),
                   ),
@@ -259,7 +259,17 @@ class _Login02State extends State<Login02> {
                     : black,
             isClickable:
                 !(isTextEmpty1 || isTextEmpty2 || isTextEmpty3 || isTextEmpty4),
-            onPressed: () => Navigator.pushNamed(context, '/door01'),
+            onPressed: () {
+              ApiService.login(
+                1,
+                textEditingController1.text,
+                textEditingController2.text,
+                textEditingController3.text,
+                textEditingController4.text,
+              ).then((_) {
+                Navigator.pushNamed(context, '/door01');
+              });
+            },
           ),
         ],
       ),

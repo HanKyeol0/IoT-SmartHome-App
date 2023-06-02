@@ -3,6 +3,7 @@ import 'package:luxrobo/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/field.dart';
 import '../widgets/navigation.dart';
+import '../services/api_service.dart';
 
 class Login01 extends StatefulWidget {
   const Login01({Key? key}) : super(key: key);
@@ -12,12 +13,13 @@ class Login01 extends StatefulWidget {
 }
 
 class _Login01State extends State<Login01> {
-  TextEditingController textEditingController = TextEditingController();
+  TextEditingController apartmentController = TextEditingController();
   bool isTextEmpty = true;
+  bool isClickable = false;
 
   @override
   void dispose() {
-    textEditingController.dispose();
+    apartmentController.dispose();
     super.dispose();
   }
 
@@ -25,6 +27,16 @@ class _Login01State extends State<Login01> {
     setState(() {
       isTextEmpty = value.isEmpty;
     });
+  }
+
+  void onPressedNext() async {
+    final value = apartmentController.text;
+    final bool isValid = await ApiService.checkApartment(value);
+
+    if (isValid) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, '/login02');
+    }
   }
 
   @override
@@ -82,22 +94,23 @@ class _Login01State extends State<Login01> {
               ],
             ),
           ),
+          //아파트 입력
           Expanded(
             child: Column(
               children: [
                 DropdownInput(
                   placeholder: '아파트 명을 입력해주세요.',
                   items: const [
-                    'A',
-                    'B',
-                    'C',
+                    '럭스로보 아파트',
+                    '아이아라 아파트',
                   ],
                   searchIconOn: 'assets/searchIconOn.png',
                   searchIconOff: 'assets/searchIconOff.png',
-                  textEditingController: textEditingController,
+                  textEditingController: apartmentController,
                   onTextChanged: onTextChanged,
                 ),
                 const SizedBox(height: 11),
+                //내용 저장
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: Row(
@@ -131,7 +144,7 @@ class _Login01State extends State<Login01> {
             buttonColor: isTextEmpty ? grey : bColor,
             textColor: isTextEmpty ? lightGrey : black,
             isClickable: !isTextEmpty,
-            onPressed: () => Navigator.pushNamed(context, '/login02'),
+            onPressed: onPressedNext,
           ),
         ],
       ),
