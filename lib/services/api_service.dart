@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:luxrobo/services/api_data.dart';
 
 class ApiService {
   static const String baseurl = 'http://43.201.14.39:8080';
@@ -35,7 +36,7 @@ class ApiService {
   }
 
   //postAuth
-  static Future<int> login(
+  static Future<UserData> login(
     int apartmentID,
     String dong,
     String ho,
@@ -59,15 +60,17 @@ class ApiService {
     );
 
     if (response.statusCode == 201) {
-      final responseBody = jsonDecode(response.body);
-      print('Logged in successfully: $responseBody');
-      return 0;
+      final loginResponse = jsonDecode(response.body);
+      final userData = loginResponse['data']['user'];
+      final user = UserData.fromJson(userData);
+      print(user);
+      return user;
     } else if (response.statusCode == 400) {
-      return 1;
+      throw Exception('User Not Found');
     } else if (response.statusCode == 404) {
-      return 2;
+      throw Exception('Wrong Login Code');
     } else {
-      return 3;
+      throw Exception('Bad Network Connection');
     }
   }
 
@@ -82,10 +85,5 @@ class ApiService {
       headers: {'Content-Type': 'application/json'},
       body: requestBody,
     );
-
-    if (response.statusCode == 201) {
-      final responseBody = jsonDecode(response.body);
-      print('saved successfully: $responseBody');
-    }
   }
 }

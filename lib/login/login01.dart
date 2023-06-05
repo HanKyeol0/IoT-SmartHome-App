@@ -76,7 +76,10 @@ class _Login01State extends State<Login01> {
               children: <Widget>[
                 Text(
                   '아파트 이름을 찾을 수 없습니다.',
-                  style: contentText(),
+                  style: contentText(
+                    color: wColor,
+                    fontSize: 18,
+                  ),
                 ),
                 const SizedBox(
                   height: 39,

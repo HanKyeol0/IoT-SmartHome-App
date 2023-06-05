@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
@@ -62,26 +63,28 @@ class _Login02State extends State<Login02> {
   }
 
   void onPressedLogin() async {
-    int response = await ApiService.login(
-      widget.apartmentID!,
-      dongController.text,
-      hoController.text,
-      nameController.text,
-      loginCodeController.text,
-    );
-    if (response == 0) {
-      // ignore: use_build_context_synchronously
+    try {
+      UserData user = await ApiService.login(
+        widget.apartmentID!,
+        dongController.text,
+        hoController.text,
+        nameController.text,
+        loginCodeController.text,
+      );
+
       Navigator.pushNamed(context, '/door01');
-    } else if (response == 1) {
-      print('로그인 코드가 일치하지 않습니다.');
-      setState(() {
-        _isLoginCodeRight = false;
-      });
-    } else if (response == 2) {
-      // ignore: use_build_context_synchronously
-      showUserNotFound(context);
-    } else if (response == 3) {
-      unstableNetwork(context);
+    } catch (e) {
+      if (e is Exception) {
+        if (e.toString() == 'User Not Found') {
+          showUserNotFound(context);
+        } else if (e.toString() == 'Wrong Login Code') {
+          setState(() {
+            _isLoginCodeRight = false;
+          });
+        } else {
+          unstableNetwork(context);
+        }
+      }
     }
   }
 
