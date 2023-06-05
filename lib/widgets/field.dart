@@ -185,6 +185,56 @@ class _InputFieldState extends State<InputField> {
   }
 }
 
+class LoginCodeInputField extends StatefulWidget {
+  final String placeholder;
+  final Function(String) onTextChanged;
+  final TextEditingController textEditingController;
+  final bool isLoginCodeRight;
+
+  const LoginCodeInputField({
+    super.key,
+    required this.placeholder,
+    required this.onTextChanged,
+    required this.textEditingController,
+    required this.isLoginCodeRight,
+  });
+
+  @override
+  State<LoginCodeInputField> createState() => _LoginCodeInputFieldState();
+}
+
+class _LoginCodeInputFieldState extends State<LoginCodeInputField> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: widget.isLoginCodeRight
+            ? Border.all(color: darkGrey, width: 1.5)
+            : Border.all(color: const Color(0xFFFA1A1A), width: 1.5),
+        color: grey,
+      ),
+      height: 54,
+      child: TextField(
+        controller: widget.textEditingController,
+        style: contentText(color: wColor),
+        decoration: InputDecoration(
+          hintText: widget.placeholder,
+          hintStyle: contentText(),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 19.5,
+            horizontal: 15,
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: (value) {
+          widget.onTextChanged(value);
+        },
+      ),
+    );
+  }
+}
+
 class AccessLog extends StatelessWidget {
   final Color bgColor;
   final String

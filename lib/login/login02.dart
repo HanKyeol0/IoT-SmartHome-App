@@ -19,6 +19,7 @@ class _Login02State extends State<Login02> {
   bool isHoEmpty = true;
   bool isNameEmpty = true;
   bool isLoginCodeEmpty = true;
+  bool _isLoginCodeRight = true;
   TextEditingController dongController = TextEditingController();
   TextEditingController hoController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -73,11 +74,109 @@ class _Login02State extends State<Login02> {
       Navigator.pushNamed(context, '/door01');
     } else if (response == 1) {
       print('로그인 코드가 일치하지 않습니다.');
+      setState(() {
+        _isLoginCodeRight = false;
+      });
     } else if (response == 2) {
-      print('유저를 찾을 수 없습니다.');
+      // ignore: use_build_context_synchronously
+      showUserNotFound(context);
     } else if (response == 3) {
-      print('네트워크 상태가 불안정합니다.');
+      unstableNetwork(context);
     }
+  }
+
+  void showUserNotFound(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '유저를 찾을 수 없습니다.',
+                  style: contentText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void unstableNetwork(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '네트워크 상태가 불안정합니다. 잠시 후 다시 시도해주세요.',
+                  style: contentText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -216,7 +315,15 @@ class _Login02State extends State<Login02> {
                             Text(
                               '로그인 코드 입력',
                               style: fieldTitle(),
-                            )
+                            ),
+                            const SizedBox(width: 4),
+                            Visibility(
+                                visible: !_isLoginCodeRight,
+                                child: const Icon(
+                                  Icons.error_outline,
+                                  size: 16,
+                                  color: Color(0xFFFA1A1A),
+                                )),
                           ],
                         )
                       ],
@@ -225,10 +332,30 @@ class _Login02State extends State<Login02> {
                   //Login code entering field
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: InputField(
+                    child: LoginCodeInputField(
                       placeholder: '인증번호를 입력해주세요.',
                       onTextChanged: onText3,
                       textEditingController: loginCodeController,
+                      isLoginCodeRight: _isLoginCodeRight,
+                    ),
+                  ),
+                  const SizedBox(height: 5.5),
+                  Visibility(
+                    visible: !_isLoginCodeRight,
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 20),
+                        child: Text(
+                          '로그인 코드를 확인해주세요.',
+                          style: TextStyle(
+                            fontFamily: 'luxFont',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12,
+                            color: Color(0xFFFA1A1A),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 11),

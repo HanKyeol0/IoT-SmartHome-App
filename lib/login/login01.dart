@@ -40,7 +40,7 @@ class _Login01State extends State<Login01> {
 
     if (apartmentID == null) {
       // ignore: use_build_context_synchronously
-      return null;
+      showApartmentNotFound(context);
     } else {
       setState(() {
         this.apartmentID = apartmentID;
@@ -53,6 +53,53 @@ class _Login01State extends State<Login01> {
         ),
       );
     }
+  }
+
+  void showApartmentNotFound(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '아파트 이름을 찾을 수 없습니다.',
+                  style: contentText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
