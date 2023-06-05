@@ -35,7 +35,7 @@ class ApiService {
   }
 
   //postAuth
-  static Future<bool> login(
+  static Future<int> login(
     int apartmentID,
     String dong,
     String ho,
@@ -61,10 +61,13 @@ class ApiService {
     if (response.statusCode == 201) {
       final responseBody = jsonDecode(response.body);
       print('Logged in successfully: $responseBody');
-      return true;
+      return 0;
+    } else if (response.statusCode == 400) {
+      return 1;
+    } else if (response.statusCode == 404) {
+      return 2;
     } else {
-      print('Login failed with status code: ${response.statusCode}');
-      return false;
+      return 3;
     }
   }
 

@@ -61,18 +61,22 @@ class _Login02State extends State<Login02> {
   }
 
   void onPressedLogin() async {
-    if (await ApiService.login(
-          widget.apartmentID!,
-          dongController.text,
-          hoController.text,
-          nameController.text,
-          loginCodeController.text,
-        ) ==
-        true) {
+    int response = await ApiService.login(
+      widget.apartmentID!,
+      dongController.text,
+      hoController.text,
+      nameController.text,
+      loginCodeController.text,
+    );
+    if (response == 0) {
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/door01');
-    } else {
-      return null;
+    } else if (response == 1) {
+      print('로그인 코드가 일치하지 않습니다.');
+    } else if (response == 2) {
+      print('유저를 찾을 수 없습니다.');
+    } else if (response == 3) {
+      print('네트워크 상태가 불안정합니다.');
     }
   }
 
