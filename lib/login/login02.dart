@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
-import 'package:luxrobo/services/api_service.dart';
 import '../widgets/field.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:luxrobo/services/api_data.dart';
 
 class Login02 extends StatefulWidget {
   final int? apartmentID;
@@ -62,29 +64,43 @@ class _Login02State extends State<Login02> {
     });
   }
 
-  void onPressedLogin() async {
-    try {
-      UserData user = await ApiService.login(
-        widget.apartmentID!,
-        dongController.text,
-        hoController.text,
-        nameController.text,
-        loginCodeController.text,
-      );
+  //login function
+  Future<UserData?> onPressedLogin() async {
+    final response = await http.post(
+      Uri.parse('http://13.125.92.61:8080/api/auth'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'apartmentId': widget.apartmentID,
+        'dong': dongController.text,
+        'ho': hoController.text,
+        'name': nameController.text,
+        'loginCode': loginCodeController.text
+      }),
+    );
 
+    if (response.statusCode == 201) {
+      final jsonDecoded = jsonDecode(response.body);
+      final userData = UserData.fromJson(jsonDecoded);
+      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/door01');
-    } catch (e) {
-      if (e is Exception) {
-        if (e.toString() == 'User Not Found') {
-          showUserNotFound(context);
-        } else if (e.toString() == 'Wrong Login Code') {
-          setState(() {
-            _isLoginCodeRight = false;
-          });
-        } else {
-          unstableNetwork(context);
-        }
-      }
+      return userData;
+    } else if (response.statusCode == 400) {
+      // ignore: avoid_print
+      print('로그인 코드가 일치하지 않습니다.');
+      setState(() {
+        _isLoginCodeRight = false;
+      });
+      return null;
+    } else if (response.statusCode == 404) {
+      // ignore: use_build_context_synchronously
+      showUserNotFound(context);
+      return null;
+    } else {
+      // ignore: use_build_context_synchronously
+      unstableNetwork(context);
+      return null;
     }
   }
 

@@ -15,6 +15,13 @@ class _Door01State extends State<Door01> {
   bool isSwitched = false;
 
   @override
+  void initState() {
+    super.initState();
+    //ApiService.getAccessLogs(
+    //    '123asdasdpsajdgfkhdasfglajdfh', '123asdasdpsajdgfkhdasfglajdfh');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LuxroboScaffold(
       currentIndex: 0,

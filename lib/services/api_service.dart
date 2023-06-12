@@ -1,15 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:luxrobo/services/api_data.dart';
 
 class ApiService {
-  static const String baseurl = 'http://43.201.14.39:8080';
+  static const String baseurl = 'http://13.125.92.61:8080';
 
   //Check Apartment
   static const String getApartment = 'api/apartment';
 
   //Login
   static const String postAuth = 'api/auth';
+
+  //Onepass Logs
+  static const String getOnepassLogs = 'api/onepass/logs';
 
   //car
   static const String postCar = 'api/car';
@@ -35,42 +37,23 @@ class ApiService {
     }
   }
 
-  //postAuth
-  static Future<UserData> login(
-    int apartmentID,
-    String dong,
-    String ho,
-    String name,
-    String loginCode,
-  ) async {
-    final url = Uri.parse('$baseurl/$postAuth');
+  //getOnepassLogs
+  static Future<void> getAccessLogs(
+      String accessToken, String refreshToken) async {
+    final url = Uri.parse('$baseurl/$getOnepassLogs');
 
-    final requestBody = jsonEncode({
-      'apartmentId': apartmentID,
-      'dong': dong,
-      'ho': ho,
-      'name': name,
-      'loginCode': loginCode,
-    });
-
-    final response = await http.post(
+    final response = await http.get(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: requestBody,
+      headers: {
+        //'Authorization': 'Bearer ${UserData.accessToken}',
+        'Refresh-Token': refreshToken,
+      },
     );
 
     if (response.statusCode == 201) {
-      final loginResponse = jsonDecode(response.body);
-      final userData = loginResponse['data']['user'];
-      final user = UserData.fromJson(userData);
-      print(user);
-      return user;
-    } else if (response.statusCode == 400) {
-      throw Exception('User Not Found');
-    } else if (response.statusCode == 404) {
-      throw Exception('Wrong Login Code');
+      print(response.body);
     } else {
-      throw Exception('Bad Network Connection');
+      print('error');
     }
   }
 
