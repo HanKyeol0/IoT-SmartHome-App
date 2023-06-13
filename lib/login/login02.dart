@@ -81,10 +81,10 @@ class _Login02State extends State<Login02> {
     );
 
     if (response.statusCode == 201) {
-      final jsonDecoded = jsonDecode(response.body);
-      final userData = UserData.fromJson(jsonDecoded);
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, '/door01');
+      final userData = UserData.fromJson(jsonDecode(response.body));
+      GlobalData().setUserData(userData);
       return userData;
     } else if (response.statusCode == 400) {
       // ignore: avoid_print
@@ -102,6 +102,11 @@ class _Login02State extends State<Login02> {
       unstableNetwork(context);
       return null;
     }
+  }
+
+  Future<List<String>> saveToken(accessToken, refreshToken) async {
+    print("$accessToken, $refreshToken");
+    return [accessToken, refreshToken];
   }
 
   void showUserNotFound(BuildContext context) {

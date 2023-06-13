@@ -159,9 +159,7 @@ class _InputFieldState extends State<InputField> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: widget.textEditingController.text.isEmpty
-            ? Border.all(color: darkGrey, width: 1.5)
-            : Border.all(color: wColor, width: 1.5),
+        border: Border.all(color: darkGrey, width: 1.5),
         color: grey,
       ),
       height: 54,
@@ -545,6 +543,78 @@ class InfoField extends StatelessWidget {
             value,
             style: contentText(color: wColor),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CarRegisterField extends StatefulWidget {
+  const CarRegisterField({
+    super.key,
+  });
+
+  @override
+  State<CarRegisterField> createState() => _CarRegisterFieldState();
+}
+
+class _CarRegisterFieldState extends State<CarRegisterField> {
+  bool isCarEmpty = true;
+  TextEditingController carController = TextEditingController();
+
+  void onCarText(String value) {
+    setState(() {
+      isCarEmpty = value.isEmpty;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(color: darkGrey, width: 1.5),
+        color: grey,
+      ),
+      height: 54,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: [
+            TextField(
+              controller: carController,
+              style: contentText(color: wColor),
+              decoration: InputDecoration(
+                hintText: '차량 번호를 입력하세요.',
+                hintStyle: contentText(),
+                contentPadding: const EdgeInsets.only(
+                  top: 19.5,
+                  bottom: 19.5,
+                  left: 15,
+                ),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                onCarText(value);
+              },
+            ),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: bColor,
+              ),
+              padding: const EdgeInsets.all(10),
+              child: const Text(
+                '등록',
+                style: TextStyle(
+                  fontFamily: 'luxFont',
+                  fontWeight: FontWeight.w700,
+                  fontSize: 10,
+                  color: black,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

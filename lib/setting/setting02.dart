@@ -48,7 +48,7 @@ class _Setting02State extends State<Setting02> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const InfoField(value: '직접 입력 가능한지? 그리고 등록 버튼 만들기'),
+                const CarRegisterField(),
                 const SizedBox(height: 30),
                 Align(
                   alignment: Alignment.centerLeft,

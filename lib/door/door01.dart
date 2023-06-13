@@ -3,6 +3,7 @@ import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/field.dart';
 import '../widgets/button.dart';
+import '../services/api_service.dart';
 
 class Door01 extends StatefulWidget {
   const Door01({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _Door01State extends State<Door01> {
   @override
   void initState() {
     super.initState();
+    ApiService.getAccessLogs();
     //ApiService.getAccessLogs(
     //    '123asdasdpsajdgfkhdasfglajdfh', '123asdasdpsajdgfkhdasfglajdfh');
   }

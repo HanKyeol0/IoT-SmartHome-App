@@ -35,9 +35,6 @@ class _Login01State extends State<Login01> {
     final value = apartmentController.text;
     final int? apartmentID = await ApiService.checkApartment(value);
 
-    // ignore: avoid_print
-    print(apartmentID); //check apartmentID
-
     if (apartmentID == null) {
       // ignore: use_build_context_synchronously
       showApartmentNotFound(context);
