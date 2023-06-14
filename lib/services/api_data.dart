@@ -71,6 +71,7 @@ class GlobalData {
   GlobalData._internal();
 
   UserData? userData;
+  List<String> carNumbers = [];
 
   void setUserData(UserData data) {
     userData = data;
@@ -101,5 +102,3 @@ class AccessLogs {
     required this.label,
   });
 }
-
-//id, building, onepass, mac, time, type, createdAt, updatedAt, id, label, floor, lines

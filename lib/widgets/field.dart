@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../styles.dart';
+import '../services/api_service.dart';
 
 class DropdownInput extends StatefulWidget {
   final String placeholder;
@@ -595,19 +596,24 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
               top: 10,
               bottom: 10,
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: bColor,
-              ),
-              padding: const EdgeInsets.all(10),
-              child: const Text(
-                '등록',
-                style: TextStyle(
-                  fontFamily: 'luxFont',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 10,
-                  color: black,
+            child: InkWell(
+              onTap: () {
+                isCarEmpty ? null : ApiService.saveCar(carController.text);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: bColor,
+                ),
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  '등록',
+                  style: TextStyle(
+                    fontFamily: 'luxFont',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    color: black,
+                  ),
                 ),
               ),
             ),

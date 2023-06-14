@@ -66,7 +66,7 @@ class ApiService {
         print(log);
       }
     } else if (response.statusCode == 401) {
-      print(response.body);
+      //reissueTokens(userData.accessToken, refreshToken);
     } else {
       print(response.body);
     }
@@ -74,15 +74,38 @@ class ApiService {
 
   //postCar
   static Future<void> saveCar(String carNumber) async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return;
+    }
+
     final url = Uri.parse('$baseurl/$postCar');
 
     final requestBody = jsonEncode({'number': carNumber});
 
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
       body: requestBody,
     );
+
+    if (response.statusCode == 201) {
+      globalData.carNumbers.add(carNumber);
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print(response.body);
+      await globalData.userData?.updateTokens();
+      await saveCar(carNumber);
+    } else {
+      // ignore: avoid_print
+      print(response.body);
+    }
   }
 
   //postReissueToken
