@@ -76,7 +76,11 @@ class _Setting02State extends State<Setting02> {
                                 shrinkWrap: true,
                                 children: [
                                   for (var car in snapshot.data!)
-                                    UserCar(carNumber: car.number),
+                                    UserCar(
+                                      carNumber: car.number,
+                                      onPressed:
+                                          ApiService.deleteUserCar(car.id),
+                                    ),
                                 ],
                               );
                             } else if (snapshot.hasError) {

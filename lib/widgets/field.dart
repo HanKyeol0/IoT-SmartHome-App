@@ -631,12 +631,13 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
 }
 
 class UserCar extends StatelessWidget {
-  // change this to DateTime, and receive real access time.
-  final String carNumber; // change this to real gate
+  final String carNumber;
+  final Future<void> onPressed;
 
   const UserCar({
     super.key,
     required this.carNumber,
+    required this.onPressed,
   });
 
   @override
@@ -645,50 +646,53 @@ class UserCar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         vertical: 5,
       ),
-      child: Container(
-        height: 54,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: grey,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.all(10),
-              height: 34,
-              width: 34,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: darkGrey,
-              ),
-              child: const Icon(
-                Icons.directions_car_outlined,
-                color: bColor,
-              ),
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 17,
-                  bottom: 17,
-                  right: 20,
+      child: InkWell(
+        onTap: () => {onPressed},
+        child: Container(
+          height: 54,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: grey,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(10),
+                height: 34,
+                width: 34,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: darkGrey,
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      carNumber,
-                      style: contentText(
-                        color: wColor,
+                child: const Icon(
+                  Icons.directions_car_outlined,
+                  color: bColor,
+                ),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 17,
+                    bottom: 17,
+                    right: 20,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        carNumber,
+                        style: contentText(
+                          color: wColor,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

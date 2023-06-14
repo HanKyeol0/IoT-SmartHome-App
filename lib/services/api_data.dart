@@ -105,12 +105,17 @@ class AccessLogList {
 }
 
 class CarList {
+  final int id;
   final String number;
 
-  CarList({required this.number});
+  CarList({
+    required this.id,
+    required this.number,
+  });
 
   factory CarList.fromJson(Map<String, dynamic> car) {
     return CarList(
+      id: car['id'],
       number: car['number'],
     );
   }

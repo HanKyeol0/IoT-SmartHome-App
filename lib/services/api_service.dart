@@ -23,6 +23,9 @@ class ApiService {
   //get car
   static const String getCar = 'api/car';
 
+  //delete car
+  static const String deleteCar = 'api/car';
+
   //getApartment
   static Future<int?> checkApartment(String value) async {
     final url = Uri.parse('$baseurl/$getApartment');
@@ -183,10 +186,43 @@ class ApiService {
       return await getUserCar();
     } else {
       // ignore: avoid_print
-      print(response.statusCode);
-      // ignore: avoid_print
-      print(response.body);
+      print('${response.statusCode}: ${response.body}');
     }
     return null;
+  }
+
+  //delete Car
+  static Future<void> deleteUserCar(int carId) async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+
+    if (userData == null) {
+      // ignore: avoid_print
+      print('user data is not set');
+      return;
+    }
+
+    final url = Uri.parse('$baseurl/$deleteCar/$carId');
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+      await globalData.userData?.updateTokens();
+      await deleteUserCar(carId);
+    } else {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+    }
   }
 }
