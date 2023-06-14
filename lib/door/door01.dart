@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
+import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/field.dart';
 import '../widgets/button.dart';
@@ -14,6 +15,8 @@ class Door01 extends StatefulWidget {
 
 class _Door01State extends State<Door01> {
   bool isSwitched = false;
+  final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
+  GlobalData globalData = GlobalData();
 
   @override
   void initState() {
@@ -78,6 +81,46 @@ class _Door01State extends State<Door01> {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          FutureBuilder<List<AccessLogList>?>(
+                            future: logs,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return ListView.builder(
+                                  itemCount: 3,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    var log = snapshot.data![index];
+                                    return AccessLog(
+                                      bgColor: darkGrey,
+                                      iconBoxColor: black,
+                                      isKey:
+                                          log.type == "smartkey" ? true : false,
+                                      accessTime: log.time,
+                                      floor: log.floor,
+                                      label: log.label,
+                                    );
+                                  },
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text(
+                                  'error: ${snapshot.error}',
+                                  style: const TextStyle(color: wColor),
+                                );
+                              } else {
+                                return const Center(
+                                  child:
+                                      CircularProgressIndicator(color: bColor),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 60),
                     const GateAccess(
                       isDetected: true,

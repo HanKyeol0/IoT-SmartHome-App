@@ -236,6 +236,7 @@ class _LoginCodeInputFieldState extends State<LoginCodeInputField> {
 
 class AccessLog extends StatelessWidget {
   final Color bgColor;
+  final Color iconBoxColor;
   final bool isKey;
   final String accessTime;
   final String floor;
@@ -245,6 +246,7 @@ class AccessLog extends StatelessWidget {
     super.key,
     required this.isKey,
     required this.bgColor,
+    required this.iconBoxColor,
     required this.accessTime,
     required this.floor,
     required this.label,
@@ -272,7 +274,7 @@ class AccessLog extends StatelessWidget {
               width: 34,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: black,
+                color: iconBoxColor,
               ),
               child: Icon(
                 isKey ? Icons.credit_card : Icons.phone_android_outlined,

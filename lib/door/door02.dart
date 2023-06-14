@@ -15,7 +15,6 @@ class Door02 extends StatefulWidget {
 
 class _Door02State extends State<Door02> {
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
-
   GlobalData globalData = GlobalData();
 
   @override
@@ -55,6 +54,7 @@ class _Door02State extends State<Door02> {
                           var log = snapshot.data![index];
                           return AccessLog(
                             bgColor: grey,
+                            iconBoxColor: darkGrey,
                             isKey: log.type == "smartkey" ? true : false,
                             accessTime: log.time,
                             floor: log.floor,
@@ -77,7 +77,7 @@ class _Door02State extends State<Door02> {
                 const SizedBox(height: 10),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
