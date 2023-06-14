@@ -577,28 +577,25 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
         color: grey,
       ),
       height: 54,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            TextField(
-              controller: carController,
-              style: contentText(color: wColor),
-              decoration: InputDecoration(
-                hintText: '차량 번호를 입력하세요.',
-                hintStyle: contentText(),
-                contentPadding: const EdgeInsets.only(
-                  top: 19.5,
-                  bottom: 19.5,
-                  left: 15,
-                ),
-                border: InputBorder.none,
-              ),
-              onChanged: (value) {
-                onCarText(value);
-              },
+      child: TextField(
+        controller: carController,
+        style: contentText(color: wColor),
+        decoration: InputDecoration(
+          hintText: '차량 번호를 입력하세요.',
+          hintStyle: contentText(),
+          contentPadding: const EdgeInsets.only(
+            top: 19.5,
+            bottom: 19.5,
+            left: 15,
+          ),
+          border: InputBorder.none,
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(
+              right: 10.0,
+              top: 10,
+              bottom: 10,
             ),
-            Container(
+            child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: bColor,
@@ -614,8 +611,11 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
                 ),
               ),
             ),
-          ],
+          ),
         ),
+        onChanged: (value) {
+          onCarText(value);
+        },
       ),
     );
   }
