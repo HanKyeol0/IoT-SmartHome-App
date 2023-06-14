@@ -68,7 +68,7 @@ class ApiService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final logs = jsonDecode(response.body);
-      for (var log in logs) {
+      for (var log in logs['data']['data']) {
         accessLogList.add(AccessLogList.fromJson(log));
         // ignore: avoid_print
         print(log);

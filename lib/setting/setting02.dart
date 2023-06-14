@@ -74,7 +74,6 @@ class _Setting02State extends State<Setting02> {
                             if (snapshot.hasData) {
                               return ListView(
                                 shrinkWrap: true,
-                                //physics: const NeverScrollableScrollPhysics(),
                                 children: [
                                   for (var car in snapshot.data!)
                                     UserCar(carNumber: car.number),

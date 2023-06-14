@@ -78,18 +78,6 @@ class _Door01State extends State<Door01> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const AccessLog(
-                      bgColor: darkGrey,
-                      isPhone: true,
-                    ),
-                    const AccessLog(
-                      bgColor: darkGrey,
-                      isPhone: false,
-                    ),
-                    const AccessLog(
-                      bgColor: darkGrey,
-                      isPhone: true,
-                    ),
                     const SizedBox(height: 60),
                     const GateAccess(
                       isDetected: true,

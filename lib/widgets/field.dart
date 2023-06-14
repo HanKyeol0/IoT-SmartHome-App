@@ -236,17 +236,18 @@ class _LoginCodeInputFieldState extends State<LoginCodeInputField> {
 
 class AccessLog extends StatelessWidget {
   final Color bgColor;
-  final String
-      accessTime; // change this to DateTime, and receive real access time.
-  final String gate; // change this to real gate
-  final bool isPhone;
+  final bool isKey;
+  final String accessTime;
+  final String floor;
+  final String label;
 
   const AccessLog({
     super.key,
+    required this.isKey,
     required this.bgColor,
-    this.accessTime = '22.12.28  20 : 22',
-    this.gate = 'G-05',
-    required this.isPhone,
+    required this.accessTime,
+    required this.floor,
+    required this.label,
   });
 
   @override
@@ -274,7 +275,7 @@ class AccessLog extends StatelessWidget {
                 color: black,
               ),
               child: Icon(
-                isPhone ? Icons.phone_android_outlined : Icons.credit_card,
+                isKey ? Icons.credit_card : Icons.phone_android_outlined,
                 color: bColor,
               ),
             ),
@@ -311,7 +312,7 @@ class AccessLog extends StatelessWidget {
                         left: 12,
                       ),
                       child: Text(
-                        gate,
+                        '$floor-$label',
                         style: contentText(
                           color: wColor,
                           fontWeight: FontWeight.w700,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
+import 'package:luxrobo/services/api_data.dart';
+import 'package:luxrobo/services/api_service.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
+import 'package:luxrobo/widgets/field.dart';
 
 class Door02 extends StatefulWidget {
   const Door02({super.key});
@@ -11,6 +14,10 @@ class Door02 extends StatefulWidget {
 }
 
 class _Door02State extends State<Door02> {
+  final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
+
+  GlobalData globalData = GlobalData();
+
   @override
   Widget build(BuildContext context) {
     return LuxroboScaffold(
@@ -34,6 +41,42 @@ class _Door02State extends State<Door02> {
             ),
           ),
           const SizedBox(height: 29),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                FutureBuilder<List<AccessLogList>?>(
+                  future: logs,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView(
+                        shrinkWrap: true,
+                        children: [
+                          for (var log in snapshot.data!)
+                            AccessLog(
+                              bgColor: grey,
+                              isKey: log.type == "smartkey" ? true : false,
+                              accessTime: log.time,
+                              floor: log.floor,
+                              label: log.label,
+                            ),
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text(
+                        'error: ${snapshot.error}',
+                        style: const TextStyle(color: wColor),
+                      );
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          )
         ],
       ),
     );

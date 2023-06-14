@@ -84,15 +84,24 @@ class TokenData {
   }
 }
 
-class AccessLogs {
-  final String time, type, id, label;
+class AccessLogList {
+  final String time, label, floor, type;
 
-  AccessLogs({
+  AccessLogList({
     required this.time,
-    required this.type,
-    required this.id,
     required this.label,
+    required this.floor,
+    required this.type,
   });
+
+  factory AccessLogList.fromJson(Map<String, dynamic> log) {
+    return AccessLogList(
+      time: log['time'],
+      label: log['gate']['label'],
+      floor: log['gate']['floor'],
+      type: log['type'],
+    );
+  }
 }
 
 class CarList {
