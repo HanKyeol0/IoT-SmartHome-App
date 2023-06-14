@@ -63,11 +63,14 @@ class _Setting02State extends State<Setting02> {
                 const SizedBox(height: 10),
                 FutureBuilder(
                   future: globalData.carNumbersFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return const Text("worked");
+                  builder: (context, carList) {
+                    if (carList.hasData) {
+                      return ListView();
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
-                    return const Text('yet');
                   },
                 )
               ],

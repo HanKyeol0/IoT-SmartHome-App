@@ -3,7 +3,6 @@ import '../services/api_service.dart';
 // UserData.dart
 class UserData {
   final String createdAt;
-  final String updatedAt;
   final int id;
   final String name;
   final String? mac;
@@ -11,14 +10,12 @@ class UserData {
   final String dong;
   final String ho;
   final String? currentCar;
-  final String currentHashedRefreshToken;
   final String role;
   String accessToken;
   String refreshToken;
 
   UserData(
       {required this.createdAt,
-      required this.updatedAt,
       required this.id,
       required this.name,
       this.mac,
@@ -26,7 +23,6 @@ class UserData {
       required this.dong,
       required this.ho,
       this.currentCar,
-      required this.currentHashedRefreshToken,
       required this.role,
       required this.accessToken,
       required this.refreshToken});
@@ -34,7 +30,6 @@ class UserData {
   factory UserData.fromJson(Map<String, dynamic> userData) {
     return UserData(
         createdAt: userData['data']['user']['createdAt'],
-        updatedAt: userData['data']['user']['updatedAt'],
         id: userData['data']['user']['id'],
         name: userData['data']['user']['name'],
         mac: userData['data']['user']['mac'],
@@ -42,8 +37,6 @@ class UserData {
         dong: userData['data']['user']['dong'],
         ho: userData['data']['user']['ho'],
         currentCar: userData['data']['user']['currentCar'],
-        currentHashedRefreshToken: userData['data']['user']
-            ['currentHashedRefreshToken'],
         role: userData['data']['user']['role'],
         accessToken: userData['data']['token']['accessToken'],
         refreshToken: userData['data']['token']['refreshToken']);

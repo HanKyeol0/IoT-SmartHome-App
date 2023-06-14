@@ -97,9 +97,11 @@ class ApiService {
 
     if (response.statusCode == 201) {
       globalData.carNumbers.add(carNumber);
+      // ignore: avoid_print
+      print('201: ${response.body}');
     } else if (response.statusCode == 401) {
       // ignore: avoid_print
-      print(response.body);
+      print('401: ${response.body}');
       await globalData.userData?.updateTokens();
       await saveCar(carNumber);
     } else {
