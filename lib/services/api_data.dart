@@ -64,14 +64,9 @@ class GlobalData {
   GlobalData._internal();
 
   UserData? userData;
-  List<String> carNumbers = [];
 
   void setUserData(UserData data) {
     userData = data;
-  }
-
-  Future<List<String>> get carNumbersFuture async {
-    return Future.value(carNumbers);
   }
 }
 
@@ -98,4 +93,16 @@ class AccessLogs {
     required this.id,
     required this.label,
   });
+}
+
+class CarList {
+  final String number;
+
+  CarList({required this.number});
+
+  factory CarList.fromJson(Map<String, dynamic> car) {
+    return CarList(
+      number: car['number'],
+    );
+  }
 }

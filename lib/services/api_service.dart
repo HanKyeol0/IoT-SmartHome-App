@@ -17,8 +17,11 @@ class ApiService {
   //reissue tokens
   static const String postAuthReissue = 'api/auth/reissue';
 
-  //car
+  //save car
   static const String postCar = 'api/car';
+
+  //get car
+  static const String getCar = 'api/car';
 
   //getApartment
   static Future<int?> checkApartment(String value) async {
@@ -56,7 +59,6 @@ class ApiService {
       url,
       headers: {
         'Authorization': 'Bearer ${userData.accessToken}',
-        //'Refresh-Token': userData.refreshToken,
       },
     );
 
@@ -69,6 +71,29 @@ class ApiService {
       //reissueTokens(userData.accessToken, refreshToken);
     } else {
       print(response.body);
+    }
+  }
+
+  //postReissueToken
+  static Future<Map<String, dynamic>> reissueTokens(
+      String accessToken, String refreshToken) async {
+    final url = Uri.parse('$baseurl/$postAuthReissue');
+
+    final requestBody = jsonEncode({
+      'accessToken': accessToken,
+      'refreshToken': refreshToken,
+    });
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update tokens');
     }
   }
 
@@ -96,7 +121,6 @@ class ApiService {
     );
 
     if (response.statusCode == 201) {
-      globalData.carNumbers.add(carNumber);
       // ignore: avoid_print
       print('201: ${response.body}');
     } else if (response.statusCode == 401) {
@@ -107,30 +131,51 @@ class ApiService {
     } else {
       // ignore: avoid_print
       print(response.statusCode);
+      // ignore: avoid_print
       print(response.body);
     }
   }
 
-  //postReissueToken
-  static Future<Map<String, dynamic>> reissueTokens(
-      String accessToken, String refreshToken) async {
-    final url = Uri.parse('$baseurl/$postAuthReissue');
+  //getUserCar
+  static Future<List<CarList>?> getUserCar() async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+    List<CarList> carList = [];
 
-    final requestBody = jsonEncode({
-      'accessToken': accessToken,
-      'refreshToken': refreshToken,
-    });
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return null;
+    }
 
-    final response = await http.post(
+    final url = Uri.parse('$baseurl/$getCar');
+
+    final response = await http.get(
       url,
-      headers: {'Content-Type': 'application/json'},
-      body: requestBody,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
     );
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // ignore: avoid_print
+      final cars = jsonDecode(response.body);
+      for (var car in cars['data']['data']) {
+        carList.add(CarList.fromJson(car));
+      }
+      return carList;
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('401: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await getUserCar();
     } else {
-      throw Exception('Failed to update tokens');
+      // ignore: avoid_print
+      print(response.statusCode);
+      // ignore: avoid_print
+      print(response.body);
     }
+    return null;
   }
 }
