@@ -106,6 +106,7 @@ class ApiService {
       await saveCar(carNumber);
     } else {
       // ignore: avoid_print
+      print(response.statusCode);
       print(response.body);
     }
   }

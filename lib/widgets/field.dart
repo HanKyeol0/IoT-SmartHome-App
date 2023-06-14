@@ -640,7 +640,6 @@ class UserCar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 20,
         vertical: 5,
       ),
       child: Container(
@@ -665,7 +664,7 @@ class UserCar extends StatelessWidget {
                 color: bColor,
               ),
             ),
-            //const Spacer(),
+            const Spacer(),
             Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -676,15 +675,10 @@ class UserCar extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.only(
-                        right: 15,
-                      ),
-                      child: Text(
-                        carNumber,
-                        style: contentText(
-                          color: wColor,
-                        ),
+                    Text(
+                      carNumber,
+                      style: contentText(
+                        color: wColor,
                       ),
                     ),
                   ],

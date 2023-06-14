@@ -66,6 +66,7 @@ class _Setting02State extends State<Setting02> {
                   builder: (context, AsyncSnapshot<List<String>> snapshot) {
                     if (snapshot.hasData) {
                       return ListView(
+                        shrinkWrap: true,
                         children: [
                           for (var car in snapshot.data!)
                             UserCar(carNumber: car),
