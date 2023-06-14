@@ -48,18 +48,19 @@ class _Door02State extends State<Door02> {
                   future: logs,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return ListView(
+                      return ListView.builder(
+                        itemCount: snapshot.data!.length,
                         shrinkWrap: true,
-                        children: [
-                          for (var log in snapshot.data!)
-                            AccessLog(
-                              bgColor: grey,
-                              isKey: log.type == "smartkey" ? true : false,
-                              accessTime: log.time,
-                              floor: log.floor,
-                              label: log.label,
-                            ),
-                        ],
+                        itemBuilder: (context, index) {
+                          var log = snapshot.data![index];
+                          return AccessLog(
+                            bgColor: grey,
+                            isKey: log.type == "smartkey" ? true : false,
+                            accessTime: log.time,
+                            floor: log.floor,
+                            label: log.label,
+                          );
+                        },
                       );
                     } else if (snapshot.hasError) {
                       return Text(
@@ -68,7 +69,7 @@ class _Door02State extends State<Door02> {
                       );
                     } else {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(color: bColor),
                       );
                     }
                   },

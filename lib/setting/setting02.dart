@@ -86,7 +86,7 @@ class _Setting02State extends State<Setting02> {
                               );
                             } else {
                               return const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(color: bColor),
                               );
                             }
                           },
