@@ -45,12 +45,15 @@ class ApiService {
   }
 
   //getOnepassLogs
-  static Future<void> getAccessLogs() async {
+  static Future<List<AccessLogList>?> getAccessLogs() async {
+    GlobalData globalData = GlobalData();
     UserData? userData = GlobalData().userData;
+    List<AccessLogList> accessLogList = [];
+
     if (userData == null) {
       // ignore: avoid_print
       print('User data is not set');
-      return;
+      return null;
     }
 
     final url = Uri.parse('$baseurl/$getOnepassLogs');
@@ -58,20 +61,29 @@ class ApiService {
     final response = await http.get(
       url,
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer ${userData.accessToken}',
       },
     );
 
-    if (response.statusCode == 201) {
-      final List<dynamic> logs = jsonDecode(response.body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final logs = jsonDecode(response.body);
       for (var log in logs) {
+        accessLogList.add(AccessLogList.fromJson(log));
+        // ignore: avoid_print
         print(log);
       }
+      return accessLogList;
     } else if (response.statusCode == 401) {
-      //reissueTokens(userData.accessToken, refreshToken);
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await getAccessLogs();
     } else {
-      print(response.body);
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
     }
+    return null;
   }
 
   //postReissueToken
@@ -159,7 +171,6 @@ class ApiService {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      // ignore: avoid_print
       final cars = jsonDecode(response.body);
       for (var car in cars['data']['data']) {
         carList.add(CarList.fromJson(car));
