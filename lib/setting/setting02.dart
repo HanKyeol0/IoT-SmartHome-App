@@ -63,9 +63,14 @@ class _Setting02State extends State<Setting02> {
                 const SizedBox(height: 10),
                 FutureBuilder(
                   future: globalData.carNumbersFuture,
-                  builder: (context, carList) {
-                    if (carList.hasData) {
-                      return ListView();
+                  builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView(
+                        children: [
+                          for (var car in snapshot.data!)
+                            UserCar(carNumber: car),
+                        ],
+                      );
                     } else {
                       return const Center(
                         child: CircularProgressIndicator(),
