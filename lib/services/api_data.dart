@@ -76,6 +76,10 @@ class GlobalData {
   void setUserData(UserData data) {
     userData = data;
   }
+
+  Future<List<String>> get carNumbersFuture async {
+    return Future.value(carNumbers);
+  }
 }
 
 class TokenData {

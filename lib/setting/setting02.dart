@@ -3,6 +3,7 @@ import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/field.dart';
+import 'package:luxrobo/services/api_data.dart';
 
 class Setting02 extends StatefulWidget {
   const Setting02({Key? key}) : super(key: key);
@@ -12,6 +13,8 @@ class Setting02 extends StatefulWidget {
 }
 
 class _Setting02State extends State<Setting02> {
+  GlobalData globalData = GlobalData();
+
   @override
   Widget build(BuildContext context) {
     return LuxroboScaffold(
@@ -58,6 +61,15 @@ class _Setting02State extends State<Setting02> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                FutureBuilder(
+                  future: globalData.carNumbersFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return const Text("worked");
+                    }
+                    return const Text('yet');
+                  },
+                )
               ],
             ),
           ),
