@@ -78,8 +78,8 @@ class _Setting02State extends State<Setting02> {
                                   for (var car in snapshot.data!)
                                     UserCar(
                                       carNumber: car.number,
-                                      onPressed:
-                                          ApiService.deleteUserCar(car.id),
+                                      onPressed: () =>
+                                          {ApiService.deleteUserCar(car.id)},
                                     ),
                                 ],
                               );

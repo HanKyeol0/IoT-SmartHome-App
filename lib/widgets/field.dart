@@ -600,8 +600,11 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
               bottom: 10,
             ),
             child: InkWell(
-              onTap: () {
-                isCarEmpty ? null : ApiService.saveCar(carController.text);
+              onTap: () async {
+                isCarEmpty
+                    ? null
+                    : await ApiService.saveCar(carController.text);
+                setState(() {});
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -632,7 +635,7 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
 
 class UserCar extends StatelessWidget {
   final String carNumber;
-  final Future<void> onPressed;
+  final void Function() onPressed;
 
   const UserCar({
     super.key,
@@ -647,7 +650,7 @@ class UserCar extends StatelessWidget {
         vertical: 5,
       ),
       child: InkWell(
-        onTap: () => {onPressed},
+        onTap: () => onPressed(),
         child: Container(
           height: 54,
           decoration: BoxDecoration(
