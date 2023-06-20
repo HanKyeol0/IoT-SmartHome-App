@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
+import 'package:luxrobo/services/api_data.dart';
+import 'package:luxrobo/services/api_service.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/field.dart';
@@ -16,13 +18,28 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   TextEditingController preferredParkingLotController = TextEditingController();
   bool isCarTextEmpty = true;
   bool isParkingLotTextEmpty = true;
+  Future<List<CarList>?> cars = ApiService.getUserCar();
+  List carList = [];
 
   late TabController tabController;
+
+  GlobalData globalData = GlobalData();
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    loadCarList();
+  }
+
+  Future<void> loadCarList() async {
+    final loadedCars = await cars;
+    if (loadedCars != null) {
+      setState(() {
+        carList = loadedCars;
+        print(carList);
+      });
+    }
   }
 
   @override
@@ -140,10 +157,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 10),
                       CarInput(
-                        items: const [
-                          'A',
-                          'B',
-                        ],
+                        items: carList,
                         placeholder: '주차하실 차량을 선택해주세요.',
                         onTextChanged: onCarChanged,
                         textEditingController: parkingCarController,

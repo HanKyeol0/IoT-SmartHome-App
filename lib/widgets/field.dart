@@ -388,7 +388,7 @@ class _GateDetectionState extends State<GateDetection> {
 
 class CarInput extends StatefulWidget {
   final String placeholder;
-  final List<String> items;
+  final List<dynamic> items;
   final TextEditingController textEditingController;
   final Function(String) onTextChanged;
   final Function(BuildContext)? onItemSelected;

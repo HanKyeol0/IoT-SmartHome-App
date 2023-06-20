@@ -49,6 +49,7 @@ class UserData {
       accessToken = newTokens['data']['accessToken'];
       refreshToken = newTokens['data']['refreshToken'];
     } catch (e) {
+      // ignore: avoid_print
       print('Failed to update tokens: $e');
     }
   }
