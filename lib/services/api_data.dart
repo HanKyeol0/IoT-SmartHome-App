@@ -121,3 +121,13 @@ class CarList {
     );
   }
 }
+
+class ParkingLotList {
+  final String parkingLot;
+
+  ParkingLotList({required this.parkingLot});
+
+  factory ParkingLotList.fromJson(Map<String, dynamic> json) {
+    return ParkingLotList(parkingLot: json['place']);
+  }
+}

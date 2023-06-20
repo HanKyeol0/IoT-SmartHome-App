@@ -26,6 +26,9 @@ class ApiService {
   //delete car
   static const String deleteCar = 'api/car';
 
+  //get parking lot and map
+  static const String getParkingLotMap = 'api/parkingmap/app';
+
   //getApartment
   static Future<int?> checkApartment(String value) async {
     final url = Uri.parse('$baseurl/$getApartment');
@@ -224,5 +227,45 @@ class ApiService {
       // ignore: avoid_print
       print('${response.statusCode}: ${response.body}');
     }
+  }
+
+  //getParkingLot
+  static Future<List<ParkingLotList>?> getParkingLot() async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+    List<ParkingLotList> parkingLotList = [];
+
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return null;
+    }
+
+    final url = Uri.parse('$baseurl/$getParkingLotMap');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final lots = jsonDecode(response.body);
+      for (var lot in lots['data']['data']) {
+        parkingLotList.add(ParkingLotList.fromJson(lot));
+      }
+      return parkingLotList;
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('401: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await getParkingLot();
+    } else {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+    }
+    return null;
   }
 }
