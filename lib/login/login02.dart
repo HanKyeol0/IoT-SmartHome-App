@@ -72,7 +72,7 @@ class _Login02State extends State<Login02> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'apartmentId': widget.apartmentID,
+        'apartmentId': 3, //widget.apartmentID,
         'dong': '101', //dongController.text,
         'ho': '101', //hoController.text,
         'name': 'Pinomaker', //nameController.text,

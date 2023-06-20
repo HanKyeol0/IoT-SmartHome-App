@@ -210,6 +210,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                           style: fieldTitle(),
                         ),
                       ),
+                      const SizedBox(height: 10),
                       const InfoField(value: '22년 12월 29일 (수) 18시 02분'),
                     ],
                   ),
