@@ -19,7 +19,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   bool isCarTextEmpty = true;
   bool isParkingLotTextEmpty = true;
   Future<List<CarList>?> cars = ApiService.getUserCar();
-  List carList = [];
+  List<String> carList = [];
 
   late TabController tabController;
 
@@ -33,12 +33,12 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   }
 
   Future<void> loadCarList() async {
-    final loadedCars = await cars;
-    if (loadedCars != null) {
-      setState(() {
-        carList = loadedCars;
-        print(carList);
-      });
+    final fetchedCars = await cars;
+    if (fetchedCars != null) {
+      for (var car in fetchedCars) {
+        final userCar = car.number;
+        carList.add(userCar);
+      }
     }
   }
 
