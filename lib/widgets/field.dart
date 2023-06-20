@@ -554,8 +554,11 @@ class InfoField extends StatelessWidget {
 }
 
 class CarRegisterField extends StatefulWidget {
+  final Function() onCarListLoading;
+
   const CarRegisterField({
     super.key,
+    required this.onCarListLoading,
   });
 
   @override
@@ -601,10 +604,10 @@ class _CarRegisterFieldState extends State<CarRegisterField> {
             ),
             child: InkWell(
               onTap: () async {
-                isCarEmpty
-                    ? null
-                    : await ApiService.saveCar(carController.text);
-                setState(() {});
+                if (!isCarEmpty) {
+                  await ApiService.saveCar(carController.text);
+                  widget.onCarListLoading(); // Invoke the callback function
+                }
               },
               child: Container(
                 decoration: BoxDecoration(

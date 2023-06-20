@@ -14,7 +14,13 @@ class Setting02 extends StatefulWidget {
 }
 
 class _Setting02State extends State<Setting02> {
-  final Future<List<CarList>?> cars = ApiService.getUserCar();
+  Future<List<CarList>?> cars = ApiService.getUserCar();
+
+  void _reloadCarList() {
+    setState(() {
+      cars = ApiService.getUserCar();
+    });
+  }
 
   GlobalData globalData = GlobalData();
 
@@ -55,7 +61,9 @@ class _Setting02State extends State<Setting02> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const CarRegisterField(),
+                  CarRegisterField(
+                    onCarListLoading: _reloadCarList,
+                  ),
                   const SizedBox(height: 30),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -77,9 +85,10 @@ class _Setting02State extends State<Setting02> {
                                 children: [
                                   for (var car in snapshot.data!)
                                     UserCar(
-                                        carNumber: car.number,
-                                        onPressed: () =>
-                                            confirmCar(context, car)),
+                                      carNumber: car.number,
+                                      onPressed: () =>
+                                          confirmCarDeletion(context, car),
+                                    ),
                                 ],
                               );
                             } else if (snapshot.hasError) {
@@ -107,7 +116,7 @@ class _Setting02State extends State<Setting02> {
     );
   }
 
-  Future<dynamic> confirmCar(BuildContext context, CarList car) {
+  Future<dynamic> confirmCarDeletion(BuildContext context, CarList car) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -158,6 +167,7 @@ class _Setting02State extends State<Setting02> {
                         buttonHeight: 46,
                         onPressed: () async {
                           await ApiService.deleteUserCar(car.id);
+                          _reloadCarList();
                           // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
