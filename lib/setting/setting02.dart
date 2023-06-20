@@ -77,10 +77,9 @@ class _Setting02State extends State<Setting02> {
                                 children: [
                                   for (var car in snapshot.data!)
                                     UserCar(
-                                      carNumber: car.number,
-                                      onPressed: () =>
-                                          {ApiService.deleteUserCar(car.id)},
-                                    ),
+                                        carNumber: car.number,
+                                        onPressed: () =>
+                                            confirmCar(context, car)),
                                 ],
                               );
                             } else if (snapshot.hasError) {
@@ -105,6 +104,72 @@ class _Setting02State extends State<Setting02> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<dynamic> confirmCar(BuildContext context, CarList car) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '차량을 삭제하시겠습니까?',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: RoundButton(
+                        text: '취소',
+                        bgColor: grey,
+                        textColor: wColor,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: RoundButton(
+                        text: '확인',
+                        bgColor: bColor,
+                        textColor: black,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () async {
+                          await ApiService.deleteUserCar(car.id);
+                          // ignore: use_build_context_synchronously
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
