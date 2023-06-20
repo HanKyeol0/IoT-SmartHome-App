@@ -18,8 +18,12 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   TextEditingController preferredParkingLotController = TextEditingController();
   bool isCarTextEmpty = true;
   bool isParkingLotTextEmpty = true;
+
   Future<List<CarList>?> cars = ApiService.getUserCar();
   List<String> carList = [];
+
+  Future<List<ParkingLotList>?> lots = ApiService.getParkingLot();
+  List<String> parkingLotList = [];
 
   late TabController tabController;
 
@@ -30,6 +34,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
     loadCarList();
+    loadParkingLotList();
   }
 
   Future<void> loadCarList() async {
@@ -38,6 +43,16 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       for (var car in fetchedCars) {
         final userCar = car.number;
         carList.add(userCar);
+      }
+    }
+  }
+
+  Future<void> loadParkingLotList() async {
+    final fetchedLots = await lots;
+    if (fetchedLots != null) {
+      for (var lot in fetchedLots) {
+        final userLot = lot.parkingLot;
+        parkingLotList.add(userLot);
       }
     }
   }
@@ -232,11 +247,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                       ),
                       CarInput(
                         placeholder: '선호 주차장을 선택해주세요.',
-                        items: const [
-                          '1단지 101-103동 주차장',
-                          '1단지 104-105동 주차장',
-                          '2단지 201-103동 주차장',
-                        ],
+                        items: const ['1'], //parkingLotList,
                         textEditingController: preferredParkingLotController,
                         onTextChanged: onParkingLotChanged,
                       ),
