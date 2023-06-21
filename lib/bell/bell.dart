@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
@@ -11,6 +12,24 @@ class Bell extends StatefulWidget {
 }
 
 class _Door01State extends State<Bell> {
+  static const platform = MethodChannel('com.bell/value');
+
+  String _value = 'null';
+
+  Future<void> _getNativeValue() async {
+    String value;
+
+    try {
+      value = await platform.invokeMethod('getValue');
+    } on PlatformException catch (e) {
+      value = 'error message : ${e.message}';
+    }
+
+    setState(() {
+      _value = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LuxroboScaffold(
@@ -33,7 +52,7 @@ class _Door01State extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const EmergencyBell(),
+                  EmergencyBell(onPressed: _getNativeValue),
                   const SizedBox(height: 50),
                   Text(
                     '비상 시 1초간 꾹 눌러주세요.',
