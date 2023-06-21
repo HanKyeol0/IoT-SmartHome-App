@@ -14,6 +14,7 @@ class Bell extends StatefulWidget {
 class _Door01State extends State<Bell> {
   static const platform = MethodChannel('com.bell/value');
 
+  // ignore: unused_field
   String _value = 'null';
 
   Future<void> _getNativeValue() async {
