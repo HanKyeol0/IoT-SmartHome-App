@@ -6,6 +6,7 @@ import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 import android.os.Bundle
+import android.bluetooth.BluetoothAdapter
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.bell/value"
@@ -25,7 +26,7 @@ class MainActivity: FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        GeneratedPluginRegistrant.registerWith(this)
+        //GeneratedPluginRegistrant.registerWith(this)
     }
 
 }
