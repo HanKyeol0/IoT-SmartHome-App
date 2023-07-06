@@ -1,5 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
@@ -8,27 +9,41 @@ class Bell extends StatefulWidget {
   const Bell({Key? key}) : super(key: key);
 
   @override
-  State<Bell> createState() => _Door01State();
+  State<Bell> createState() => _BellState();
 }
 
-class _Door01State extends State<Bell> {
-  static const platform = MethodChannel('com.bell/value');
+class _BellState extends State<Bell> {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  StreamSubscription<List<ScanResult>>? scanSubscription;
 
-  // ignore: unused_field
-  String _value = 'null';
+  @override
+  void initState() {
+    super.initState();
+    startScan();
+  }
 
-  Future<void> _getNativeValue() async {
-    String value;
-
-    try {
-      value = await platform.invokeMethod('getValue');
-    } on PlatformException catch (e) {
-      value = 'error message : ${e.message}';
-    }
-
-    setState(() {
-      _value = value;
+  void startScan() {
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        // ignore: avoid_print
+        print('Found device: ${result.device.name} (${result.device.id})');
+        // Add your desired logic to handle the Bluetooth response here
+      }
     });
+
+    flutterBlue.startScan(timeout: const Duration(seconds: 5));
+  }
+
+  Future<void> print1() async {
+    // ignore: avoid_print
+    print('1');
+  }
+
+  @override
+  void dispose() {
+    scanSubscription?.cancel();
+    flutterBlue.stopScan();
+    super.dispose();
   }
 
   @override
@@ -53,7 +68,7 @@ class _Door01State extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(onPressed: _getNativeValue),
+                  EmergencyBell(onPressed: print1),
                   const SizedBox(height: 50),
                   Text(
                     '비상 시 1초간 꾹 눌러주세요.',
@@ -75,3 +90,22 @@ class _Door01State extends State<Bell> {
     );
   }
 }
+
+  /*static const platform = MethodChannel('com.bell/value');
+
+  // ignore: unused_field
+  String _value = 'null';
+
+  Future<void> _getNativeValue() async {
+    String value;
+
+    try {
+      value = await platform.invokeMethod('getValue');
+    } on PlatformException catch (e) {
+      value = 'error message : ${e.message}';
+    }
+
+    setState(() {
+      _value = value;
+    });
+  }*/
