@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
@@ -13,7 +14,7 @@ class Bell extends StatefulWidget {
 }
 
 class _BellState extends State<Bell> {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+  FlutterBluePlus flutterBlue = FlutterBlue.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
 
   @override
@@ -31,7 +32,7 @@ class _BellState extends State<Bell> {
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 5));
+    flutterBlue.startScan(timeout: const Duration(seconds: 10));
   }
 
   Future<void> print1() async {
@@ -90,22 +91,3 @@ class _BellState extends State<Bell> {
     );
   }
 }
-
-  /*static const platform = MethodChannel('com.bell/value');
-
-  // ignore: unused_field
-  String _value = 'null';
-
-  Future<void> _getNativeValue() async {
-    String value;
-
-    try {
-      value = await platform.invokeMethod('getValue');
-    } on PlatformException catch (e) {
-      value = 'error message : ${e.message}';
-    }
-
-    setState(() {
-      _value = value;
-    });
-  }*/
