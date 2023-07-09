@@ -75,7 +75,7 @@ class _Door01State extends State<Door01> {
                           const Spacer(),
                           const Align(
                             alignment: Alignment.centerRight,
-                            child: SeeMoreButton(),
+                            child: SeeMoreButton(), //'더보기' button
                           )
                         ],
                       ),

@@ -200,6 +200,34 @@ class _Login01State extends State<Login01> {
                     ],
                   ),
                 ),
+                //move to BLE test page
+                InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    '/bleTest',
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: darkGrey,
+                        width: 1.5,
+                      ),
+                      color: grey,
+                    ),
+                    height: 54,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 14.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'BLE test page',
+                          style: contentText(color: wColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

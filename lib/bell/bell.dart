@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
@@ -14,7 +13,7 @@ class Bell extends StatefulWidget {
 }
 
 class _BellState extends State<Bell> {
-  FlutterBluePlus flutterBlue = FlutterBlue.instance;
+  FlutterBlue flutterBlue = FlutterBlue.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
 
   @override

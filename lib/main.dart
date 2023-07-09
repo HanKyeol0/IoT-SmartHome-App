@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/bell/bell.dart';
+import 'package:luxrobo/door/door_test.dart';
 import 'package:luxrobo/parking/parking.dart';
 import 'package:luxrobo/setting/setting01.dart';
 import 'package:luxrobo/setting/setting02.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/bell': (context) => const Bell(),
         '/setting01': (context) => const Setting01(),
         '/setting02': (context) => const Setting02(),
+        '/bleTest': (context) => const BLEtest(),
       },
     );
   }
