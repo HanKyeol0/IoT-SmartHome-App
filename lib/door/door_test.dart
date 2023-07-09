@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+//import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/controllers/bluetooth_controller.dart';
 import 'package:get/get.dart';
 import 'package:luxrobo/styles.dart';
@@ -14,8 +15,15 @@ class BLEtest extends StatefulWidget {
 
 class _BLEtestState extends State<BLEtest> {
   @override
+  void dispose() {
+    Get.find<BluetoothController>().dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: black,
       body: GetBuilder<BluetoothController>(
           init: BluetoothController(),
           builder: (controller) {
@@ -36,7 +44,7 @@ class _BLEtestState extends State<BLEtest> {
                     child: Center(
                       child: Text(
                         "BLE testing page",
-                        style: titleText(),
+                        style: fieldTitle(color: black),
                       ),
                     ),
                   ),
@@ -63,11 +71,15 @@ class _BLEtestState extends State<BLEtest> {
                       stream: controller.scanResults,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
+                          // ignore: avoid_print
+                          print(snapshot.data);
                           return ListView.builder(
                               shrinkWrap: true,
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
                                 final data = snapshot.data![index];
+                                // ignore: avoid_print
+                                print(data);
                                 return Card(
                                   elevation: 2,
                                   child: ListTile(
@@ -78,8 +90,13 @@ class _BLEtestState extends State<BLEtest> {
                                 );
                               });
                         } else {
-                          return const Center(
-                            child: Text("No devices found"),
+                          // ignore: avoid_print
+                          print('nothing');
+                          return Center(
+                            child: Text(
+                              "No devices found",
+                              style: contentText(),
+                            ),
                           );
                         }
                       }),
