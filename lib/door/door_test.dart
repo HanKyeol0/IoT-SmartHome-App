@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+//import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/controllers/bluetooth_controller.dart';
 import 'package:get/get.dart';
 import 'package:luxrobo/styles.dart';

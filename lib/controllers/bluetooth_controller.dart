@@ -1,10 +1,10 @@
 import 'dart:async';
-//import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+//import 'package:flutter_blue/flutter_blue.dart';
 import 'package:get/get.dart';
 
 class BluetoothController extends GetxController {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
   final scanResultsController = StreamController<List<ScanResult>>();
 
