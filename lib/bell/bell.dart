@@ -26,8 +26,27 @@ class _BellState extends State<Bell> {
   void startScan() {
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            print("1");
+          }
+        });
         // ignore: avoid_print
-        print('Found device: ${result.device.name} (${result.device.id})');
+        if ("${result.device.id}" == "34:B4:72:94:76:06") {
+          // ignore: avoid_print
+          print(
+              'Found device: ${result.device.id} c(${result.advertisementData.manufacturerData}) h(${result.rssi})');
+          result.advertisementData.manufacturerData.forEach((id, bytes) {
+            var hexString = bytes
+                .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+                .join();
+            print('Found device: id=$id, data=$hexString');
+          });
+        }
         // Add your desired logic to handle the Bluetooth response here
       }
     });
