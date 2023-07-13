@@ -131,3 +131,12 @@ class ParkingLotList {
     return ParkingLotList(parkingLot: json['place']);
   }
 }
+
+class BleDeviceInfoList {
+  final String id, manufacturerSpecificData;
+
+  BleDeviceInfoList({
+    required this.id,
+    required this.manufacturerSpecificData,
+  });
+}

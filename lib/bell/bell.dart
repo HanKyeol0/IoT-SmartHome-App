@@ -8,11 +8,18 @@ import 'package:luxrobo/widgets/button.dart';
 class BleDevice {
   String deviceId;
   String manufacturerSpecificData;
+  int rssi;
 
   BleDevice({
     required this.deviceId,
     required this.manufacturerSpecificData,
+    required this.rssi,
   });
+
+  @override
+  String toString() {
+    return 'BleDevice { deviceId: $deviceId, manufacturerSpecificData: $manufacturerSpecificData, rssi: $rssi }';
+  }
 }
 
 class Bell extends StatefulWidget {
@@ -43,17 +50,24 @@ class _BellState extends State<Bell> {
               .map((data) => data.toRadixString(16).padLeft(2, '0'))
               .join();
           if (hexData.contains("4c4354")) {
-            devices.add(BleDevice(
-                deviceId: "${result.device.id}",
-                manufacturerSpecificData: hexData));
-            // ignore: avoid_print
-            print(devices);
+            var deviceId = "${result.device.id}";
+            if (!devices.any((device) => device.deviceId == deviceId)) {
+              // add this line
+              devices.add(BleDevice(
+                  deviceId: deviceId,
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi));
+            }
           }
         });
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 10));
+    flutterBlue.startScan(timeout: const Duration(seconds: 10)).then((_) {
+      scanSubscription?.cancel();
+
+      print(devices);
+    });
   }
 
   Future<void> print1() async {
