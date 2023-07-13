@@ -5,6 +5,18 @@ import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/field.dart';
 import '../widgets/button.dart';
 import '../services/api_service.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'dart:async';
+
+class BleDevice {
+  String deviceId;
+  String manufacturerSpecificData;
+
+  BleDevice({
+    required this.deviceId,
+    required this.manufacturerSpecificData,
+  });
+}
 
 class Door01 extends StatefulWidget {
   const Door01({Key? key}) : super(key: key);
@@ -14,16 +26,41 @@ class Door01 extends StatefulWidget {
 }
 
 class _Door01State extends State<Door01> {
+  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  StreamSubscription<List<ScanResult>>? scanSubscription;
   bool isSwitched = false;
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
   GlobalData globalData = GlobalData();
+  List<BleDevice> devices = [];
 
   @override
   void initState() {
     super.initState();
     ApiService.getAccessLogs();
-    //ApiService.getAccessLogs(
-    //    '123asdasdpsajdgfkhdasfglajdfh', '123asdasdpsajdgfkhdasfglajdfh');
+    startScan();
+  }
+
+  void startScan() {
+    devices = []; // initialize the BLE devices list
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            devices.add(BleDevice(
+                deviceId: "${result.device.id}",
+                manufacturerSpecificData: hexData));
+            // ignore: avoid_print
+            print(devices);
+          }
+        });
+      }
+    });
+
+    flutterBlue.startScan(timeout: const Duration(seconds: 10));
   }
 
   @override

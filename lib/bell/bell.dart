@@ -1,10 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-//import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
+
+class BleDevice {
+  String deviceId;
+  String manufacturerSpecificData;
+
+  BleDevice({
+    required this.deviceId,
+    required this.manufacturerSpecificData,
+  });
+}
 
 class Bell extends StatefulWidget {
   const Bell({Key? key}) : super(key: key);
@@ -16,6 +25,7 @@ class Bell extends StatefulWidget {
 class _BellState extends State<Bell> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
+  List<BleDevice> devices = [];
 
   @override
   void initState() {
@@ -24,6 +34,7 @@ class _BellState extends State<Bell> {
   }
 
   void startScan() {
+    devices = []; // initialize the BLE devices list
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
         result.advertisementData.manufacturerData
@@ -32,22 +43,13 @@ class _BellState extends State<Bell> {
               .map((data) => data.toRadixString(16).padLeft(2, '0'))
               .join();
           if (hexData.contains("4c4354")) {
-            print("1");
+            devices.add(BleDevice(
+                deviceId: "${result.device.id}",
+                manufacturerSpecificData: hexData));
+            // ignore: avoid_print
+            print(devices);
           }
         });
-        // ignore: avoid_print
-        if ("${result.device.id}" == "34:B4:72:94:76:06") {
-          // ignore: avoid_print
-          print(
-              'Found device: ${result.device.id} c(${result.advertisementData.manufacturerData}) h(${result.rssi})');
-          result.advertisementData.manufacturerData.forEach((id, bytes) {
-            var hexString = bytes
-                .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
-                .join();
-            print('Found device: id=$id, data=$hexString');
-          });
-        }
-        // Add your desired logic to handle the Bluetooth response here
       }
     });
 
