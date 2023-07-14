@@ -7,6 +7,13 @@ import '../widgets/button.dart';
 import '../services/api_service.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
+import 'package:network_info_plus/network_info_plus.dart';
+
+void getWifiBSSID() async {
+  final NetworkInfo info = NetworkInfo();
+  final String? wifiBSSID = await info.getWifiBSSID();
+  print("Wifi BSSID: $wifiBSSID");
+}
 
 class BleDevice {
   String deviceId;
@@ -36,6 +43,7 @@ class _Door01State extends State<Door01> {
   @override
   void initState() {
     super.initState();
+    getWifiBSSID();
     ApiService.getAccessLogs();
     startScan();
   }
