@@ -52,6 +52,7 @@ class _BellState extends State<Bell> {
               .map((data) => data.toRadixString(16).padLeft(2, '0'))
               .join();
           if (hexData.contains("4c4354")) {
+            // Lux device code
             if (result.rssi > maxRssi) {
               // only store the device if its RSSI is greater than the current max
               maxRssi = result.rssi;

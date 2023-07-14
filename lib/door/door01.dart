@@ -9,20 +9,28 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
 import 'package:network_info_plus/network_info_plus.dart';
 
-void getWifiBSSID() async {
+Future<String?> getWifiBSSID() async {
   final NetworkInfo info = NetworkInfo();
   final String? wifiBSSID = await info.getWifiBSSID();
   print("Wifi BSSID: $wifiBSSID");
+  return wifiBSSID;
 }
 
 class BleDevice {
   String deviceId;
   String manufacturerSpecificData;
+  int rssi;
 
   BleDevice({
     required this.deviceId,
     required this.manufacturerSpecificData,
+    required this.rssi,
   });
+
+  @override
+  String toString() {
+    return 'BleDevice { deviceId: $deviceId, manufacturerSpecificData: $manufacturerSpecificData, rssi: $rssi }';
+  }
 }
 
 class Door01 extends StatefulWidget {
@@ -43,13 +51,16 @@ class _Door01State extends State<Door01> {
   @override
   void initState() {
     super.initState();
-    getWifiBSSID();
+    // ignore: unused_local_variable
+    Future<String?> macAddress = getWifiBSSID();
     ApiService.getAccessLogs();
     startScan();
   }
 
   void startScan() {
-    devices = []; // initialize the BLE devices list
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
         result.advertisementData.manufacturerData
@@ -58,17 +69,29 @@ class _Door01State extends State<Door01> {
               .map((data) => data.toRadixString(16).padLeft(2, '0'))
               .join();
           if (hexData.contains("4c4354")) {
-            devices.add(BleDevice(
-                deviceId: "${result.device.id}",
-                manufacturerSpecificData: hexData));
-            // ignore: avoid_print
-            print(devices);
+            // Lux device code
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi);
+            }
           }
         });
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 10));
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) {
+      scanSubscription?.cancel();
+
+      if (maxRssiDevice != null) {
+        print(maxRssiDevice);
+      } else {
+        print("No device found");
+      }
+    });
   }
 
   @override
