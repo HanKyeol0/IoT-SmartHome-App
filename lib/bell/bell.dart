@@ -41,7 +41,9 @@ class _BellState extends State<Bell> {
   }
 
   void startScan() {
-    devices = []; // initialize the BLE devices list
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
         result.advertisementData.manufacturerData
@@ -50,13 +52,13 @@ class _BellState extends State<Bell> {
               .map((data) => data.toRadixString(16).padLeft(2, '0'))
               .join();
           if (hexData.contains("4c4354")) {
-            var deviceId = "${result.device.id}";
-            if (!devices.any((device) => device.deviceId == deviceId)) {
-              // add this line
-              devices.add(BleDevice(
-                  deviceId: deviceId,
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
                   manufacturerSpecificData: hexData,
-                  rssi: result.rssi));
+                  rssi: result.rssi);
             }
           }
         });
@@ -66,7 +68,11 @@ class _BellState extends State<Bell> {
     flutterBlue.startScan(timeout: const Duration(seconds: 10)).then((_) {
       scanSubscription?.cancel();
 
-      print(devices);
+      if (maxRssiDevice != null) {
+        print(maxRssiDevice);
+      } else {
+        print("No device found");
+      }
     });
   }
 
