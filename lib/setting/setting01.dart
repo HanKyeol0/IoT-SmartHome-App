@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
+import 'package:flutter/services.dart';
 
 class Setting01 extends StatefulWidget {
   const Setting01({Key? key}) : super(key: key);
@@ -191,13 +192,15 @@ void showExitDialog(BuildContext context) {
                   ),
                   Expanded(
                     child: RoundButton(
-                      text: '확인',
-                      bgColor: bColor,
-                      textColor: black,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                      buttonHeight: 46,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+                        text: '확인',
+                        bgColor: bColor,
+                        textColor: black,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () {
+                          SystemChannels.platform
+                              .invokeMethod('SystemNavigator.pop');
+                        }),
                   ),
                 ],
               ),
