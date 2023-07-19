@@ -83,7 +83,7 @@ class _Login02State extends State<Login02> {
     if (response.statusCode == 201) {
       final userData = UserData.fromJson(jsonDecode(response.body));
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, '/door01');
+      Navigator.pushReplacementNamed(context, '/door01');
       GlobalData().setUserData(userData);
       return userData;
     } else if (response.statusCode == 400) {

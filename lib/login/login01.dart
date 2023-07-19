@@ -43,7 +43,7 @@ class _Login01State extends State<Login01> {
         this.apartmentID = apartmentID;
       });
       // ignore: use_build_context_synchronously
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => Login02(apartmentID: apartmentID),
