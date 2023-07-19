@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
-import 'package:flutter/services.dart';
+
+import '../widgets/dialog.dart';
 
 class Setting01 extends StatefulWidget {
   const Setting01({Key? key}) : super(key: key);
@@ -146,70 +147,6 @@ class _Setting01State extends State<Setting01> {
       ),
     );
   }
-}
-
-void showExitDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: darkGrey,
-        elevation: 0.0, // No shadow
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.only(
-            top: 40,
-            bottom: 30,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                '앱을 종료하시겠습니까?',
-                style: titleText(),
-              ),
-              const SizedBox(
-                height: 39,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: RoundButton(
-                      text: '취소',
-                      bgColor: grey,
-                      textColor: wColor,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                      buttonHeight: 46,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: RoundButton(
-                        text: '확인',
-                        bgColor: bColor,
-                        textColor: black,
-                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                        buttonHeight: 46,
-                        onPressed: () {
-                          SystemChannels.platform
-                              .invokeMethod('SystemNavigator.pop');
-                        }),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }
 
 void terminateAllFunctions(BuildContext context) {
