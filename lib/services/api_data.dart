@@ -1,16 +1,17 @@
 import '../services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // UserData.dart
 class UserData {
-  final String createdAt;
-  final int id;
-  final String name;
-  final String? mac;
-  final String loginCode;
-  final String dong;
-  final String ho;
-  final String? currentCar;
-  final String role;
+  String createdAt;
+  int id;
+  String name;
+  String? mac;
+  String loginCode;
+  String dong;
+  String ho;
+  String? currentCar;
+  String role;
   String accessToken;
   String refreshToken;
 
@@ -68,6 +69,12 @@ class GlobalData {
 
   void setUserData(UserData data) {
     userData = data;
+  }
+
+  void logOut() async {
+    userData = null;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 
+import '../services/api_data.dart';
 import '../widgets/dialog.dart';
 
 class Setting01 extends StatefulWidget {
@@ -262,13 +263,16 @@ void showLogoutDialog(BuildContext context) {
                   ),
                   Expanded(
                     child: RoundButton(
-                      text: '확인',
-                      bgColor: bColor,
-                      textColor: black,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                      buttonHeight: 46,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
+                        text: '확인',
+                        bgColor: bColor,
+                        textColor: black,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () {
+                          GlobalData globalData = GlobalData();
+                          globalData.logOut();
+                          Navigator.pushReplacementNamed(context, '/login01');
+                        }),
                   ),
                 ],
               ),
