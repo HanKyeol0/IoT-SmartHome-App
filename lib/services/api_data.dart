@@ -56,6 +56,7 @@ class UserData {
   }
 }
 
+// Globally used data
 class GlobalData {
   static final GlobalData _singleton = GlobalData._internal();
 
@@ -71,6 +72,7 @@ class GlobalData {
     userData = data;
   }
 
+  // log-out function
   void logOut() async {
     userData = null;
     final prefs = await SharedPreferences.getInstance();
@@ -92,6 +94,7 @@ class TokenData {
   }
 }
 
+//gate access log
 class AccessLogList {
   final String time, label, floor, type;
 

@@ -87,11 +87,42 @@ class _Door01State extends State<Door01> {
       scanSubscription?.cancel();
 
       if (maxRssiDevice != null) {
+        // ignore: avoid_print
         print(maxRssiDevice);
       } else {
+        // ignore: avoid_print
         print("No device found");
       }
     });
+  }
+
+  void advertiseToCCTV(String macAddress, String deviceId) {
+    List<int> macAddressBytes =
+        macAddress.split("-").map((e) => int.parse(e, radix: 16)).toList();
+    List<int> deviceIdBytes =
+        deviceId.split("-").map((e) => int.parse(e, radix: 16)).toList();
+
+    List<int> payload = [
+      0x4C,
+      0x55,
+      0x42,
+      0x00,
+      ...macAddressBytes,
+      ...deviceIdBytes,
+      0x4F,
+      0x50,
+      0x41,
+      0x00,
+      0xFF,
+      0x00,
+      0x00,
+    ];
+
+    if (payload.length > 31) {
+      // ignore: avoid_print
+      print("Payload size exceeds 31 bytes limit");
+      return;
+    }
   }
 
   @override
