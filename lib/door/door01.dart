@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
@@ -8,10 +9,12 @@ import '../services/api_service.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
 Future<String?> getWifiBSSID() async {
   final NetworkInfo info = NetworkInfo();
   final String? wifiBSSID = await info.getWifiBSSID();
+  // ignore: avoid_print
   print("Wifi BSSID: $wifiBSSID");
   return wifiBSSID;
 }
@@ -42,6 +45,7 @@ class Door01 extends StatefulWidget {
 
 class _Door01State extends State<Door01> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  FlutterBlePeripheral blePeripheral = FlutterBlePeripheral();
   StreamSubscription<List<ScanResult>>? scanSubscription;
   bool isSwitched = false;
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
@@ -54,10 +58,14 @@ class _Door01State extends State<Door01> {
     // ignore: unused_local_variable
     Future<String?> macAddress = getWifiBSSID();
     ApiService.getAccessLogs();
-    startScan();
   }
 
-  void startScan() {
+  scanAdvertise() {
+    startScan();
+    bleAdvertise();
+  }
+
+  Future<void> startScan() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
@@ -84,6 +92,7 @@ class _Door01State extends State<Door01> {
     });
 
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) {
+      bleAdvertise();
       scanSubscription?.cancel();
 
       if (maxRssiDevice != null) {
@@ -96,32 +105,39 @@ class _Door01State extends State<Door01> {
     });
   }
 
-  void advertiseToCCTV(String macAddress, String deviceId) {
-    List<int> macAddressBytes =
-        macAddress.split("-").map((e) => int.parse(e, radix: 16)).toList();
-    List<int> deviceIdBytes =
-        deviceId.split("-").map((e) => int.parse(e, radix: 16)).toList();
-
-    List<int> payload = [
+  void bleAdvertise() async {
+    var data = [
       0x4C,
       0x55,
       0x42,
       0x00,
-      ...macAddressBytes,
-      ...deviceIdBytes,
+      0x21,
+      0x04,
+      0xB0,
+      0x00,
+      0x00,
+      0x04,
+      0x43,
+      0x00,
+      0xB1,
+      0x41,
+      0x0A,
       0x4F,
       0x50,
       0x41,
       0x00,
-      0xFF,
+      0x01,
       0x00,
-      0x00,
+      0x00
     ];
-
-    if (payload.length > 31) {
+    try {
+      AdvertiseData? advertiseData =
+          AdvertiseData(manufacturerData: Uint8List.fromList(data));
+      print('here is the data: ${Uint8List.fromList(data)}');
+      await FlutterBlePeripheral().start(advertiseData: advertiseData);
+    } catch (e) {
       // ignore: avoid_print
-      print("Payload size exceeds 31 bytes limit");
-      return;
+      print('Error during BLE advertisement: $e');
     }
   }
 
@@ -221,8 +237,9 @@ class _Door01State extends State<Door01> {
                       ),
                     ),
                     const SizedBox(height: 60),
-                    const GateAccess(
+                    GateAccess(
                       isDetected: true,
+                      onPressed: startScan,
                     ),
                     const SizedBox(height: 100),
                   ],
@@ -234,5 +251,34 @@ class _Door01State extends State<Door01> {
         ],
       ),
     );
+  }
+}
+
+void advertiseToCCTV(String macAddress, String deviceId) {
+  List<int> macAddressBytes =
+      macAddress.split("-").map((e) => int.parse(e, radix: 16)).toList();
+  List<int> deviceIdBytes =
+      deviceId.split("-").map((e) => int.parse(e, radix: 16)).toList();
+
+  List<int> payload = [
+    0x4C,
+    0x55,
+    0x42,
+    0x00,
+    ...macAddressBytes,
+    ...deviceIdBytes,
+    0x4F,
+    0x50,
+    0x41,
+    0x00,
+    0xFF,
+    0x00,
+    0x00,
+  ];
+
+  if (payload.length > 31) {
+    // ignore: avoid_print
+    print("Payload size exceeds 31 bytes limit");
+    return;
   }
 }

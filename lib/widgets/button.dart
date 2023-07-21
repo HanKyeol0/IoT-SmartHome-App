@@ -289,42 +289,47 @@ class _SeeMoreButtonState extends State<SeeMoreButton> {
 
 class GateAccess extends StatelessWidget {
   final bool isDetected;
+  final VoidCallback onPressed;
 
   const GateAccess({
     super.key,
     required this.isDetected,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          Container(
-            //padding: const EdgeInsets.all(33.5),
-            height: 118,
-            width: 118,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
+      child: InkWell(
+        onTap: onPressed,
+        child: Column(
+          children: [
+            Container(
+              //padding: const EdgeInsets.all(33.5),
+              height: 118,
+              width: 118,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isDetected ? bColor : lightGrey,
+                ),
+              ),
+              child: Icon(
+                isDetected ? Icons.door_sliding_outlined : Icons.door_sliding,
                 color: isDetected ? bColor : lightGrey,
+                size: 51,
               ),
             ),
-            child: Icon(
-              isDetected ? Icons.door_sliding_outlined : Icons.door_sliding,
-              color: isDetected ? bColor : lightGrey,
-              size: 51,
+            const SizedBox(height: 20),
+            Text(
+              isDetected ? '터치해서 현관문 출입' : '출입문이 감지되지 않습니다.',
+              style: fieldTitle(
+                fontSize: 16,
+                color: isDetected ? wColor : lightGrey,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            isDetected ? '터치해서 현관문 출입' : '출입문이 감지되지 않습니다.',
-            style: fieldTitle(
-              fontSize: 16,
-              color: isDetected ? wColor : lightGrey,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
