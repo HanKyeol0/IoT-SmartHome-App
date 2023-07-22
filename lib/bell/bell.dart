@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+//import 'package:flutter_blue/flutter_blue.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
@@ -32,7 +33,6 @@ class Bell extends StatefulWidget {
 class _BellState extends State<Bell> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
-  List<BleDevice> devices = [];
 
   @override
   void initState() {
@@ -41,40 +41,15 @@ class _BellState extends State<Bell> {
   }
 
   void startScan() {
-    int maxRssi = -999; // a large negative value to compare with actual RSSI
-    BleDevice? maxRssiDevice;
-
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
-        result.advertisementData.manufacturerData
-            .forEach((id, manufacturerSpecificData) {
-          var hexData = manufacturerSpecificData
-              .map((data) => data.toRadixString(16).padLeft(2, '0'))
-              .join();
-          if (hexData.contains("4c4354")) {
-            // Lux device code
-            if (result.rssi > maxRssi) {
-              // only store the device if its RSSI is greater than the current max
-              maxRssi = result.rssi;
-              maxRssiDevice = BleDevice(
-                  deviceId: "${result.device.id}",
-                  manufacturerSpecificData: hexData,
-                  rssi: result.rssi);
-            }
-          }
-        });
+        // ignore: avoid_print
+        print('Found device: ${result.device.name} (${result.device.id})');
+        // Add your desired logic to handle the Bluetooth response here
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 10)).then((_) {
-      scanSubscription?.cancel();
-
-      if (maxRssiDevice != null) {
-        print(maxRssiDevice);
-      } else {
-        print("No device found");
-      }
-    });
+    flutterBlue.startScan(timeout: const Duration(seconds: 10));
   }
 
   Future<void> print1() async {

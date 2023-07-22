@@ -40,6 +40,15 @@ dependencies:
   shared_preferences: ^2.2.0
   beacon_broadcast: ^0.3.1
   flutter_ble_peripheral: ^1.2.0
+  flutter_native_splash: ^2.3.1
+
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  color: "#FFFFFF"
+  image: "assets/luxrobo_splash_icon.png"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
