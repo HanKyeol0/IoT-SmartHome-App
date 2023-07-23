@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:beacon_broadcast/beacon_broadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
@@ -51,6 +52,7 @@ class _Door01State extends State<Door01> {
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
   GlobalData globalData = GlobalData();
   List<BleDevice> devices = [];
+  BeaconBroadcast beaconBroadcast = BeaconBroadcast();
 
   @override
   void initState() {
@@ -92,8 +94,17 @@ class _Door01State extends State<Door01> {
     });
 
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) {
-      bleAdvertise();
+      beaconBroadcast
+          .setUUID('4C5542002104B00000044300B1410A4F504100010000')
+          .setMajorId(1)
+          .setMinorId(100)
+          .start();
+      //bleAdvertise();
       scanSubscription?.cancel();
+
+      Future.delayed(Duration(seconds: 5), () {
+        beaconBroadcast.stop();
+      });
 
       if (maxRssiDevice != null) {
         // ignore: avoid_print
