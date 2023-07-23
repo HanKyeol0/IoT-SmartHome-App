@@ -37,19 +37,7 @@ class _BellState extends State<Bell> {
   @override
   void initState() {
     super.initState();
-    startScan();
-  }
-
-  void startScan() {
-    scanSubscription = flutterBlue.scanResults.listen((results) {
-      for (var result in results) {
-        // ignore: avoid_print
-        print('Found device: ${result.device.name} (${result.device.id})');
-        // Add your desired logic to handle the Bluetooth response here
-      }
-    });
-
-    flutterBlue.startScan(timeout: const Duration(seconds: 10));
+    //startScan();
   }
 
   Future<void> print1() async {

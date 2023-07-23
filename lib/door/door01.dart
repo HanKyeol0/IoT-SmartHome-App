@@ -20,6 +20,37 @@ Future<String?> getWifiBSSID() async {
   return wifiBSSID;
 }
 
+final AdvertiseData advertiseData = AdvertiseData(
+  serviceUuid: 'bf27730d-860a-4e09-889c-2d8b6a9e0fe7',
+  manufacturerId: 1234,
+  manufacturerData: Uint8List.fromList([
+    0x4C,
+    0x55,
+    0x42,
+    0x00,
+    0xB4,
+    0xA9,
+    0x4F,
+    0x5E,
+    0x07,
+    0x17,
+    0x43,
+    0x00,
+    0xB1,
+    0x41,
+    0x0C,
+    0x4F,
+    0x50,
+    0x41,
+    0x00,
+    0x01,
+    0x00,
+    0x00,
+  ]),
+);
+
+final AdvertiseSetParameters advertiseSetParameters = AdvertiseSetParameters();
+
 class BleDevice {
   String deviceId;
   String manufacturerSpecificData;
@@ -48,7 +79,7 @@ class _Door01State extends State<Door01> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   FlutterBlePeripheral blePeripheral = FlutterBlePeripheral();
   StreamSubscription<List<ScanResult>>? scanSubscription;
-  bool isSwitched = false;
+  bool isGateDetected = false;
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
   GlobalData globalData = GlobalData();
   List<BleDevice> devices = [];
@@ -60,19 +91,41 @@ class _Door01State extends State<Door01> {
     // ignore: unused_local_variable
     Future<String?> macAddress = getWifiBSSID();
     ApiService.getAccessLogs();
+    /*advertiseTest();
+    Future.delayed(Duration(seconds: 10), () {
+      //  FlutterBlePeripheral().stop();
+      beaconBroadcast.stop();
+      print('end');
+    });*/
+  }
+
+  void advertiseTest() {
+    beaconBroadcast
+        .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+        .setMajorId(1)
+        .setMinorId(100)
+        .start();
   }
 
   scanAdvertise() {
     startScan();
-    bleAdvertise();
+    //bleAdvertise();
   }
 
+  void gateDetection() {
+    setState(() {
+      isGateDetected = true;
+    });
+  }
+
+  // scan BLE devices and pick one that has the highest RSSI
   Future<void> startScan() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
+        //print(result);
         result.advertisementData.manufacturerData
             .forEach((id, manufacturerSpecificData) {
           var hexData = manufacturerSpecificData
@@ -93,30 +146,45 @@ class _Door01State extends State<Door01> {
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) {
-      beaconBroadcast
-          .setUUID('4C5542002104B00000044300B1410A4F504100010000')
-          .setMajorId(1)
-          .setMinorId(100)
-          .start();
-      //bleAdvertise();
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      //beaconBroadcast
+      //    .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+      //    .setMajorId(1)
+      //    .setMinorId(100)
+      //    .start();
+      print('start');
+      try {
+        await FlutterBlePeripheral()
+            .start(
+          advertiseData: advertiseData,
+          advertiseSetParameters: AdvertiseSetParameters(),
+        )
+            .then((_) {
+          print('hello');
+        });
+      } catch (e) {
+        print(e);
+      }
       scanSubscription?.cancel();
-
-      Future.delayed(Duration(seconds: 5), () {
-        beaconBroadcast.stop();
-      });
 
       if (maxRssiDevice != null) {
         // ignore: avoid_print
+        gateDetection();
         print(maxRssiDevice);
       } else {
         // ignore: avoid_print
         print("No device found");
       }
+
+      Future.delayed(Duration(seconds: 10), () {
+        FlutterBlePeripheral().stop();
+        //beaconBroadcast.stop();
+        print('end');
+      });
     });
   }
 
-  void bleAdvertise() async {
+  /*Future<void> bleAdvertise() async {
     var data = [
       0x4C,
       0x55,
@@ -144,13 +212,16 @@ class _Door01State extends State<Door01> {
     try {
       AdvertiseData? advertiseData =
           AdvertiseData(manufacturerData: Uint8List.fromList(data));
-      print('here is the data: ${Uint8List.fromList(data)}');
-      await FlutterBlePeripheral().start(advertiseData: advertiseData);
+      print('here is the data: ${Uint16List.fromList(data)}');
+      await FlutterBlePeripheral().start(
+        advertiseData: advertiseData,
+        //advertiseSetParameters: advertiseSetParameters,
+      );
     } catch (e) {
       // ignore: avoid_print
       print('Error during BLE advertisement: $e');
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +320,7 @@ class _Door01State extends State<Door01> {
                     ),
                     const SizedBox(height: 60),
                     GateAccess(
-                      isDetected: true,
+                      isDetected: isGateDetected,
                       onPressed: startScan,
                     ),
                     const SizedBox(height: 100),
@@ -258,7 +329,7 @@ class _Door01State extends State<Door01> {
               ),
             ],
           ),
-          const GateDetection(isDetected: true),
+          GateDetection(isDetected: isGateDetected),
         ],
       ),
     );
