@@ -166,7 +166,7 @@ class _InputFieldState extends State<InputField> {
         border: Border.all(color: darkGrey, width: 1.5),
         color: grey,
       ),
-      height: 54,
+      height: 58,
       child: TextField(
         controller: widget.textEditingController,
         style: contentText(color: wColor),
@@ -216,7 +216,7 @@ class _LoginCodeInputFieldState extends State<LoginCodeInputField> {
             : Border.all(color: const Color(0xFFFA1A1A), width: 1.5),
         color: grey,
       ),
-      height: 54,
+      height: 58,
       child: TextField(
         controller: widget.textEditingController,
         style: contentText(color: wColor),
