@@ -52,10 +52,9 @@ class _DropdownInputState extends State<DropdownInput> {
         color: grey,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(
-            height: 54,
+            height: 56,
             child: TextField(
               controller: widget.textEditingController,
               style: const TextStyle(color: wColor),
@@ -63,7 +62,7 @@ class _DropdownInputState extends State<DropdownInput> {
                 hintText: widget.placeholder,
                 hintStyle: contentText(color: lightGrey),
                 contentPadding: const EdgeInsets.symmetric(
-                  vertical: 19.5,
+                  vertical: 18.5,
                   horizontal: 15,
                 ),
                 border: InputBorder.none,
@@ -118,9 +117,12 @@ class _DropdownInputState extends State<DropdownInput> {
               itemBuilder: (context, index) {
                 final item = widget.items[index];
                 return ListTile(
-                  title: Text(
-                    item,
-                    style: contentText(color: lightGrey),
+                  title: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item,
+                      style: contentText(color: lightGrey),
+                    ),
                   ),
                   onTap: () {
                     setState(() {

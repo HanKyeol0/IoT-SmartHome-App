@@ -172,6 +172,8 @@ class _Login01State extends State<Login01> {
                     items: const [
                       '럭스로보 아파트',
                       '아이아라 아파트',
+                      '테스트 아파트',
+                      '아파트 1',
                     ],
                     searchIconOn: 'assets/searchIconOn.png',
                     searchIconOff: 'assets/searchIconOff.png',

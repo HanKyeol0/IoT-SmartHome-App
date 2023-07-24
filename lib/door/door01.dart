@@ -21,6 +21,8 @@ Future<String?> getWifiBSSID() async {
 }
 
 final AdvertiseData advertiseData = AdvertiseData(
+  includeDeviceName: true,
+  localName: 'Luxrobo test',
   serviceUuid: 'bf27730d-860a-4e09-889c-2d8b6a9e0fe7',
   manufacturerId: 1234,
   manufacturerData: Uint8List.fromList([
@@ -147,12 +149,12 @@ class _Door01State extends State<Door01> {
     });
 
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
-      //beaconBroadcast
-      //    .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
-      //    .setMajorId(1)
-      //    .setMinorId(100)
-      //    .start();
-      print('start');
+      /*beaconBroadcast
+          .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+          .setMajorId(1)
+          .setMinorId(100)
+          .start();
+      print('start');*/
       try {
         await FlutterBlePeripheral()
             .start(
