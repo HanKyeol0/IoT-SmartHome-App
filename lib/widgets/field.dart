@@ -108,6 +108,7 @@ class _DropdownInputState extends State<DropdownInput> {
           ),
           if (showDropdown)
             ListView.separated(
+              padding: EdgeInsets.only(top: 0, bottom: 5),
               shrinkWrap: true,
               itemCount: widget.items.length,
               separatorBuilder: (context, index) => const Divider(
@@ -116,21 +117,21 @@ class _DropdownInputState extends State<DropdownInput> {
               ),
               itemBuilder: (context, index) {
                 final item = widget.items[index];
-                return ListTile(
-                  title: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
+                return Container(
+                  height: 56,
+                  child: ListTile(
+                    title: Text(
                       item,
                       style: contentText(color: lightGrey),
                     ),
+                    onTap: () {
+                      setState(() {
+                        selectedValue = item;
+                        widget.textEditingController.text = item;
+                        showDropdown = false;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    setState(() {
-                      selectedValue = item;
-                      widget.textEditingController.text = item;
-                      showDropdown = false;
-                    });
-                  },
                 );
               },
             ),
