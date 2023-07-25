@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import '../services/api_service.dart';
 import '../widgets/dialog.dart';
 import '../widgets/field.dart';
 import 'dart:convert';
@@ -39,6 +41,9 @@ class _Login02State extends State<Login02> {
     isHoEmpty = hoController.text.isEmpty;
     isNameEmpty = nameController.text.isEmpty;
     isLoginCodeEmpty = loginCodeController.text.isEmpty;
+
+    // ignore: unused_local_variable
+    Future<String?> macAddress = getWifiBSSID();
   }
 
   void onText1(String value) {
@@ -65,8 +70,17 @@ class _Login02State extends State<Login02> {
     });
   }
 
+  // get mac address
+  Future<String?> getWifiBSSID() async {
+    final NetworkInfo info = NetworkInfo();
+    final String? wifiBSSID = await info.getWifiBSSID();
+    return wifiBSSID;
+  }
+
   //login function
   Future<UserData?> onPressedLogin() async {
+    final String? macAddress = await getWifiBSSID();
+
     final response = await http.post(
       Uri.parse('http://13.125.92.61:8080/api/auth'),
       headers: <String, String>{
@@ -83,9 +97,26 @@ class _Login02State extends State<Login02> {
 
     if (response.statusCode == 201) {
       final userData = UserData.fromJson(jsonDecode(response.body));
+      GlobalData().setUserData(userData);
+
+      if (userData.mac != macAddress) {
+        final updateMacResult = await ApiService.updateMacAddress(
+            macAddress, dongController.text, hoController.text);
+        if (updateMacResult == 0) {
+          print('mac update completed');
+          null;
+        } else if (updateMacResult == 1) {
+          null;
+        } else if (updateMacResult == 2) {
+          unstableNetwork(context);
+        }
+      } else {
+        null;
+      }
+
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/door01');
-      GlobalData().setUserData(userData);
+
       return userData;
     } else if (response.statusCode == 400) {
       // ignore: avoid_print

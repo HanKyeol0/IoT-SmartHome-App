@@ -72,6 +72,10 @@ class GlobalData {
     userData = data;
   }
 
+  static GlobalData getInstance() {
+    return _singleton;
+  }
+
   // log-out function
   void logOut() async {
     userData = null;
