@@ -288,7 +288,9 @@ class _Door01State extends State<Door01> {
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 return ListView.builder(
-                                  itemCount: 3,
+                                  itemCount: snapshot.data!.length > 3
+                                      ? 3
+                                      : snapshot.data!.length,
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     var log = snapshot.data![index];

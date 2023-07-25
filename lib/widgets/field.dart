@@ -483,6 +483,7 @@ class _CarInputState extends State<CarInput> {
           ),
           if (showDropdown)
             ListView.separated(
+              padding: EdgeInsets.only(top: 0, bottom: 5),
               shrinkWrap: true,
               itemCount: widget.items.length,
               separatorBuilder: (context, index) => const Divider(
@@ -492,7 +493,7 @@ class _CarInputState extends State<CarInput> {
               itemBuilder: (context, index) {
                 final item = widget.items[index];
                 return SizedBox(
-                  height: 48,
+                  height: 56,
                   child: ListTile(
                     title: Align(
                       alignment: Alignment.centerLeft,
