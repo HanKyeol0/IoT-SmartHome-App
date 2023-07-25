@@ -40,42 +40,45 @@ class _Door02State extends State<Door02> {
             ),
           ),
           const SizedBox(height: 29),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                FutureBuilder<List<AccessLogList>?>(
-                  future: logs,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          var log = snapshot.data![index];
-                          return AccessLog(
-                            bgColor: grey,
-                            iconBoxColor: darkGrey,
-                            isKey: log.type == "smartkey" ? true : false,
-                            accessTime: log.time,
-                            floor: log.floor,
-                            label: log.label,
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text(
-                        'error: ${snapshot.error}',
-                        style: const TextStyle(color: wColor),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(color: bColor),
-                      );
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
-              ],
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  FutureBuilder<List<AccessLogList>?>(
+                    future: logs,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data!.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            var log = snapshot.data![index];
+                            return AccessLog(
+                              bgColor: grey,
+                              iconBoxColor: darkGrey,
+                              isKey: log.type == "smartkey" ? true : false,
+                              accessTime: log.time,
+                              floor: log.floor,
+                              label: log.label,
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text(
+                          'error: ${snapshot.error}',
+                          style: const TextStyle(color: wColor),
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(color: bColor),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ],
