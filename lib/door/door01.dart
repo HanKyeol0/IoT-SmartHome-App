@@ -260,75 +260,82 @@ class _Door01State extends State<Door01> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            '출입기록',
-                            style: fieldTitle(),
-                          ),
-                          const Spacer(),
-                          const Align(
-                            alignment: Alignment.centerRight,
-                            child: SeeMoreButton(), //'더보기' button
-                          )
-                        ],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              '출입기록',
+                              style: fieldTitle(),
+                            ),
+                            const Spacer(),
+                            const Align(
+                              alignment: Alignment.centerRight,
+                              child: SeeMoreButton(), //'더보기' button
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          FutureBuilder<List<AccessLogList>?>(
-                            future: logs,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return ListView.builder(
-                                  itemCount: snapshot.data!.length > 3
-                                      ? 3
-                                      : snapshot.data!.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    var log = snapshot.data![index];
-                                    return AccessLog(
-                                      bgColor: darkGrey,
-                                      iconBoxColor: black,
-                                      isKey:
-                                          log.type == "smartkey" ? true : false,
-                                      accessTime: log.time,
-                                      floor: log.floor,
-                                      label: log.label,
-                                    );
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return Text(
-                                  'error: ${snapshot.error}',
-                                  style: const TextStyle(color: wColor),
-                                );
-                              } else {
-                                return const Center(
-                                  child:
-                                      CircularProgressIndicator(color: bColor),
-                                );
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                        ],
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 230,
+                        child: Column(
+                          children: [
+                            FutureBuilder<List<AccessLogList>?>(
+                              future: logs,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                    itemCount: snapshot.data!.length > 3
+                                        ? 3
+                                        : snapshot.data!.length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      var log = snapshot.data![index];
+                                      return AccessLog(
+                                        bgColor: darkGrey,
+                                        iconBoxColor: black,
+                                        isKey: log.type == "smartkey"
+                                            ? true
+                                            : false,
+                                        accessTime: log.time,
+                                        floor: log.floor,
+                                        label: log.label,
+                                      );
+                                    },
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    'error: ${snapshot.error}',
+                                    style: const TextStyle(color: wColor),
+                                  );
+                                } else {
+                                  return const Center(
+                                    child: SizedBox(
+                                        height: 230,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                              color: bColor),
+                                        )),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 60),
-                    GateAccess(
-                      isDetected: isGateDetected,
-                      onPressed: startScan,
-                    ),
-                    const SizedBox(height: 100),
-                  ],
+                      const SizedBox(height: 30),
+                      GateAccess(
+                        isDetected: isGateDetected,
+                        onPressed: startScan,
+                      ),
+                      const SizedBox(height: 100),
+                    ],
+                  ),
                 ),
               ),
             ],
