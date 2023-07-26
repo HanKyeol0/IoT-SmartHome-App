@@ -451,7 +451,7 @@ class _CarInputState extends State<CarInput> {
                     hintText: widget.placeholder,
                     hintStyle: contentText(color: lightGrey),
                     contentPadding: const EdgeInsets.symmetric(
-                      vertical: 19.5,
+                      vertical: 16,
                       horizontal: 15,
                     ),
                     border: InputBorder.none,

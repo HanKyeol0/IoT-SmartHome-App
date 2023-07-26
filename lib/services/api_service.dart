@@ -82,8 +82,7 @@ class ApiService {
       },
       body: requestBody,
     );
-    print(response.body);
-    print(response.statusCode);
+    print(macAddress);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('hello it is updated');

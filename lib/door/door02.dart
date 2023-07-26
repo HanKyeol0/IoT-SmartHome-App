@@ -70,7 +70,8 @@ class _Door02State extends State<Door02> {
                           style: const TextStyle(color: wColor),
                         );
                       } else {
-                        return const Center(
+                        return const Align(
+                          alignment: Alignment.center,
                           child: CircularProgressIndicator(color: bColor),
                         );
                       }

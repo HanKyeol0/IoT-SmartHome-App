@@ -247,7 +247,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                       ),
                       CarInput(
                         placeholder: '선호 주차장을 선택해주세요.',
-                        items: const ['1'], //parkingLotList,
+                        items: const ['1단지 B1 주차장 1구역'], //parkingLotList,
                         textEditingController: preferredParkingLotController,
                         onTextChanged: onParkingLotChanged,
                       ),
