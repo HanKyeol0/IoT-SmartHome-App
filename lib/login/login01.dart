@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/login/login02.dart';
+import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import '../widgets/button.dart';
 import '../widgets/dialog.dart';
@@ -20,6 +21,9 @@ class _Login01State extends State<Login01> {
   bool isClickable = false;
   int? apartmentID;
 
+  Future<List<ApartmentList>?> apartments = ApiService.getApartmentList();
+  List<String> apartmentList = [];
+
   @override
   void dispose() {
     apartmentController.dispose();
@@ -30,6 +34,22 @@ class _Login01State extends State<Login01> {
     setState(() {
       isTextEmpty = value.isEmpty;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadApartmentList();
+  }
+
+  Future<void> loadApartmentList() async {
+    final fetchedApartments = await apartments;
+    if (fetchedApartments != null) {
+      for (var fetchedApartment in fetchedApartments) {
+        final apartment = fetchedApartment.name;
+        apartmentList.add(apartment);
+      }
+    }
   }
 
   void onPressedNext() async {
@@ -169,10 +189,7 @@ class _Login01State extends State<Login01> {
                 children: [
                   DropdownInput(
                     placeholder: '아파트 명을 입력해주세요.',
-                    items: const [
-                      '럭스로보 아파트',
-                      '아이아라 아파트',
-                    ],
+                    items: apartmentList,
                     searchIconOn: 'assets/searchIconOn.png',
                     searchIconOff: 'assets/searchIconOff.png',
                     textEditingController: apartmentController,

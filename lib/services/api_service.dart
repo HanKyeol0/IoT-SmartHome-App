@@ -32,7 +32,32 @@ class ApiService {
   //get parking lot and map
   static const String getParkingLotMap = 'api/parkingmap/app';
 
-  //getApartment
+  //getApartment - fetch Apartment list
+  static Future<List<ApartmentList>?> getApartmentList() async {
+    List<ApartmentList> apartmentList = [];
+
+    final url = Uri.parse('$baseurl/$getApartment');
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final apartments = jsonDecode(response.body);
+      for (var apartment in apartments['data'][0]) {
+        apartmentList.add(ApartmentList.fromJson(apartment));
+      }
+      return apartmentList;
+    } else if (response.statusCode == 500) {
+      print('${response.statusCode}: ${response.body}');
+    } else {
+      print('nothing happened');
+    }
+
+    return null;
+  }
+
+  //getApartment - check Apartment ID
   static Future<int?> checkApartment(String value) async {
     final url = Uri.parse('$baseurl/$getApartment');
     final response = await http.get(url);

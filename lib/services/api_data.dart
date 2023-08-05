@@ -119,6 +119,23 @@ class AccessLogList {
   }
 }
 
+class ApartmentList {
+  final int id;
+  final String name;
+
+  ApartmentList({
+    required this.id,
+    required this.name,
+  });
+
+  factory ApartmentList.fromJson(Map<String, dynamic> apartment) {
+    return ApartmentList(
+      id: apartment['id'],
+      name: apartment['name'],
+    );
+  }
+}
+
 class CarList {
   final int id;
   final String number;
