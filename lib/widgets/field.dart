@@ -69,7 +69,6 @@ class _DropdownInputState extends State<DropdownInput> {
                 suffixIcon: GestureDetector(
                   onTap: () {
                     setState(() {
-                      //widget.textEditingController.clear();
                       toggleDropdown();
                     });
                   },
@@ -77,8 +76,8 @@ class _DropdownInputState extends State<DropdownInput> {
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Image.asset(
                       widget.textEditingController.text.isEmpty
-                          ? widget.searchIconOn
-                          : widget.searchIconOff,
+                          ? widget.searchIconOff
+                          : widget.searchIconOn,
                       width: 10,
                       height: 10,
                     ),
@@ -90,7 +89,7 @@ class _DropdownInputState extends State<DropdownInput> {
                   selectedValue = null; // Clear the selected value
                 });
                 widget.onTextChanged(value);
-                if (value.isNotEmpty) {
+                /*if (value.isNotEmpty) {
                   setState(() {
                     showDropdown = true;
                   });
@@ -98,7 +97,7 @@ class _DropdownInputState extends State<DropdownInput> {
                   setState(() {
                     showDropdown = false;
                   });
-                }
+                }*/
               },
             ),
           ),
