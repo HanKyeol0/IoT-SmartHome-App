@@ -27,6 +27,7 @@ class DropdownInput extends StatefulWidget {
 class _DropdownInputState extends State<DropdownInput> {
   String? selectedValue;
   bool showDropdown = false;
+  bool searchIconActivated = false;
 
   @override
   void initState() {
@@ -75,9 +76,10 @@ class _DropdownInputState extends State<DropdownInput> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Image.asset(
-                      widget.textEditingController.text.isEmpty
-                          ? widget.searchIconOff
-                          : widget.searchIconOn,
+                      (!widget.textEditingController.text.isEmpty &&
+                              !showDropdown)
+                          ? widget.searchIconOn
+                          : widget.searchIconOff,
                       width: 10,
                       height: 10,
                     ),
@@ -89,15 +91,13 @@ class _DropdownInputState extends State<DropdownInput> {
                   selectedValue = null; // Clear the selected value
                 });
                 widget.onTextChanged(value);
-                /*if (value.isNotEmpty) {
-                  setState(() {
-                    showDropdown = true;
-                  });
+                if (value.isNotEmpty) {
+                  null;
                 } else {
                   setState(() {
                     showDropdown = false;
                   });
-                }*/
+                }
               },
             ),
           ),
