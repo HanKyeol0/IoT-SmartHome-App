@@ -69,7 +69,7 @@ class _DropdownInputState extends State<DropdownInput> {
                 suffixIcon: GestureDetector(
                   onTap: () {
                     setState(() {
-                      widget.textEditingController.clear();
+                      //widget.textEditingController.clear();
                       toggleDropdown();
                     });
                   },
@@ -130,6 +130,7 @@ class _DropdownInputState extends State<DropdownInput> {
                         widget.textEditingController.text = item;
                         showDropdown = false;
                       });
+                      widget.onTextChanged(item);
                     },
                   ),
                 );
