@@ -21,7 +21,6 @@ class _Login01State extends State<Login01> {
   bool isClickable = false;
   int? apartmentID;
 
-  Future<List<ApartmentList>?> apartments = ApiService.getApartmentList();
   List<String> apartmentList = [];
 
   @override
@@ -39,17 +38,29 @@ class _Login01State extends State<Login01> {
   @override
   void initState() {
     super.initState();
-    loadApartmentList();
   }
 
   Future<void> loadApartmentList() async {
-    final fetchedApartments = await apartments;
+    print('function called');
+    // Here we fetch the data first
+    List<ApartmentList>? fetchedApartments =
+        await ApiService.getApartmentList(apartmentController.text);
+
     if (fetchedApartments != null) {
+      List<String> tempApartmentList = [];
       for (var fetchedApartment in fetchedApartments) {
         final apartment = fetchedApartment.name;
-        apartmentList.add(apartment);
+        tempApartmentList.add(apartment);
       }
+
+      // After the data is fetched and processed, we call setState
+      setState(() {
+        apartmentList = tempApartmentList;
+      });
     }
+
+    print(apartmentController.text);
+    print(apartmentList);
   }
 
   void onPressedNext() async {
@@ -194,6 +205,7 @@ class _Login01State extends State<Login01> {
                     searchIconOff: 'assets/searchIconOff.png',
                     textEditingController: apartmentController,
                     onTextChanged: onTextChanged,
+                    searchApartment: loadApartmentList,
                   ),
                   const SizedBox(height: 11),
                   //내용 저장

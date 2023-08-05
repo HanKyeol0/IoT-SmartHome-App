@@ -9,6 +9,7 @@ class DropdownInput extends StatefulWidget {
   final String searchIconOff;
   final TextEditingController textEditingController;
   final Function(String) onTextChanged;
+  final Function searchApartment;
 
   const DropdownInput({
     Key? key,
@@ -18,6 +19,7 @@ class DropdownInput extends StatefulWidget {
     required this.searchIconOff,
     required this.textEditingController,
     required this.onTextChanged,
+    required this.searchApartment,
   }) : super(key: key);
 
   @override
@@ -68,7 +70,8 @@ class _DropdownInputState extends State<DropdownInput> {
                 ),
                 border: InputBorder.none,
                 suffixIcon: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await widget.searchApartment();
                     setState(() {
                       toggleDropdown();
                     });
@@ -107,7 +110,7 @@ class _DropdownInputState extends State<DropdownInput> {
           ),
           if (showDropdown)
             ListView.separated(
-              padding: EdgeInsets.only(top: 0, bottom: 5),
+              padding: EdgeInsets.only(top: 0, bottom: 0),
               shrinkWrap: true,
               itemCount: widget.items.length,
               separatorBuilder: (context, index) => const Divider(
