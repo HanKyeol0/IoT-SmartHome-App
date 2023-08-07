@@ -49,7 +49,7 @@ class _DropdownInputState extends State<DropdownInput> {
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        border: widget.textEditingController.text.isEmpty
+        border: (widget.textEditingController.text.isEmpty || !showDropdown)
             ? Border.all(color: darkGrey, width: 1)
             : Border.all(color: wColor, width: 1),
         color: grey,
@@ -79,10 +79,10 @@ class _DropdownInputState extends State<DropdownInput> {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10.0),
                     child: Image.asset(
-                      (!widget.textEditingController.text.isEmpty &&
-                              !showDropdown)
-                          ? widget.searchIconOn
-                          : widget.searchIconOff,
+                      !widget.textEditingController.text.isEmpty
+                          //&&!showDropdown
+                          ? widget.searchIconOff
+                          : widget.searchIconOn,
                       width: 10,
                       height: 10,
                     ),
@@ -91,11 +91,16 @@ class _DropdownInputState extends State<DropdownInput> {
               ),
               onChanged: (value) {
                 setState(() {
+                  widget.onTextChanged;
+                  widget.searchApartment();
                   selectedValue = null; // Clear the selected value
                 });
                 widget.onTextChanged(value);
                 if (value.isNotEmpty) {
-                  null;
+                  setState(() {
+                    showDropdown = true;
+                  });
+                  //null;
                 } else {
                   setState(() {
                     showDropdown = false;
@@ -119,6 +124,36 @@ class _DropdownInputState extends State<DropdownInput> {
               ),
               itemBuilder: (context, index) {
                 final item = widget.items[index];
+                /*
+                // Extract the search text and item text for easier access.
+                final String searchText = widget.textEditingController.text;
+                final String itemText = item;
+
+                // Find the start and end indices of the searchText in the itemText.
+                int startIndex = itemText.indexOf(searchText);
+                int endIndex = startIndex + searchText.length;
+
+                // Create TextSpans for segments before, within, and after the matched substring.
+                List<TextSpan> textSpans = [];
+                if (startIndex != -1) {
+                  // Means we found a match
+                  if (startIndex > 0) {
+                    textSpans.add(TextSpan(
+                        text: itemText.substring(0, startIndex),
+                        style: TextStyle(color: grey)));
+                  }
+                  textSpans.add(TextSpan(
+                      text: itemText.substring(startIndex, endIndex),
+                      style: TextStyle(color: wColor)));
+                  if (endIndex < itemText.length) {
+                    textSpans.add(TextSpan(
+                        text: itemText.substring(endIndex),
+                        style: TextStyle(color: grey)));
+                  }
+                } else {
+                  textSpans.add(
+                      TextSpan(text: itemText, style: TextStyle(color: grey)));
+                }*/
                 return Container(
                   height: 56,
                   child: ListTile(
