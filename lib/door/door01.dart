@@ -81,7 +81,7 @@ class _Door01State extends State<Door01> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   FlutterBlePeripheral blePeripheral = FlutterBlePeripheral();
   StreamSubscription<List<ScanResult>>? scanSubscription;
-  bool isGateDetected = false;
+  bool isGateDetected = true;
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
   GlobalData globalData = GlobalData();
   List<BleDevice> devices = [];
@@ -118,6 +118,10 @@ class _Door01State extends State<Door01> {
     setState(() {
       isGateDetected = true;
     });
+  }
+
+  Future<void> turnBluetooth() async {
+    if (!await flutterBlue.isOn) {}
   }
 
   // scan BLE devices and pick one that has the highest RSSI
@@ -171,7 +175,7 @@ class _Door01State extends State<Door01> {
 
       if (maxRssiDevice != null) {
         // ignore: avoid_print
-        gateDetection();
+        //gateDetection();
         print(maxRssiDevice);
       } else {
         // ignore: avoid_print
@@ -185,45 +189,6 @@ class _Door01State extends State<Door01> {
       });
     });
   }
-
-  /*Future<void> bleAdvertise() async {
-    var data = [
-      0x4C,
-      0x55,
-      0x42,
-      0x00,
-      0x21,
-      0x04,
-      0xB0,
-      0x00,
-      0x00,
-      0x04,
-      0x43,
-      0x00,
-      0xB1,
-      0x41,
-      0x0A,
-      0x4F,
-      0x50,
-      0x41,
-      0x00,
-      0x01,
-      0x00,
-      0x00
-    ];
-    try {
-      AdvertiseData? advertiseData =
-          AdvertiseData(manufacturerData: Uint8List.fromList(data));
-      print('here is the data: ${Uint16List.fromList(data)}');
-      await FlutterBlePeripheral().start(
-        advertiseData: advertiseData,
-        //advertiseSetParameters: advertiseSetParameters,
-      );
-    } catch (e) {
-      // ignore: avoid_print
-      print('Error during BLE advertisement: $e');
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -340,7 +305,7 @@ class _Door01State extends State<Door01> {
               ),
             ],
           ),
-          GateDetection(isDetected: isGateDetected),
+          //GateDetection(isDetected: isGateDetected),
         ],
       ),
     );
