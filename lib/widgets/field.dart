@@ -124,7 +124,7 @@ class _DropdownInputState extends State<DropdownInput> {
               ),
               itemBuilder: (context, index) {
                 final item = widget.items[index];
-                /*
+
                 // Extract the search text and item text for easier access.
                 final String searchText = widget.textEditingController.text;
                 final String itemText = item;
@@ -140,26 +140,28 @@ class _DropdownInputState extends State<DropdownInput> {
                   if (startIndex > 0) {
                     textSpans.add(TextSpan(
                         text: itemText.substring(0, startIndex),
-                        style: TextStyle(color: grey)));
+                        style: contentText(color: lightGrey, fontSize: 16)));
                   }
                   textSpans.add(TextSpan(
                       text: itemText.substring(startIndex, endIndex),
-                      style: TextStyle(color: wColor)));
+                      style: contentText(color: wColor, fontSize: 16)));
                   if (endIndex < itemText.length) {
                     textSpans.add(TextSpan(
                         text: itemText.substring(endIndex),
-                        style: TextStyle(color: grey)));
+                        style: contentText(color: lightGrey, fontSize: 16)));
                   }
                 } else {
-                  textSpans.add(
-                      TextSpan(text: itemText, style: TextStyle(color: grey)));
-                }*/
+                  textSpans.add(TextSpan(
+                      text: itemText,
+                      style: contentText(color: lightGrey, fontSize: 16)));
+                }
                 return Container(
                   height: 56,
                   child: ListTile(
-                    title: Text(
-                      item,
-                      style: contentText(color: lightGrey),
+                    title: RichText(
+                      text: TextSpan(
+                        children: textSpans,
+                      ),
                     ),
                     onTap: () {
                       setState(() {
