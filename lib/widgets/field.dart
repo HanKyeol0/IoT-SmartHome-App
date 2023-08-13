@@ -489,7 +489,7 @@ class _CarInputState extends State<CarInput> {
                   style: const TextStyle(color: wColor),
                   decoration: InputDecoration(
                     hintText: widget.placeholder,
-                    hintStyle: contentText(color: lightGrey),
+                    hintStyle: contentText(color: wColor),
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 15,
