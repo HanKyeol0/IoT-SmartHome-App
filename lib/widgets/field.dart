@@ -450,13 +450,15 @@ class CarInput extends StatefulWidget {
 }
 
 class _CarInputState extends State<CarInput> {
-  String? selectedValue;
+  late String selectedValue;
   bool showDropdown = false;
 
   @override
   void initState() {
     super.initState();
-    selectedValue = null;
+    selectedValue = widget.textEditingController.text.isEmpty
+        ? widget.placeholder
+        : widget.textEditingController.text;
   }
 
   void toggleDropdown() {
@@ -525,13 +527,18 @@ class _CarInputState extends State<CarInput> {
             ListView.separated(
               padding: EdgeInsets.only(top: 0, bottom: 5),
               shrinkWrap: true,
-              itemCount: widget.items.length,
+              itemCount: widget.items
+                  .where((item) => item != widget.textEditingController.text)
+                  .length,
               separatorBuilder: (context, index) => const Divider(
                 color: lightGrey,
                 thickness: 0.5,
               ),
               itemBuilder: (context, index) {
-                final item = widget.items[index];
+                final filteredItems = widget.items
+                    .where((item) => item != widget.textEditingController.text)
+                    .toList();
+                final item = filteredItems[index];
                 return SizedBox(
                   height: 56,
                   child: ListTile(
