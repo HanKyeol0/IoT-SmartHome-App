@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
@@ -10,6 +12,9 @@ import '../widgets/field.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:luxrobo/services/api_data.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_device_identifier/flutter_device_identifier.dart';
+//import 'package:platform_device_id/platform_device_id.dart';
 
 class Login02 extends StatefulWidget {
   final int? apartmentID;
@@ -30,12 +35,15 @@ class _Login02State extends State<Login02> {
   TextEditingController hoController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController loginCodeController = TextEditingController();
-
   bool isValid = false;
+  String _platformVersion = 'Unknown';
+  String _serialNumber = "--";
 
   @override
   void initState() {
     super.initState();
+    //initPlatformState();
+    getDeviceUUID();
 
     isDongEmpty = dongController.text.isEmpty;
     isHoEmpty = hoController.text.isEmpty;
@@ -43,7 +51,11 @@ class _Login02State extends State<Login02> {
     isLoginCodeEmpty = loginCodeController.text.isEmpty;
 
     // ignore: unused_local_variable
-    Future<String?> macAddress = getWifiBSSID();
+    //Future<String?> macAddress = getWifiBSSID();
+
+    // ignore: unused_local_variable
+    //Future<String?> deviceUUID = getDeviceUUID();
+    //print('$deviceUUID');
   }
 
   void onText1(String value) {
@@ -77,9 +89,91 @@ class _Login02State extends State<Login02> {
     return wifiBSSID;
   }
 
+  Future<String?> getDeviceUUID() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.deviceInfo;
+      //String takeDeviceID = androidInfo.
+      print('here is the device info hello): ${androidInfo.data}');
+      /*print('board: ${androidInfo.board}');
+      print('bootloader: ${androidInfo.bootloader}');
+      print('brand: ${androidInfo.brand}');
+      print('device: ${androidInfo.device}');
+      print('display: ${androidInfo.display}');
+      print('displayMetrics: ${androidInfo.displayMetrics}');
+      print('fingerprint: ${androidInfo.fingerprint}');
+      print('hardware: ${androidInfo.hardware}');
+      print('host: ${androidInfo.host}');
+      print('id: ${androidInfo.id}');
+      print('isPhysicalDevice: ${androidInfo.isPhysicalDevice}');
+      print('manufacturer: ${androidInfo.manufacturer}');
+      print('model: ${androidInfo.model}');
+      print('product: ${androidInfo.product}');
+      print('serialNumber: ${androidInfo.serialNumber}');
+      print('supported32BitAbis: ${androidInfo.supported32BitAbis}');
+      print('supported64BitAbis: ${androidInfo.supported64BitAbis}');
+      print('supportedAbis: ${androidInfo.supportedAbis}');
+      print('systemFeatures: ${androidInfo.systemFeatures}');
+      print('tags: ${androidInfo.tags}');
+      print('type: ${androidInfo.type}');
+      print('version: ${androidInfo.version}');
+      print('data: ${androidInfo.data}');*/
+      return null;
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      //print(iosInfo);
+      return iosInfo.identifierForVendor;
+    }
+    return 'Unknown UUID';
+  }
+
+  /*Future<String?> getDeviceId() async {
+    final String? deviceId = await PlatformDeviceId.getDeviceId;
+    print('here is the device id : $deviceId');
+    return deviceId;
+  }*/
+
+  Future<String?> getID() async {
+    const MethodChannel _deviceID = MethodChannel('com.example.luxrobo');
+
+    final Future<String?> uuid = _deviceID.invokeMethod<String?>('getId');
+    print('here is the device UUID $uuid');
+    return uuid;
+  }
+
+  Future<void> initPlatformState() async {
+    String platformVersion;
+    String androidID = await FlutterDeviceIdentifier.androidID;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    // We also handle the message potentially returning null.
+    print('android ID: $androidID');
+    try {
+      platformVersion = await FlutterDeviceIdentifier.platformVersion ??
+          'Unknown platform version';
+    } on PlatformException {
+      platformVersion = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
+
+    await FlutterDeviceIdentifier.requestPermission();
+    _serialNumber = await FlutterDeviceIdentifier.serialCode;
+  }
+
   //login function
   Future<UserData?> onPressedLogin() async {
-    final String? macAddress = await getWifiBSSID();
+    //final String? macAddress = await getWifiBSSID();
+    final String? deviceId = await getDeviceUUID();
+    //final String? deviceId = await getDeviceId();
+    //final String? deviceId = await getID();
 
     final response = await http.post(
       Uri.parse('http://13.125.92.61:8080/api/auth'),
@@ -99,9 +193,9 @@ class _Login02State extends State<Login02> {
       final userData = UserData.fromJson(jsonDecode(response.body));
       GlobalData().setUserData(userData);
 
-      if (userData.mac != macAddress) {
+      if (userData.mac != deviceId) {
         final updateMacResult = await ApiService.updateMacAddress(
-            macAddress, dongController.text, hoController.text);
+            deviceId, dongController.text, hoController.text);
         if (updateMacResult == 0) {
           print('mac update completed');
           null;
@@ -483,6 +577,34 @@ class _Login02State extends State<Login02> {
           ],
         ),
         backgroundColor: black,
+      ),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
+  static const MethodChannel _methodChannel = MethodChannel('deviceId');
+  final uuid = _methodChannel.invokeMethod<String?>('getId');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('UUID Example'),
+      ),
+      body: Center(
+        child: FutureBuilder<String?>(
+          future: _methodChannel.invokeMethod<String?>('getId'),
+          builder: (_, snapshot) {
+            if (snapshot.hasData) {
+              return Text('${snapshot.data}');
+            }
+
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
     );
   }

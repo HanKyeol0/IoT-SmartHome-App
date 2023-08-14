@@ -101,12 +101,18 @@ class _Door01State extends State<Door01> {
     });*/
   }
 
-  void advertiseTest() {
+  Future<void> accessGate() async {
     beaconBroadcast
         .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
         .setMajorId(1)
         .setMinorId(100)
         .start();
+    print('start');
+
+    Future.delayed(Duration(seconds: 10), () {
+      beaconBroadcast.stop();
+      print('end');
+    });
   }
 
   scanAdvertise() {
@@ -296,7 +302,7 @@ class _Door01State extends State<Door01> {
                       const SizedBox(height: 30),
                       GateAccess(
                         isDetected: isGateDetected,
-                        onPressed: startScan,
+                        onPressed: accessGate,
                       ),
                       const SizedBox(height: 100),
                     ],
@@ -340,3 +346,72 @@ void advertiseToCCTV(String macAddress, String deviceId) {
     return;
   }
 }
+
+
+
+/*
+Future<void> startScan() async {
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        //print(result);
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            // Lux device code
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi);
+            }
+          }
+        });
+      }
+    });
+
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      /*beaconBroadcast
+          .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+          .setMajorId(1)
+          .setMinorId(100)
+          .start();
+      print('start');*/
+      try {
+        await FlutterBlePeripheral()
+            .start(
+          advertiseData: advertiseData,
+          advertiseSetParameters: AdvertiseSetParameters(),
+        )
+            .then((_) {
+          print('hello');
+        });
+      } catch (e) {
+        print(e);
+      }
+      scanSubscription?.cancel();
+
+      if (maxRssiDevice != null) {
+        // ignore: avoid_print
+        //gateDetection();
+        print(maxRssiDevice);
+      } else {
+        // ignore: avoid_print
+        print("No device found");
+      }
+
+      Future.delayed(Duration(seconds: 10), () {
+        FlutterBlePeripheral().stop();
+        //beaconBroadcast.stop();
+        print('end');
+      });
+    });
+  }
+  */
