@@ -450,20 +450,26 @@ class CarInput extends StatefulWidget {
 }
 
 class _CarInputState extends State<CarInput> {
-  late String selectedValue;
+  late String? selectedValue;
+  late String? firstCar;
   bool showDropdown = false;
 
   @override
   void initState() {
     super.initState();
-    selectedValue = widget.textEditingController.text.isEmpty
-        ? widget.placeholder
-        : widget.textEditingController.text;
+    setPlaceholder();
   }
 
   void toggleDropdown() {
     setState(() {
       showDropdown = !showDropdown;
+    });
+  }
+
+  void setPlaceholder() async {
+    setState(await () {
+      selectedValue = widget.placeholder;
+      firstCar = widget.placeholder;
     });
   }
 
@@ -483,10 +489,10 @@ class _CarInputState extends State<CarInput> {
           SizedBox(
             height: 54,
             child: GestureDetector(
-              onTap: toggleDropdown, // Show the dropdown on tap
+              onTap: toggleDropdown,
               child: AbsorbPointer(
                 child: TextField(
-                  readOnly: true, // Make the TextField read-only
+                  readOnly: true,
                   controller: widget.textEditingController,
                   style: const TextStyle(color: wColor),
                   decoration: InputDecoration(
@@ -528,7 +534,7 @@ class _CarInputState extends State<CarInput> {
               padding: EdgeInsets.only(top: 0, bottom: 5),
               shrinkWrap: true,
               itemCount: widget.items
-                  .where((item) => item != widget.textEditingController.text)
+                  .where((item) => (item != firstCar && item != selectedValue))
                   .length,
               separatorBuilder: (context, index) => const Divider(
                 color: lightGrey,
@@ -536,7 +542,8 @@ class _CarInputState extends State<CarInput> {
               ),
               itemBuilder: (context, index) {
                 final filteredItems = widget.items
-                    .where((item) => item != widget.textEditingController.text)
+                    .where(
+                        (item) => (item != firstCar && item != selectedValue))
                     .toList();
                 final item = filteredItems[index];
                 return SizedBox(
@@ -554,8 +561,8 @@ class _CarInputState extends State<CarInput> {
                         selectedValue = item;
                         widget.textEditingController.text = item;
                         showDropdown = false;
+                        firstCar = null;
                       });
-
                       if (widget.onItemSelected != null) {
                         widget.onItemSelected!(context);
                       }
