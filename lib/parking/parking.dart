@@ -44,6 +44,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
         final userCar = car.number;
         carList.add(userCar);
       }
+      setState(() {});
     }
   }
 
@@ -173,7 +174,8 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                       const SizedBox(height: 10),
                       CarInput(
                         items: carList,
-                        placeholder: '주차하실 차량을 선택해주세요.',
+                        placeholder:
+                            carList.isNotEmpty ? carList[0] : '등록된 차량이 없습니다.',
                         onTextChanged: onCarChanged,
                         textEditingController: parkingCarController,
                         onItemSelected: showParkingLocationSavingDialog,

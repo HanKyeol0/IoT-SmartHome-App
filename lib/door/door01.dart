@@ -159,13 +159,13 @@ class _Door01State extends State<Door01> {
     });
 
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
-      /*beaconBroadcast
+      beaconBroadcast
           .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
           .setMajorId(1)
           .setMinorId(100)
           .start();
-      print('start');*/
-      try {
+      print('start');
+      /*try {
         await FlutterBlePeripheral()
             .start(
           advertiseData: advertiseData,
@@ -177,7 +177,7 @@ class _Door01State extends State<Door01> {
       } catch (e) {
         print(e);
       }
-      scanSubscription?.cancel();
+      scanSubscription?.cancel();*/
 
       if (maxRssiDevice != null) {
         // ignore: avoid_print
@@ -189,8 +189,8 @@ class _Door01State extends State<Door01> {
       }
 
       Future.delayed(Duration(seconds: 10), () {
-        FlutterBlePeripheral().stop();
-        //beaconBroadcast.stop();
+        //FlutterBlePeripheral().stop();
+        beaconBroadcast.stop();
         print('end');
       });
     });
