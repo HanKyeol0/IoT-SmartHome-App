@@ -142,7 +142,6 @@ class _Login01State extends State<Login01> {
         return Future.value(false);
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             const SizedBox(height: 111),
@@ -196,46 +195,48 @@ class _Login01State extends State<Login01> {
             ),
             //아파트 입력
             Expanded(
-              child: Column(
-                children: [
-                  DropdownInput(
-                    placeholder: '아파트 명을 입력해주세요.',
-                    items: apartmentList,
-                    searchIconOn: 'assets/searchIconOn.png',
-                    searchIconOff: 'assets/searchIconOff.png',
-                    textEditingController: apartmentController,
-                    onTextChanged: onTextChanged,
-                    searchApartment: loadApartmentList,
-                  ),
-                  const SizedBox(height: 11),
-                  //내용 저장
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Row(
-                      children: [
-                        Expanded(child: Container()),
-                        const Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Row(
-                            children: [
-                              BlueCheckbox(),
-                              SizedBox(width: 11),
-                              Text(
-                                '내용 저장',
-                                style: TextStyle(
-                                  fontFamily: 'luxFont',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13,
-                                  color: textGrey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    DropdownInput(
+                      placeholder: '아파트 명을 입력해주세요.',
+                      items: apartmentList,
+                      searchIconOn: 'assets/searchIconOn.png',
+                      searchIconOff: 'assets/searchIconOff.png',
+                      textEditingController: apartmentController,
+                      onTextChanged: onTextChanged,
+                      searchApartment: loadApartmentList,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 11),
+                    //내용 저장
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Row(
+                        children: [
+                          Expanded(child: Container()),
+                          const Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Row(
+                              children: [
+                                BlueCheckbox(),
+                                SizedBox(width: 11),
+                                Text(
+                                  '내용 저장',
+                                  style: TextStyle(
+                                    fontFamily: 'luxFont',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 13,
+                                    color: textGrey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             RoundNextButton(
