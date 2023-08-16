@@ -435,6 +435,7 @@ class CarInput extends StatefulWidget {
   final TextEditingController textEditingController;
   final Function(String) onTextChanged;
   final Function(BuildContext)? onItemSelected;
+  final Color placeholderColor;
 
   const CarInput({
     Key? key,
@@ -443,6 +444,7 @@ class CarInput extends StatefulWidget {
     required this.textEditingController,
     required this.onTextChanged,
     this.onItemSelected,
+    required this.placeholderColor,
   }) : super(key: key);
 
   @override
@@ -497,7 +499,7 @@ class _CarInputState extends State<CarInput> {
                   style: const TextStyle(color: wColor),
                   decoration: InputDecoration(
                     hintText: widget.placeholder,
-                    hintStyle: contentText(color: wColor),
+                    hintStyle: contentText(color: widget.placeholderColor),
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 15,

@@ -41,6 +41,7 @@ dependencies:
   flutter_ble_peripheral: ^1.2.0
   flutter_native_splash: ^2.3.1
   flutter_device_identifier: ^0.0.1
+  flutter_beacon: ^0.5.1
   #platform_device_id: ^1.0.1
 
 #flutter_native_splash:

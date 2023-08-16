@@ -190,6 +190,8 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                               onTextChanged: onCarChanged,
                               textEditingController: parkingCarController,
                               onItemSelected: showParkingLocationSavingDialog,
+                              placeholderColor:
+                                  loadedCarList.isNotEmpty ? wColor : lightGrey,
                             ),
                             const SizedBox(height: 74),
                             const Expanded(child: TouchParking()),
@@ -264,6 +266,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                               textEditingController:
                                   preferredParkingLotController,
                               onTextChanged: onParkingLotChanged,
+                              placeholderColor: lightGrey,
                             ),
                             const SizedBox(height: 30),
                             Align(

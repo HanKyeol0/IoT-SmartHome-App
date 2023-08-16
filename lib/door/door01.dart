@@ -86,6 +86,28 @@ class _Door01State extends State<Door01> {
   GlobalData globalData = GlobalData();
   List<BleDevice> devices = [];
   BeaconBroadcast beaconBroadcast = BeaconBroadcast();
+  String customData = Uint8List.fromList([
+    0x44,
+    0x00,
+    0x21,
+    0x04,
+    0xB0,
+    0x00,
+    0x00,
+    0x04,
+    0x43,
+    0x00,
+    0xB1,
+    0x41,
+    0x0A,
+    0x4F,
+    0x50,
+    0x41,
+    0x00,
+    0x01,
+    0x00,
+    0xAF
+  ]).toString();
 
   @override
   void initState() {
@@ -103,9 +125,12 @@ class _Door01State extends State<Door01> {
 
   Future<void> accessGate() async {
     beaconBroadcast
-        .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+        .setUUID(
+            '44002104B00000044300B1410A4F504100010000') //customData //44-00-21-04-B0-00-00-04-43-00-B1-41-0A-4F-50-41-00-01-00-00
         .setMajorId(1)
         .setMinorId(100)
+        .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
+        .setManufacturerId(0x4C55)
         .start();
     print('start');
 

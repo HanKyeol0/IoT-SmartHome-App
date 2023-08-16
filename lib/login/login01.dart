@@ -142,6 +142,7 @@ class _Login01State extends State<Login01> {
         return Future.value(false);
       },
       child: Scaffold(
+        //resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             const SizedBox(height: 111),
