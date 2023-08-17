@@ -13,7 +13,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
 
   final screens = [
-    const Door01(),
+    const FlutterBlePeripheralExample(),
   ];
 
   void _onItemTapped(value) {

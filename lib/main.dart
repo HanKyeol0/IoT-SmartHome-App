@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login01': (context) => const Login01(),
         '/login02': (context) => const Login02(),
-        '/door01': (context) => const Door01(),
+        '/door01': (context) => const FlutterBlePeripheralExample(),
         '/door02': (context) => const Door02(),
         '/parking': (context) => const Parking(),
         '/bell': (context) => const Bell(),
