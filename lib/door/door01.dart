@@ -23,31 +23,29 @@ Future<String?> getWifiBSSID() async {
 final AdvertiseData advertiseData = AdvertiseData(
   includeDeviceName: true,
   localName: 'Luxrobo test',
-  serviceUuid: 'bf27730d-860a-4e09-889c-2d8b6a9e0fe7',
-  manufacturerId: 1234,
+  serviceUuid: '44002104B00000044300B1410A4F504100010000',
+  manufacturerId: 0x4C55,
   manufacturerData: Uint8List.fromList([
-    0x4C,
-    0x55,
-    0x42,
+    0x44,
     0x00,
-    0xB4,
-    0xA9,
-    0x4F,
-    0x5E,
-    0x07,
-    0x17,
+    0x21,
+    0x04,
+    0xB0,
+    0x00,
+    0x00,
+    0x04,
     0x43,
     0x00,
     0xB1,
     0x41,
-    0x0C,
+    0x0A,
     0x4F,
     0x50,
     0x41,
     0x00,
     0x01,
     0x00,
-    0x00,
+    0xAF,
   ]),
 );
 
@@ -86,7 +84,7 @@ class _Door01State extends State<Door01> {
   GlobalData globalData = GlobalData();
   List<BleDevice> devices = [];
   BeaconBroadcast beaconBroadcast = BeaconBroadcast();
-  String customData = Uint8List.fromList([
+  final customData = Uint8List.fromList([
     0x44,
     0x00,
     0x21,
@@ -103,11 +101,7 @@ class _Door01State extends State<Door01> {
     0x4F,
     0x50,
     0x41,
-    0x00,
-    0x01,
-    0x00,
-    0xAF
-  ]).toString();
+  ]);
 
   @override
   void initState() {
@@ -121,16 +115,46 @@ class _Door01State extends State<Door01> {
       beaconBroadcast.stop();
       print('end');
     });*/
+    //String bleUUID = uuidSetting();
+  }
+
+  String uuidSetting() {
+    final customData = Uint8List.fromList([
+      0x44,
+      0x00,
+      0x21,
+      0x04,
+      0xB0,
+      0x00,
+      0x00,
+      0x04,
+      0x43,
+      0x00,
+      0xB1,
+      0x41,
+      0x0A,
+      0x4F,
+      0x50,
+      0x41,
+      0x00,
+      0x01,
+      0x00,
+      0xAF,
+    ]);
+
+    final stringValue = String.fromCharCodes(customData);
+    return stringValue;
   }
 
   Future<void> accessGate() async {
+    final bleUUID = await String.fromCharCodes(customData);
     beaconBroadcast
         .setUUID(
-            '44002104B00000044300B1410A4F504100010000') //customData //44-00-21-04-B0-00-00-04-43-00-B1-41-0A-4F-50-41-00-01-00-00
+            '4C5544002104B00000044300B1410A4F504100010000') //'44002104B00000044300B1410A4F504100010000' //customData //44-00-21-04-B0-00-00-04-43-00-B1-41-0A-4F-50-41-00-01-00-00
         .setMajorId(1)
         .setMinorId(100)
-        .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
-        .setManufacturerId(0x4C55)
+        //.setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
+        //.setManufacturerId(0x4C55)
         .start();
     print('start');
 
@@ -218,6 +242,42 @@ class _Door01State extends State<Door01> {
         beaconBroadcast.stop();
         print('end');
       });
+    });
+  }
+
+  Future<void> beaconBroadCastUsing() async {
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      beaconBroadcast
+          .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
+          .setMajorId(1)
+          .setMinorId(100)
+          .start();
+      print('start');
+
+      Future.delayed(Duration(seconds: 10), () {
+        beaconBroadcast.stop();
+        print('end');
+      });
+    });
+  }
+
+  Future<void> peripheralBleUsing() async {
+    try {
+      await FlutterBlePeripheral()
+          .start(
+        advertiseData: advertiseData,
+        //advertiseSetParameters: AdvertiseSetParameters(),
+      )
+          .then((_) {
+        print('hello peripheral');
+      });
+    } catch (e) {
+      print('this is the error : $e');
+    }
+
+    Future.delayed(Duration(seconds: 10), () {
+      FlutterBlePeripheral().stop();
+      print('peripheral end');
     });
   }
 
@@ -327,7 +387,7 @@ class _Door01State extends State<Door01> {
                       const SizedBox(height: 30),
                       GateAccess(
                         isDetected: isGateDetected,
-                        onPressed: accessGate,
+                        onPressed: peripheralBleUsing,
                       ),
                       const SizedBox(height: 100),
                     ],
