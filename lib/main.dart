@@ -7,6 +7,8 @@ import 'package:luxrobo/setting/setting02.dart';
 import 'package:luxrobo/splash/splash_screen.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/dialog.dart';
+import 'door/door01_android.dart';
+import 'door/door01_test.dart';
 import 'door/door01.dart';
 import 'door/door02.dart';
 import 'login/login01.dart';
@@ -35,7 +37,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login01': (context) => const Login01(),
         '/login02': (context) => const Login02(),
-        '/door01': (context) => const FlutterBlePeripheralExample(),
+        '/door01': (context) => const Door01(),
+        '/door01_test': (context) => const FlutterBlePeripheralExample(),
+        '/door01_android': (context) => const Door01Android(),
         '/door02': (context) => const Door02(),
         '/parking': (context) => const Parking(),
         '/bell': (context) => const Bell(),

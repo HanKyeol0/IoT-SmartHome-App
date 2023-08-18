@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luxrobo/styles.dart';
+
 import '../door/door01.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -13,7 +14,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
 
   final screens = [
-    const FlutterBlePeripheralExample(),
+    const Door01(),
   ];
 
   void _onItemTapped(value) {

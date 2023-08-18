@@ -13,7 +13,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:luxrobo/services/api_data.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter_device_identifier/flutter_device_identifier.dart';
 //import 'package:platform_device_id/platform_device_id.dart';
 
 class Login02 extends StatefulWidget {
@@ -36,26 +35,16 @@ class _Login02State extends State<Login02> {
   TextEditingController nameController = TextEditingController();
   TextEditingController loginCodeController = TextEditingController();
   bool isValid = false;
-  String _platformVersion = 'Unknown';
-  String _serialNumber = "--";
 
   @override
   void initState() {
     super.initState();
-    //initPlatformState();
     getDeviceUUID();
 
     isDongEmpty = dongController.text.isEmpty;
     isHoEmpty = hoController.text.isEmpty;
     isNameEmpty = nameController.text.isEmpty;
     isLoginCodeEmpty = loginCodeController.text.isEmpty;
-
-    // ignore: unused_local_variable
-    //Future<String?> macAddress = getWifiBSSID();
-
-    // ignore: unused_local_variable
-    //Future<String?> deviceUUID = getDeviceUUID();
-    //print('$deviceUUID');
   }
 
   void onText1(String value) {
@@ -94,31 +83,7 @@ class _Login02State extends State<Login02> {
 
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.deviceInfo;
-      //String takeDeviceID = androidInfo.
       print('here is the device info hello): ${androidInfo.data}');
-      /*print('board: ${androidInfo.board}');
-      print('bootloader: ${androidInfo.bootloader}');
-      print('brand: ${androidInfo.brand}');
-      print('device: ${androidInfo.device}');
-      print('display: ${androidInfo.display}');
-      print('displayMetrics: ${androidInfo.displayMetrics}');
-      print('fingerprint: ${androidInfo.fingerprint}');
-      print('hardware: ${androidInfo.hardware}');
-      print('host: ${androidInfo.host}');
-      print('id: ${androidInfo.id}');
-      print('isPhysicalDevice: ${androidInfo.isPhysicalDevice}');
-      print('manufacturer: ${androidInfo.manufacturer}');
-      print('model: ${androidInfo.model}');
-      print('product: ${androidInfo.product}');
-      print('serialNumber: ${androidInfo.serialNumber}');
-      print('supported32BitAbis: ${androidInfo.supported32BitAbis}');
-      print('supported64BitAbis: ${androidInfo.supported64BitAbis}');
-      print('supportedAbis: ${androidInfo.supportedAbis}');
-      print('systemFeatures: ${androidInfo.systemFeatures}');
-      print('tags: ${androidInfo.tags}');
-      print('type: ${androidInfo.type}');
-      print('version: ${androidInfo.version}');
-      print('data: ${androidInfo.data}');*/
       return null;
     } else if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -128,44 +93,12 @@ class _Login02State extends State<Login02> {
     return 'Unknown UUID';
   }
 
-  /*Future<String?> getDeviceId() async {
-    final String? deviceId = await PlatformDeviceId.getDeviceId;
-    print('here is the device id : $deviceId');
-    return deviceId;
-  }*/
-
   Future<String?> getID() async {
     const MethodChannel _deviceID = MethodChannel('com.example.luxrobo');
 
     final Future<String?> uuid = _deviceID.invokeMethod<String?>('getId');
     print('here is the device UUID $uuid');
     return uuid;
-  }
-
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    String androidID = await FlutterDeviceIdentifier.androidID;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    print('android ID: $androidID');
-    try {
-      platformVersion = await FlutterDeviceIdentifier.platformVersion ??
-          'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-
-    await FlutterDeviceIdentifier.requestPermission();
-    _serialNumber = await FlutterDeviceIdentifier.serialCode;
   }
 
   //login function
@@ -181,11 +114,11 @@ class _Login02State extends State<Login02> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'apartmentId': widget.apartmentID, //1
-        'dong': dongController.text, //101
-        'ho': hoController.text, //101
-        'name': nameController.text, //pinomaker
-        'loginCode': loginCodeController.text, //'74:9E:F5:3C:51:15'
+        'apartmentId': widget.apartmentID,
+        'dong': dongController.text,
+        'ho': hoController.text,
+        'name': nameController.text,
+        'loginCode': loginCodeController.text,
       }),
     );
 
@@ -209,7 +142,7 @@ class _Login02State extends State<Login02> {
       }
 
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, '/door01');
+      Navigator.pushReplacementNamed(context, '/door01_android');
 
       return userData;
     } else if (response.statusCode == 400) {
