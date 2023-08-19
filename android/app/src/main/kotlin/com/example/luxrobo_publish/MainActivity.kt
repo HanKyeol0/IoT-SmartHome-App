@@ -43,9 +43,20 @@ class MainActivity: FlutterActivity() {
             call, result ->
             when(call.method) {
                 "startAdvertising" -> {
-                    startAdvertising()
+                    val passedData = call.argument<String?>("data")
+                    if (passedData != null) {
+                        startAdvertising(passedData)
+                        result.success(null)
+                    } else {
+                        result.error("NO_DATA", "No data passed", null)
+                    }
+                }
+                /*
+                "gateAccessAdvertising" -> {
+                    gateAccessAdvertising()
                     result.success(null)
                 }
+                */
                 "stopAdvertising" -> {
                     stopAdvertising()
                     result.success(null)
@@ -63,7 +74,6 @@ class MainActivity: FlutterActivity() {
         //configureResultList()
         permissionCheck()
         bleInit()
-        startAdvertising()
     }
 
     override fun onResume() {
@@ -147,17 +157,14 @@ class MainActivity: FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
-    private fun startAdvertising() {
+    private fun startAdvertising(data: String) {
         bluetoothAdapter.startDiscovery()
+
+        val byteArray = data.toByteArray(Charsets.UTF_8)
 
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, byteArrayOf(
-                0x44, 0x00, 0x21.toByte(), 0x04.toByte(),
-                0xB0.toByte(), 0x00.toByte(), 0x00.toByte(), 0x04.toByte(), 0x43, 0x00,
-                0xB1.toByte(), 0x41, 0x0A, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAB.toByte()
-            )
-            )
+            addManufacturerData(0x4C55, byteArray)
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {
@@ -182,7 +189,39 @@ class MainActivity: FlutterActivity() {
 
         advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
     }
+/*
+    private fun gateAccessAdvertising() {
+        bluetoothAdapter.startDiscovery()
 
+        AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
+        AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
+
+        ParcelUuid temp = new ParcelUuid(UUID.fromString("44002104B00000044300B1410A4F504100010000"));
+
+        dataBuilder.addServiceUuid(temp)
+
+        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
+        settingsBuilder.setConnectable(false);
+
+        AdvertiseData ad = dataBuilder.build();
+
+        val advertiseCallback = object : AdvertiseCallback() {
+            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+                super.onStartSuccess(settingsInEffect)
+                Log.i("steave", "onStartSuccess: $settingsInEffect")
+                isAdvertiser = true
+            }
+
+            override fun onStartFailure(errorCode: Int) {
+                super.onStartFailure(errorCode)
+                Log.e("steave", "onStartFailure: $errorCode")
+                isAdvertiser = false
+            }
+        }
+
+        bluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), ad, null, advertiseCallback);
+    }
+*/
     private fun stopAdvertising() {
         advertiser.stopAdvertising(advertiseCallback)
         bluetoothAdapter.cancelDiscovery()

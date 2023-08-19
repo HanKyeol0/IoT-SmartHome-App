@@ -19,6 +19,7 @@ class _Door01AndroidState extends State<Door01Android> {
   bool isGateDetected = true;
   final Future<List<AccessLogList>?> logs = ApiService.getAccessLogs();
   GlobalData globalData = GlobalData();
+  UserData? userData = GlobalData().userData;
 
   @override
   void initState() {
@@ -33,7 +34,13 @@ class _Door01AndroidState extends State<Door01Android> {
   }
 
   void androidBle() {
-    BLEPlatformChannel.startAdvertising();
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set - mac address');
+    } else {
+      print(userData!.mac);
+    }
+    BLEPlatformChannel.startAdvertising(userData!.mac);
     print('start');
 
     Future.delayed(Duration(seconds: 10), () {

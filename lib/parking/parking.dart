@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/services/api_service.dart';
@@ -13,12 +16,32 @@ class Parking extends StatefulWidget {
   State<Parking> createState() => _ParkingState();
 }
 
+class BleDevice {
+  String deviceId;
+  String manufacturerSpecificData;
+  int rssi;
+
+  BleDevice({
+    required this.deviceId,
+    required this.manufacturerSpecificData,
+    required this.rssi,
+  });
+
+  @override
+  String toString() {
+    return 'BleDevice { deviceId: $deviceId, manufacturerSpecificData: $manufacturerSpecificData, rssi: $rssi }';
+  }
+}
+
 class _ParkingState extends State<Parking> with TickerProviderStateMixin {
+  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   TextEditingController parkingCarController = TextEditingController();
   TextEditingController preferredParkingLotController = TextEditingController();
   bool isCarTextEmpty = true;
   bool isParkingLotTextEmpty = true;
   bool dataLoaded = false;
+  List<BleDevice> devices = [];
+  StreamSubscription<List<ScanResult>>? scanSubscription;
 
   Future<List<CarList>?> cars = ApiService.getUserCar();
   List<String> carList = [];
@@ -37,6 +60,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     tabController = TabController(length: 3, vsync: this);
     loadCarList();
     loadParkingLotList();
+    findNearestCCTV();
   }
 
   Future<List<String>> loadCarList() async {
@@ -58,6 +82,43 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
         final userLot = lot.parkingLot;
         parkingLotList.add(userLot);
       }
+    }
+  }
+
+  Future<void> findNearestCCTV() async {
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        //print(result);
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            // Lux device code
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi);
+            }
+          }
+        });
+      }
+    });
+
+    if (maxRssiDevice != null) {
+      // ignore: avoid_print
+      //gateDetection();
+      print(maxRssiDevice);
+    } else {
+      // ignore: avoid_print
+      print("No device found");
     }
   }
 
