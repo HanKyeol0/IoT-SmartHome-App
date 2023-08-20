@@ -40,7 +40,7 @@ class ApiService {
     };
 
     final url =
-        Uri.http('13.125.92.61:33650', '/$getApartment', queryParameters);
+        Uri.http('13.125.92.61:8080', '/$getApartment', queryParameters);
     final response = await http.get(url);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
