@@ -11,9 +11,6 @@ class ApiService {
   //Login
   static const String postAuth = 'api/auth';
 
-  //user mac address update
-  static const String putUserMac = 'api/user/mac';
-
   //Onepass Logs
   static const String getOnepassLogs = 'api/onepass/logs';
 
@@ -78,50 +75,6 @@ class ApiService {
     } else {
       return null;
     }
-  }
-
-  //putUserMacAddress
-  static Future<int> updateMacAddress(
-      String? macAddress, String dong, String ho) async {
-    UserData? userData = GlobalData().userData;
-
-    if (userData == null) {
-      // ignore: avoid_print
-      print('User data is not set - mac address');
-      return 3;
-    }
-
-    final url = Uri.parse('$baseurl/$putUserMac');
-
-    final requestBody = jsonEncode({
-      'mac': macAddress,
-      'installed_at': {
-        "building": dong,
-        "house": ho,
-      },
-    });
-
-    final response = await http.put(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${userData.accessToken}',
-      },
-      body: requestBody,
-    );
-    print(macAddress);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('hello it is updated');
-      return 0;
-    } else if (response.statusCode == 400) {
-      print('400');
-      return 1;
-    } else if (response.statusCode == 500) {
-      print('500');
-      return 2;
-    }
-    return 3;
   }
 
   //getOnepassLogs

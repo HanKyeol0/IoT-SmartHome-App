@@ -63,6 +63,22 @@ class MainActivity: FlutterActivity() {
                 }
                 else -> result.notImplemented()
             }
+            when(call.method) {
+            "startAdvertising" -> {
+                val data1 = call.argument<String?>("data1")
+                val data2 = call.argument<String?>("data2")
+                
+                if (data1 != null && data2 != null) {
+                    startAdvertising(data1, data2)
+                    result.success(null)
+                } else {
+                    result.error("NO_DATA", "Data1 or Data2 missing", null)
+                }
+            }
+            // ... other cases ...
+            else -> result.notImplemented()
+        }
+    }
         }
     }
 
@@ -165,6 +181,40 @@ class MainActivity: FlutterActivity() {
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
             addManufacturerData(0x4C55, byteArray)
+        }
+
+        val settingsBuilder = AdvertiseSettings.Builder().apply {
+            setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+            setConnectable(false)
+            setTimeout(0)
+        }
+
+        val advertiseCallback = object : AdvertiseCallback() {
+            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+                super.onStartSuccess(settingsInEffect)
+                Log.i("steave", "onStartSuccess: $settingsInEffect")
+                isAdvertiser = true
+            }
+
+            override fun onStartFailure(errorCode: Int) {
+                super.onStartFailure(errorCode)
+                Log.e("steave", "onStartFailure: $errorCode")
+                isAdvertiser = false
+            }
+        }
+
+        advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+    }
+
+    private fun cctvAdvertising(data1: String, data2: String) {
+        bluetoothAdapter.startDiscovery()
+
+        val byteArray1 = data1.toByteArray(Charsets.UTF_8)
+        val byteArray2 = data2.toByteArray(Charsets.UTF_8)
+
+        val dataBuilder = AdvertiseData.Builder().apply {
+            setIncludeDeviceName(false)
+            addManufacturerData(0x4C55, byteArray1, byteArray2)
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {

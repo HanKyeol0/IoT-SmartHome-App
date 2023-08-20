@@ -6,7 +6,6 @@ import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import '../services/api_service.dart';
 import '../widgets/dialog.dart';
 import '../widgets/field.dart';
 import 'dart:convert';
@@ -126,21 +125,6 @@ class _Login02State extends State<Login02> {
       final userData = UserData.fromJson(jsonDecode(response.body));
       GlobalData().setUserData(userData);
       print('hello hello here ${userData.mac}');
-
-      if (userData.mac != deviceId) {
-        final updateMacResult = await ApiService.updateMacAddress(
-            deviceId, dongController.text, hoController.text);
-        if (updateMacResult == 0) {
-          print('mac update completed');
-          null;
-        } else if (updateMacResult == 1) {
-          null;
-        } else if (updateMacResult == 2) {
-          unstableNetwork(context);
-        }
-      } else {
-        null;
-      }
 
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/door01_android');

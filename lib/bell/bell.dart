@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-//import 'package:flutter_blue/flutter_blue.dart';
+import 'package:luxrobo/ble_platform_channel.dart';
 import 'package:luxrobo/main.dart';
+import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 
@@ -33,16 +34,78 @@ class Bell extends StatefulWidget {
 class _BellState extends State<Bell> {
   FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
+  GlobalData globalData = GlobalData();
+  UserData? userData = GlobalData().userData;
+  String? cctvId;
 
   @override
   void initState() {
     super.initState();
-    //startScan();
+    findNearestCCTV().then((id) {
+      setState(() {
+        cctvId = id;
+      });
+    });
   }
 
   Future<void> print1() async {
     // ignore: avoid_print
     print('1');
+  }
+
+  Future<String> findNearestCCTV() async {
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        //print(result);
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            // Lux device code
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi);
+            }
+          }
+        });
+      }
+    });
+
+    if (maxRssiDevice != null) {
+      print(maxRssiDevice);
+      return maxRssiDevice!.deviceId;
+      // ignore: avoid_print
+      //gateDetection();
+    } else {
+      // ignore: avoid_print
+      print("No device found");
+      return '1';
+    }
+  }
+
+  void cctvAdvertising(cctvId) {
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set - mac address');
+    } else {
+      print(userData!.mac);
+    }
+    BLEPlatformChannel.cctvAdvertising(userData!.mac, cctvId);
+    print('start');
+
+    Future.delayed(Duration(seconds: 10), () {
+      BLEPlatformChannel.stopAdvertising();
+      print('end');
+    });
   }
 
   @override
@@ -74,7 +137,13 @@ class _BellState extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(onPressed: print1),
+                  EmergencyBell(onPressed: () {
+                    if (cctvId != null) {
+                      cctvAdvertising(cctvId!);
+                    } else {
+                      print('CCTV ID not available yet');
+                    }
+                  }),
                   const SizedBox(height: 50),
                   Text(
                     '비상 시 1초간 꾹 눌러주세요.',
