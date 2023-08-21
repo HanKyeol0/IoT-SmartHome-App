@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import '../widgets/dialog.dart';
 import '../widgets/field.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:luxrobo/services/api_data.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 //import 'package:platform_device_id/platform_device_id.dart';
 
 class Login02 extends StatefulWidget {
@@ -38,7 +35,6 @@ class _Login02State extends State<Login02> {
   @override
   void initState() {
     super.initState();
-    getDeviceUUID();
 
     isDongEmpty = dongController.text.isEmpty;
     isHoEmpty = hoController.text.isEmpty;
@@ -70,43 +66,8 @@ class _Login02State extends State<Login02> {
     });
   }
 
-  // get mac address
-  Future<String?> getWifiBSSID() async {
-    final NetworkInfo info = NetworkInfo();
-    final String? wifiBSSID = await info.getWifiBSSID();
-    return wifiBSSID;
-  }
-
-  Future<String?> getDeviceUUID() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isAndroid) {
-      final androidInfo = await deviceInfo.deviceInfo;
-      print('here is the device info hello): ${androidInfo.data}');
-      return null;
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      //print(iosInfo);
-      return iosInfo.identifierForVendor;
-    }
-    return 'Unknown UUID';
-  }
-
-  Future<String?> getID() async {
-    const MethodChannel _deviceID = MethodChannel('com.example.luxrobo');
-
-    final Future<String?> uuid = _deviceID.invokeMethod<String?>('getId');
-    print('here is the device UUID $uuid');
-    return uuid;
-  }
-
   //login function
   Future<UserData?> onPressedLogin() async {
-    //final String? macAddress = await getWifiBSSID();
-    final String? deviceId = await getDeviceUUID();
-    //final String? deviceId = await getDeviceId();
-    //final String? deviceId = await getID();
-
     final response = await http.post(
       Uri.parse('http://13.125.92.61:8080/api/auth'),
       headers: <String, String>{
