@@ -19,6 +19,17 @@ class BLEPlatformChannel {
     }
   }
 
+  static Future<void> cctvAdvertising(String? uuid, String? cctvId) async {
+    try {
+      await platform.invokeMethod('cctvAdvertising', {
+        'data1': uuid,
+        'data2': cctvId,
+      });
+    } on PlatformException catch (e) {
+      print("Failed to start advertising: ${e.message}");
+    }
+  }
+
   static Future<void> stopAdvertising() async {
     try {
       await platform.invokeMethod('stopAdvertising');
