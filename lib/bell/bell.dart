@@ -53,7 +53,7 @@ class _BellState extends State<Bell> {
     print('1');
   }
 
-  Future<String> findNearestCCTV() async {
+  Future<String?> findNearestCCTV() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
@@ -88,7 +88,7 @@ class _BellState extends State<Bell> {
     } else {
       // ignore: avoid_print
       print("No device found");
-      return '1';
+      return null;
     }
   }
 
@@ -106,6 +106,53 @@ class _BellState extends State<Bell> {
       BLEPlatformChannel.stopAdvertising();
       print('end');
     });
+  }
+
+  void cctvDetectionFailed(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'CCTV BLE가 감지되지 않습니다.',
+                  style: contentText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -141,7 +188,7 @@ class _BellState extends State<Bell> {
                     if (cctvId != null) {
                       cctvAdvertising(cctvId!);
                     } else {
-                      print('CCTV ID not available yet');
+                      cctvDetectionFailed;
                     }
                   }),
                   const SizedBox(height: 50),

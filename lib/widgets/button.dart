@@ -385,7 +385,7 @@ class EmergencyBell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: onPressed,
+        onLongPress: onPressed,
         child: Column(
           children: [
             Container(
