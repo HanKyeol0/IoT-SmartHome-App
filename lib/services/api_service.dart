@@ -29,6 +29,9 @@ class ApiService {
   //get parking lot and map
   static const String getParkingLotMap = 'api/parkingmap/app';
 
+  //get parking place
+  static const String getParkingPlace = 'api/parkingplace';
+
   //getApartment - fetch Apartment list
   static Future<List<ApartmentList>?> getApartmentList(searchWord) async {
     List<ApartmentList> apartmentList = [];
@@ -54,6 +57,27 @@ class ApiService {
     }
 
     return null;
+  }
+
+  static Future<String> getPakingPlace(apartmentId) async {
+    final queryParameters = {
+      'mapImage': apartmentId,
+    };
+
+    final url =
+        Uri.http('13.125.92.61:8080', '/$getParkingPlace', queryParameters);
+    final response = await http.get(url);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final parkingPlaceData = jsonDecode(response.body);
+      final mapImageUrl = parkingPlaceData['data']['parkingMap']['mapImage'];
+      print(mapImageUrl);
+      return mapImageUrl;
+    } else if (response.statusCode == 400) {
+      return 'no parking lot data';
+    } else {
+      return 'bad internet';
+    }
   }
 
   //getApartment - check Apartment ID

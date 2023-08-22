@@ -6,6 +6,7 @@ class LoginInfoService {
   static final keyName = 'name';
   static final keyLoginCode = 'loginCode';
   static final keySave = 'save';
+  static final keyAutoLogin = 'autoLogin';
 
   Future<void> saveLoginInfo({
     required String dong,
@@ -13,6 +14,7 @@ class LoginInfoService {
     required String name,
     required String loginCode,
     required bool save,
+    required bool autoLogin,
   }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(keyDong, dong);
@@ -20,6 +22,7 @@ class LoginInfoService {
     await prefs.setString(keyName, name);
     await prefs.setString(keyLoginCode, loginCode);
     await prefs.setBool(keySave, save);
+    await prefs.setBool(keyAutoLogin, autoLogin);
   }
 
   Future<Map<String, dynamic>> retrieveLoginInfo() async {
@@ -30,6 +33,7 @@ class LoginInfoService {
       keyName: prefs.getString(keyName),
       keyLoginCode: prefs.getString(keyLoginCode),
       keySave: prefs.getBool(keySave),
+      keyAutoLogin: prefs.getBool(keyAutoLogin),
     };
   }
 }

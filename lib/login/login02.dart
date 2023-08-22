@@ -32,7 +32,8 @@ class _Login02State extends State<Login02> {
   TextEditingController nameController = TextEditingController();
   TextEditingController loginCodeController = TextEditingController();
   bool isValid = false;
-  bool isChecked = false;
+  bool isSaved = false;
+  bool isAutoLogin = false;
 
   @override
   void initState() {
@@ -73,9 +74,12 @@ class _Login02State extends State<Login02> {
       });
     }
     if (loginInfo[LoginInfoService.keySave] == true) {
-      isChecked = true;
+      isSaved = true;
     } else {
-      isChecked = false;
+      isSaved = false;
+    }
+    if (loginInfo[LoginInfoService.keyAutoLogin] == true) {
+      onPressedLogin();
     }
   }
 
@@ -154,7 +158,8 @@ class _Login02State extends State<Login02> {
       ho: hoController.text,
       name: nameController.text,
       loginCode: loginCodeController.text,
-      save: isChecked,
+      save: isSaved,
+      autoLogin: isAutoLogin,
     );
   }
 
@@ -454,15 +459,15 @@ class _Login02State extends State<Login02> {
                               InkWell(
                                 onTap: () {
                                   setState(() {
-                                    isChecked = !isChecked;
+                                    isSaved = !isSaved;
                                   });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.rectangle,
                                     color:
-                                        isChecked ? bColor : Colors.transparent,
-                                    border: isChecked
+                                        isSaved ? bColor : Colors.transparent,
+                                    border: isSaved
                                         ? Border.all(
                                             color: bColor,
                                           )
@@ -472,7 +477,7 @@ class _Login02State extends State<Login02> {
                                   padding: const EdgeInsets.only(bottom: 1.5),
                                   height: 18,
                                   width: 18,
-                                  child: isChecked
+                                  child: isSaved
                                       ? const Icon(
                                           Icons.check_outlined,
                                           color: black,
@@ -504,15 +509,16 @@ class _Login02State extends State<Login02> {
                               InkWell(
                                 onTap: () {
                                   setState(() {
-                                    isChecked = !isChecked;
+                                    isAutoLogin = !isAutoLogin;
                                   });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.rectangle,
-                                    color:
-                                        isChecked ? bColor : Colors.transparent,
-                                    border: isChecked
+                                    color: isAutoLogin
+                                        ? bColor
+                                        : Colors.transparent,
+                                    border: isAutoLogin
                                         ? Border.all(
                                             color: bColor,
                                           )
@@ -522,7 +528,7 @@ class _Login02State extends State<Login02> {
                                   padding: const EdgeInsets.only(bottom: 1.5),
                                   height: 18,
                                   width: 18,
-                                  child: isChecked
+                                  child: isAutoLogin
                                       ? const Icon(
                                           Icons.check_outlined,
                                           color: black,
