@@ -67,6 +67,13 @@ class GlobalData {
   GlobalData._internal();
 
   UserData? userData;
+  int? apartmentID;
+
+  int? get getApartmentID => apartmentID;
+
+  void setApartmentID(int? id) {
+    apartmentID = id;
+  }
 
   void setUserData(UserData data) {
     userData = data;
@@ -79,6 +86,7 @@ class GlobalData {
   // log-out function
   void logOut() async {
     userData = null;
+    apartmentID = null;
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
   }

@@ -92,6 +92,9 @@ class _Login01State extends State<Login01> {
       showApartmentNotFound(context);
     } else {
       _saveApartmentData();
+
+      GlobalData().setApartmentID(apartmentID);
+
       setState(() {
         this.apartmentID = apartmentID;
       });

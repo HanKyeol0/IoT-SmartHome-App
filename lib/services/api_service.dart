@@ -59,14 +59,23 @@ class ApiService {
     return null;
   }
 
-  static Future<String> getPakingPlace(apartmentId) async {
-    final queryParameters = {
-      'mapImage': apartmentId,
-    };
+  static Future<String?> getParkingPlaceMap() async {
+    UserData? userData = GlobalData().userData;
 
-    final url =
-        Uri.http('13.125.92.61:8080', '/$getParkingPlace', queryParameters);
-    final response = await http.get(url);
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return null;
+    }
+
+    final url = Uri.http('$baseurl/$getParkingPlace');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final parkingPlaceData = jsonDecode(response.body);

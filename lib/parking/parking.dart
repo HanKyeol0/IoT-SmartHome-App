@@ -42,10 +42,13 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   bool dataLoaded = false;
   List<BleDevice> devices = [];
   StreamSubscription<List<ScanResult>>? scanSubscription;
+  int? apartmentID = GlobalData().getApartmentID;
 
   Future<List<CarList>?> cars = ApiService.getUserCar();
 
   Future<List<ParkingLotList>?> lots = ApiService.getParkingLot();
+
+  Future<String?> parkingPlaceMap = ApiService.getParkingPlaceMap();
 
   late TabController tabController;
 
@@ -57,6 +60,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     tabController = TabController(length: 3, vsync: this);
     loadCarList();
     loadParkingLotList();
+    loadParkingPlaceMap();
     findNearestCCTV();
   }
 
@@ -82,6 +86,11 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       }
     }
     return parkingLotList;
+  }
+
+  Future<String?> loadParkingPlaceMap() async {
+    final Future<String?> parkingMap = ApiService.getParkingPlaceMap();
+    return parkingMap;
   }
 
   Future<void> findNearestCCTV() async {
@@ -284,7 +293,18 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const InfoField(value: 'Car Location Map'),
+                      FutureBuilder<String?>(
+                        future: loadParkingPlaceMap(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String?> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else {
+                            return Image.network(snapshot.data!);
+                          }
+                        },
+                      ),
                       const SizedBox(height: 30),
                       Align(
                         alignment: Alignment.centerLeft,
