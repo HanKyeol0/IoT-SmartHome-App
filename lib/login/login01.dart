@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:luxrobo/login/login02.dart';
 import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
+import '../device_storage.dart';
 import '../widgets/button.dart';
 import '../widgets/dialog.dart';
 import '../widgets/field.dart';
@@ -20,6 +21,7 @@ class _Login01State extends State<Login01> {
   bool isTextEmpty = true;
   bool isClickable = false;
   int? apartmentID;
+  bool isChecked = false;
 
   List<String> apartmentList = [];
 
@@ -38,6 +40,24 @@ class _Login01State extends State<Login01> {
   @override
   void initState() {
     super.initState();
+    _loadSavedApartment();
+  }
+
+  void _loadSavedApartment() async {
+    Map<String, dynamic> apartmentInfo =
+        await ApartmentInfoService().retrieveApartmentInfo();
+    if (apartmentInfo[ApartmentInfoService.keyApartment] != null) {
+      apartmentController.text =
+          apartmentInfo[ApartmentInfoService.keyApartment]!;
+      setState(() {
+        isTextEmpty = false;
+      });
+    }
+    if (apartmentInfo[ApartmentInfoService.keySave] == true) {
+      isChecked = true;
+    } else {
+      isChecked = false;
+    }
   }
 
   Future<void> loadApartmentList() async {
@@ -71,6 +91,7 @@ class _Login01State extends State<Login01> {
       // ignore: use_build_context_synchronously
       showApartmentNotFound(context);
     } else {
+      _saveApartmentData();
       setState(() {
         this.apartmentID = apartmentID;
       });
@@ -81,6 +102,13 @@ class _Login01State extends State<Login01> {
           builder: (context) => Login02(apartmentID: apartmentID),
         ),
       );
+    }
+  }
+
+  void _saveApartmentData() {
+    if (isChecked == true) {
+      ApartmentInfoService().saveApartmentInfo(
+          apartment: apartmentController.text, save: isChecked);
     }
   }
 
@@ -215,11 +243,42 @@ class _Login01State extends State<Login01> {
                       child: Row(
                         children: [
                           Expanded(child: Container()),
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Row(
                               children: [
-                                BlueCheckbox(),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      isChecked = !isChecked;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      color: isChecked
+                                          ? bColor
+                                          : Colors.transparent,
+                                      border: isChecked
+                                          ? Border.all(
+                                              color: bColor,
+                                            )
+                                          : Border.all(color: lightGrey),
+                                      borderRadius: BorderRadius.circular(2.0),
+                                    ),
+                                    padding: const EdgeInsets.only(bottom: 1.5),
+                                    height: 18,
+                                    width: 18,
+                                    child: isChecked
+                                        ? const Icon(
+                                            Icons.check_outlined,
+                                            color: black,
+                                            size: 17,
+                                            weight: 20.0,
+                                          )
+                                        : null,
+                                  ),
+                                ),
                                 SizedBox(width: 11),
                                 Text(
                                   '내용 저장',

@@ -61,26 +61,22 @@ class MainActivity: FlutterActivity() {
                     stopAdvertising()
                     result.success(null)
                 }
-                else -> result.notImplemented()
-            }
-            when(call.method) {
-            "startAdvertising" -> {
+                "cctvAdvertising" -> {
                 val data1 = call.argument<String?>("data1")
                 val data2 = call.argument<String?>("data2")
                 
                 if (data1 != null && data2 != null) {
-                    startAdvertising(data1, data2)
+                    cctvAdvertising(data1, data2)
                     result.success(null)
                 } else {
                     result.error("NO_DATA", "Data1 or Data2 missing", null)
                 }
             }
-            // ... other cases ...
-            else -> result.notImplemented()
-        }
+                else -> result.notImplemented()
+            }       
     }
         }
-    }
+    
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -209,12 +205,11 @@ class MainActivity: FlutterActivity() {
     private fun cctvAdvertising(data1: String, data2: String) {
         bluetoothAdapter.startDiscovery()
 
-        val byteArray1 = data1.toByteArray(Charsets.UTF_8)
-        val byteArray2 = data2.toByteArray(Charsets.UTF_8)
+        val byteArray = data1.toByteArray(Charsets.UTF_8) + data2.toByteArray(Charsets.UTF_8)
 
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, byteArray1, byteArray2)
+            addManufacturerData(0x4C55, byteArray)
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {

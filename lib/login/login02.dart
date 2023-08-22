@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/navigation.dart';
+import '../device_storage.dart';
 import '../widgets/dialog.dart';
 import '../widgets/field.dart';
 import 'dart:convert';
@@ -31,15 +32,51 @@ class _Login02State extends State<Login02> {
   TextEditingController nameController = TextEditingController();
   TextEditingController loginCodeController = TextEditingController();
   bool isValid = false;
+  bool isChecked = false;
 
   @override
   void initState() {
     super.initState();
+    _loadSavedLoginData();
 
     isDongEmpty = dongController.text.isEmpty;
     isHoEmpty = hoController.text.isEmpty;
     isNameEmpty = nameController.text.isEmpty;
     isLoginCodeEmpty = loginCodeController.text.isEmpty;
+  }
+
+  void _loadSavedLoginData() async {
+    Map<String, dynamic> loginInfo =
+        await LoginInfoService().retrieveLoginInfo();
+    if (loginInfo[LoginInfoService.keyDong] != null) {
+      dongController.text = loginInfo[LoginInfoService.keyDong]!;
+      setState(() {
+        isDongEmpty = false;
+      });
+    }
+    if (loginInfo[LoginInfoService.keyHo] != null) {
+      hoController.text = loginInfo[LoginInfoService.keyHo]!;
+      setState(() {
+        isHoEmpty = false;
+      });
+    }
+    if (loginInfo[LoginInfoService.keyName] != null) {
+      nameController.text = loginInfo[LoginInfoService.keyName]!;
+      setState(() {
+        isNameEmpty = false;
+      });
+    }
+    if (loginInfo[LoginInfoService.keyLoginCode] != null) {
+      loginCodeController.text = loginInfo[LoginInfoService.keyLoginCode]!;
+      setState(() {
+        isLoginCodeEmpty = false;
+      });
+    }
+    if (loginInfo[LoginInfoService.keySave] == true) {
+      isChecked = true;
+    } else {
+      isChecked = false;
+    }
   }
 
   void onText1(String value) {
@@ -87,6 +124,8 @@ class _Login02State extends State<Login02> {
       GlobalData().setUserData(userData);
       print('hello hello here ${userData.mac}');
 
+      _saveLoginData();
+
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, '/door01_android');
 
@@ -107,6 +146,16 @@ class _Login02State extends State<Login02> {
       unstableNetwork(context);
       return null;
     }
+  }
+
+  void _saveLoginData() {
+    LoginInfoService().saveLoginInfo(
+      dong: dongController.text,
+      ho: hoController.text,
+      name: nameController.text,
+      loginCode: loginCodeController.text,
+      save: isChecked,
+    );
   }
 
   Future<List<String>> saveToken(accessToken, refreshToken) async {
@@ -401,7 +450,38 @@ class _Login02State extends State<Login02> {
                           margin: const EdgeInsets.only(right: 32),
                           child: Row(
                             children: [
-                              const BlueCheckbox(),
+                              //내용 저장
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isChecked = !isChecked;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    color:
+                                        isChecked ? bColor : Colors.transparent,
+                                    border: isChecked
+                                        ? Border.all(
+                                            color: bColor,
+                                          )
+                                        : Border.all(color: lightGrey),
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                  padding: const EdgeInsets.only(bottom: 1.5),
+                                  height: 18,
+                                  width: 18,
+                                  child: isChecked
+                                      ? const Icon(
+                                          Icons.check_outlined,
+                                          color: black,
+                                          size: 17,
+                                          weight: 20.0,
+                                        )
+                                      : null,
+                                ),
+                              ),
                               const SizedBox(width: 11),
                               Text(
                                 '내용 저장',
@@ -420,7 +500,38 @@ class _Login02State extends State<Login02> {
                           margin: const EdgeInsets.only(right: 20),
                           child: Row(
                             children: [
-                              const BlueCheckbox(),
+                              //자동 로그인
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    isChecked = !isChecked;
+                                  });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    color:
+                                        isChecked ? bColor : Colors.transparent,
+                                    border: isChecked
+                                        ? Border.all(
+                                            color: bColor,
+                                          )
+                                        : Border.all(color: lightGrey),
+                                    borderRadius: BorderRadius.circular(2.0),
+                                  ),
+                                  padding: const EdgeInsets.only(bottom: 1.5),
+                                  height: 18,
+                                  width: 18,
+                                  child: isChecked
+                                      ? const Icon(
+                                          Icons.check_outlined,
+                                          color: black,
+                                          size: 17,
+                                          weight: 20.0,
+                                        )
+                                      : null,
+                                ),
+                              ),
                               const SizedBox(width: 11),
                               Text(
                                 '자동 로그인',
