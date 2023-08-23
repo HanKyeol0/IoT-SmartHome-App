@@ -68,7 +68,7 @@ class ApiService {
       return null;
     }
 
-    final url = Uri.http('$baseurl/$getParkingPlace');
+    final url = Uri.parse('$baseurl/$getParkingPlace');
     final response = await http.get(
       url,
       headers: {

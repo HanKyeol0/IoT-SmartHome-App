@@ -79,6 +79,7 @@ class _Login02State extends State<Login02> {
       isSaved = false;
     }
     if (loginInfo[LoginInfoService.keyAutoLogin] == true) {
+      isAutoLogin = true;
       onPressedLogin();
     }
   }
