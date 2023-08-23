@@ -62,6 +62,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     loadParkingLotList();
     loadParkingPlaceMap();
     findNearestCCTV();
+    loadCurrentCar();
   }
 
   Future<List<String>> loadCarList() async {
@@ -91,6 +92,20 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   Future<String?> loadParkingPlaceMap() async {
     final Future<String?> parkingMap = ApiService.getParkingPlaceMap();
     return parkingMap;
+  }
+
+  Future<String> loadCurrentCar() async {
+    String carValue = await ApiService.getUserCurrentCar();
+
+    if (carValue == '1') {
+      return '등록된 차량이 없습니다.';
+    } else if (carValue == '2') {
+      return '차량 조회 실패 (네트워크 오류)';
+    } else if (carValue == '3') {
+      return '유저 정보 조회 실패';
+    } else {
+      return carValue;
+    }
   }
 
   Future<void> findNearestCCTV() async {
@@ -244,27 +259,37 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      FutureBuilder<List<String>>(
-                          future: loadCarList(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<String>> snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            List<String> loadedCarList = snapshot.data ?? [];
-                            return CarInput(
-                              items: loadedCarList,
-                              placeholder: loadedCarList.isNotEmpty
-                                  ? loadedCarList[0]
-                                  : "등록된 차량이 없습니다.",
-                              onTextChanged: onCarChanged,
-                              textEditingController: parkingCarController,
-                              onItemSelected: showParkingLocationSavingDialog,
-                              placeholderColor:
-                                  loadedCarList.isNotEmpty ? wColor : lightGrey,
-                            );
-                          }),
+                      FutureBuilder<List<dynamic>>(
+                        future: Future.wait([loadCarList(), loadCurrentCar()]),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<dynamic>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: bColor,
+                            ));
+                          }
+
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+
+                          List<String> loadedCarList = List<String>.from(
+                              snapshot
+                                  .data![0]); // Explicitly cast to List<String>
+                          String currentCarValue = snapshot.data![1];
+
+                          return CarInput(
+                            items: loadedCarList,
+                            placeholder: currentCarValue,
+                            onTextChanged: onCarChanged,
+                            textEditingController: parkingCarController,
+                            onItemSelected: showParkingLocationSavingDialog,
+                            placeholderColor: wColor,
+                          );
+                        },
+                      ),
                       const SizedBox(height: 74),
                       const Expanded(child: TouchParking()),
                     ],
@@ -299,7 +324,9 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                             AsyncSnapshot<String?> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return CircularProgressIndicator(
+                              color: bColor,
+                            );
                           } else {
                             return Image.network(snapshot.data!);
                           }
@@ -403,7 +430,7 @@ void showParkingLocationSavingDialog(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text(
-                '주차 위치를 저장하시겠습니까?',
+                '현재 차량으로 등록하시겠습니까?',
                 style: titleText(),
               ),
               const SizedBox(

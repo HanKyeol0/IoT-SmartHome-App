@@ -32,6 +32,9 @@ class ApiService {
   //get parking place
   static const String getParkingPlace = 'api/parkingplace';
 
+  //get user's current car
+  static const String getCurrentCar = 'api/user/car';
+
   //getApartment - fetch Apartment list
   static Future<List<ApartmentList>?> getApartmentList(searchWord) async {
     List<ApartmentList> apartmentList = [];
@@ -252,6 +255,38 @@ class ApiService {
       print('${response.statusCode}: ${response.body}');
     }
     return null;
+  }
+
+  //getCurrentCar
+  static Future<String> getUserCurrentCar() async {
+    //GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return '3';
+    }
+
+    final url = Uri.parse('$baseurl/$getCurrentCar');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final currentCarData = jsonDecode(response.body);
+      final currentCar = currentCarData['data']['number'];
+      return currentCar;
+    } else if (response.statusCode == 404) {
+      return '1';
+    } else {
+      return '2';
+    }
   }
 
   //delete Car

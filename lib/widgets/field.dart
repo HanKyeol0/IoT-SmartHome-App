@@ -453,6 +453,153 @@ class CarInput extends StatefulWidget {
 
 class _CarInputState extends State<CarInput> {
   late String? selectedValue;
+  bool showDropdown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    setPlaceholder();
+  }
+
+  void toggleDropdown() {
+    setState(() {
+      showDropdown = !showDropdown;
+    });
+  }
+
+  void setPlaceholder() {
+    setState(() {
+      selectedValue = widget.placeholder;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: showDropdown
+            ? Border.all(color: wColor, width: 1)
+            : Border.all(color: darkGrey, width: 1),
+        color: grey,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(
+            height: 54,
+            child: GestureDetector(
+              onTap: toggleDropdown,
+              child: AbsorbPointer(
+                child: TextField(
+                  readOnly: true,
+                  controller: widget.textEditingController,
+                  style: const TextStyle(color: wColor),
+                  decoration: InputDecoration(
+                    hintText: widget.placeholder,
+                    hintStyle: contentText(color: widget.placeholderColor),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 15,
+                    ),
+                    border: InputBorder.none,
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: showDropdown ? lightGrey : bColor,
+                        ),
+                        height: 20,
+                        width: 20,
+                        child: Icon(
+                          showDropdown
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          color: showDropdown ? bColor : black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            height: 0.5,
+            color: showDropdown ? lightGrey : null,
+          ),
+          if (showDropdown)
+            ListView.separated(
+              padding: EdgeInsets.only(top: 0, bottom: 0),
+              shrinkWrap: true,
+              itemCount:
+                  widget.items.where((item) => (item != selectedValue)).length,
+              separatorBuilder: (context, index) => const Divider(
+                color: lightGrey,
+                thickness: 0.5,
+              ),
+              itemBuilder: (context, index) {
+                final filteredItems = widget.items
+                    .where((item) => (item != selectedValue))
+                    .toList();
+                final item = filteredItems[index];
+                return SizedBox(
+                  height: 56,
+                  child: ListTile(
+                    title: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item,
+                        style: contentText(color: wColor),
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        selectedValue = item;
+                        widget.textEditingController.text = item;
+                        showDropdown = false;
+                      });
+
+                      if (widget.onItemSelected != null) {
+                        widget.onItemSelected!(context);
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/*
+class CarInput extends StatefulWidget {
+  final String placeholder;
+  final List<dynamic> items;
+  final TextEditingController textEditingController;
+  final Function(String) onTextChanged;
+  final Function(BuildContext)? onItemSelected;
+  final Color placeholderColor;
+
+  const CarInput({
+    Key? key,
+    required this.placeholder,
+    required this.items,
+    required this.textEditingController,
+    required this.onTextChanged,
+    this.onItemSelected,
+    required this.placeholderColor,
+  }) : super(key: key);
+
+  @override
+  State<CarInput> createState() => _CarInputState();
+}
+
+class _CarInputState extends State<CarInput> {
+  late String? selectedValue;
   late String? firstCar;
   bool showDropdown = false;
 
@@ -578,6 +725,7 @@ class _CarInputState extends State<CarInput> {
     );
   }
 }
+*/
 
 class InfoField extends StatelessWidget {
   final String value;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+//import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:luxrobo/bell/bell.dart';
 import 'package:luxrobo/parking/parking.dart';
 import 'package:luxrobo/setting/setting01.dart';
@@ -15,14 +15,7 @@ import 'login/login01.dart';
 import 'login/login02.dart';
 
 Future main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-
-  await Future.delayed(const Duration(seconds: 3));
-
   runApp(const MyApp());
-
-  FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {
@@ -121,3 +114,16 @@ class LuxroboScaffold extends StatelessWidget {
     );
   }
 }
+
+/*
+Future main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await Future.delayed(const Duration(seconds: 3));
+
+  runApp(const MyApp());
+
+  FlutterNativeSplash.remove();
+}
+*/
