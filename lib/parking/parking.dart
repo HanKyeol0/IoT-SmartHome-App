@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:luxrobo/main.dart';
@@ -90,8 +89,13 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   }
 
   Future<String?> loadParkingPlaceMap() async {
-    final Future<String?> parkingMap = ApiService.getParkingPlaceMap();
-    return parkingMap;
+    try {
+      final String? parkingMap = await ApiService.getParkingPlaceMap();
+      return parkingMap;
+    } catch (e) {
+      print('Error loading parking map: $e');
+      return null;
+    }
   }
 
   Future<String> loadCurrentCar() async {
@@ -163,6 +167,230 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     setState(() {
       isParkingLotTextEmpty = value.isEmpty;
     });
+  }
+
+  Future<void> updateCurrentCar(String currentCar, BuildContext context) async {
+    try {
+      final int updateResult = await ApiService.putUserCurrentCar(currentCar);
+
+      Navigator.of(context).pop();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (updateResult == 1) {
+          currentCarUpdateSucceeded(context);
+        } else if (updateResult == 2) {
+          unstableNetwork(context); // Update this function similarly
+        } else if (updateResult == 3) {
+          userInfoAccessFailed(context); // Update this function similarly
+        }
+      });
+    } catch (e) {
+      print("Error updating car: $e");
+    }
+  }
+
+  void currentCarUpdateSucceeded(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '현재 차량 등록을 성공했습니다.',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void unstableNetwork(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '네트워크가 불안정합니다.',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void userInfoAccessFailed(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '유저 정보 조회 실패',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void registerCurrentCar(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  '현재 차량으로 등록하시겠습니까?',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: RoundButton(
+                        text: '취소',
+                        bgColor: grey,
+                        textColor: wColor,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: RoundButton(
+                        text: '확인',
+                        bgColor: bColor,
+                        textColor: black,
+                        buttonWidth: MediaQuery.of(context).size.width * 0.4,
+                        buttonHeight: 46,
+                        onPressed: () => updateCurrentCar(
+                            parkingCarController.text, context),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -279,13 +507,12 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                               snapshot
                                   .data![0]); // Explicitly cast to List<String>
                           String currentCarValue = snapshot.data![1];
-
                           return CarInput(
                             items: loadedCarList,
                             placeholder: currentCarValue,
                             onTextChanged: onCarChanged,
                             textEditingController: parkingCarController,
-                            onItemSelected: showParkingLocationSavingDialog,
+                            onItemSelected: registerCurrentCar,
                             placeholderColor: wColor,
                           );
                         },
@@ -308,7 +535,21 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const InfoField(value: '123가 1234'),
+                      FutureBuilder<String?>(
+                        future: loadCurrentCar(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<String?> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator(color: bColor);
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            return InfoField(value: snapshot.data!);
+                          } else {
+                            return InfoField(value: '주차 차량 조회 실패');
+                          }
+                        },
+                      ),
                       const SizedBox(height: 30),
                       Align(
                         alignment: Alignment.centerLeft,
@@ -324,11 +565,19 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                             AsyncSnapshot<String?> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator(
-                              color: bColor,
+                            return CircularProgressIndicator(color: bColor);
+                          } else if (snapshot.hasData &&
+                              snapshot.data != null) {
+                            return Image.network(
+                              snapshot.data!,
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                                print('Error loading image: $exception');
+                                return InfoField(value: '주차 위치 조회 실패');
+                              },
                             );
                           } else {
-                            return Image.network(snapshot.data!);
+                            return Text('No image');
                           }
                         },
                       ),
@@ -408,66 +657,4 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       ),
     );
   }
-}
-
-void showParkingLocationSavingDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: darkGrey,
-        elevation: 0.0, // No shadow
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.only(
-            top: 40,
-            bottom: 30,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                '현재 차량으로 등록하시겠습니까?',
-                style: titleText(),
-              ),
-              const SizedBox(
-                height: 39,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: RoundButton(
-                      text: '취소',
-                      bgColor: grey,
-                      textColor: wColor,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                      buttonHeight: 46,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: RoundButton(
-                      text: '확인',
-                      bgColor: bColor,
-                      textColor: black,
-                      buttonWidth: MediaQuery.of(context).size.width * 0.4,
-                      buttonHeight: 46,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

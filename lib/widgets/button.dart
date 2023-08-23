@@ -374,18 +374,18 @@ class TouchParking extends StatelessWidget {
 }
 
 class EmergencyBell extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback longPressed;
 
   const EmergencyBell({
     super.key,
-    required this.onPressed,
+    required this.longPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onLongPress: onPressed,
+        onLongPress: longPressed,
         child: Column(
           children: [
             Container(

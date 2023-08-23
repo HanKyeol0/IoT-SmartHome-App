@@ -174,14 +174,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
-  flutter_ble_peripheral:
-    dependency: "direct main"
-    description:
-      name: flutter_ble_peripheral
-      sha256: "4b8f48ca0858c42b6c394fb078f1369eb54beef0c3aedf03566f7a0f8f976ab0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   flutter_blue_plus:
     dependency: "direct main"
     description:

@@ -81,6 +81,10 @@ class _Setting02State extends State<Setting02> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return ListView(
+                                padding: EdgeInsets.only(
+                                  top: 0,
+                                  bottom: 0,
+                                ),
                                 shrinkWrap: true,
                                 children: [
                                   for (var car in snapshot.data!)

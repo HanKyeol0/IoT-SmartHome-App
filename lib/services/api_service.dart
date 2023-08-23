@@ -32,6 +32,9 @@ class ApiService {
   //get parking place
   static const String getParkingPlace = 'api/parkingplace';
 
+  //put user's current car
+  static const String putCurrentCar = 'api/user/car';
+
   //get user's current car
   static const String getCurrentCar = 'api/user/car';
 
@@ -85,8 +88,8 @@ class ApiService {
       final mapImageUrl = parkingPlaceData['data']['parkingMap']['mapImage'];
       print(mapImageUrl);
       return mapImageUrl;
-    } else if (response.statusCode == 400) {
-      return 'no parking lot data';
+    } else if (response.statusCode == 404) {
+      return 'no data';
     } else {
       return 'bad internet';
     }
@@ -214,6 +217,47 @@ class ApiService {
       print(response.statusCode);
       // ignore: avoid_print
       print(response.body);
+    }
+  }
+
+  //putCurrentCar
+  static Future<int> putUserCurrentCar(String carNumber) async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return 3;
+    }
+
+    final url = Uri.parse('$baseurl/$putCurrentCar');
+
+    final requestBody = jsonEncode({'carNumber': carNumber});
+
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // ignore: avoid_print
+      print('201: ${response.body}');
+      return 1;
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('401: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await putUserCurrentCar(carNumber);
+    } else {
+      // ignore: avoid_print
+      print(response.statusCode);
+      // ignore: avoid_print
+      print(response.body);
+      return 2;
     }
   }
 

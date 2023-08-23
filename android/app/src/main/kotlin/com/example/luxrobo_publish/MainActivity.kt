@@ -174,9 +174,15 @@ class MainActivity: FlutterActivity() {
 
         val byteArray = data.toByteArray(Charsets.UTF_8)
 
+        val customData = byteArrayOf(0x43, 0x00, 0x99.toByte(), 0x99.toByte(),
+            0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
+            0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAF.toByte()
+        )
+
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, byteArray)
+            addManufacturerData(0x4C55, customData)
+            //addManufacturerData(0x4C55, byteArray)
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {

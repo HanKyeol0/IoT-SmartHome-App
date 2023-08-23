@@ -184,7 +184,7 @@ class _BellState extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(onPressed: () {
+                  EmergencyBell(longPressed: () {
                     if (cctvId != null) {
                       cctvAdvertising(cctvId!);
                     } else {
