@@ -41,19 +41,56 @@ class _BellState extends State<Bell> {
   @override
   void initState() {
     super.initState();
-    findNearestCCTV().then((id) {
-      setState(() {
-        cctvId = id;
-      });
+    findNearestCCTV();
+    Future.delayed(Duration(seconds: 7), () {
+      print('hello this is cctvID : $cctvId');
     });
-  }
-
-  Future<void> print1() async {
-    // ignore: avoid_print
-    print('1');
+    //startScan();
   }
 
   Future<String?> findNearestCCTV() async {
+    int maxRssi = -999; // a large negative value to compare with actual RSSI
+    BleDevice? maxRssiDevice;
+
+    scanSubscription = flutterBlue.scanResults.listen((results) {
+      for (var result in results) {
+        //print(result);
+        result.advertisementData.manufacturerData
+            .forEach((id, manufacturerSpecificData) {
+          var hexData = manufacturerSpecificData
+              .map((data) => data.toRadixString(16).padLeft(2, '0'))
+              .join();
+          if (hexData.contains("4c4354")) {
+            // Lux device code
+            if (result.rssi > maxRssi) {
+              // only store the device if its RSSI is greater than the current max
+              maxRssi = result.rssi;
+              //print(id);
+              maxRssiDevice = BleDevice(
+                  deviceId: "${result.device.id}",
+                  manufacturerSpecificData: hexData,
+                  rssi: result.rssi);
+            }
+          }
+        });
+      }
+    });
+
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      if (maxRssiDevice != null) {
+        print('here is the device: $maxRssiDevice');
+        setState(() {
+          cctvId = maxRssiDevice!.deviceId;
+        });
+      } else {
+        // ignore: avoid_print
+        print("No device found");
+      }
+    });
+    return null;
+  }
+
+  Future<void> startScan() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
@@ -80,26 +117,26 @@ class _BellState extends State<Bell> {
       }
     });
 
-    if (maxRssiDevice != null) {
-      print(maxRssiDevice);
-      return maxRssiDevice!.deviceId;
-      // ignore: avoid_print
-      //gateDetection();
-    } else {
-      // ignore: avoid_print
-      print("No device found");
-      return null;
-    }
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      if (maxRssiDevice != null) {
+        print('here is the device: $maxRssiDevice');
+        setState(() {
+          cctvId = maxRssiDevice!.deviceId;
+        });
+      } else {
+        print("No device found");
+      }
+    });
   }
 
-  void cctvAdvertising(cctvId) {
+  void cctvBellAdvertising(cctvId) {
     if (userData == null) {
       // ignore: avoid_print
       print('User data is not set - mac address');
     } else {
       print(userData!.mac);
     }
-    BLEPlatformChannel.cctvAdvertising(userData!.mac, cctvId);
+    BLEPlatformChannel.bellAdvertising(userData!.mac, cctvId);
     print('start');
 
     Future.delayed(Duration(seconds: 10), () {
@@ -186,8 +223,11 @@ class _BellState extends State<Bell> {
                 children: [
                   EmergencyBell(longPressed: () {
                     if (cctvId != null) {
-                      cctvAdvertising(cctvId!);
+                      print('cctv found');
+                      cctvBellAdvertising(cctvId);
+                      print(cctvId);
                     } else {
+                      print('cctv not found');
                       cctvDetectionFailed;
                     }
                   }),

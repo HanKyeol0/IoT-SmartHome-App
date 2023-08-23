@@ -51,22 +51,16 @@ class MainActivity: FlutterActivity() {
                         result.error("NO_DATA", "No data passed", null)
                     }
                 }
-                /*
-                "gateAccessAdvertising" -> {
-                    gateAccessAdvertising()
-                    result.success(null)
-                }
-                */
                 "stopAdvertising" -> {
                     stopAdvertising()
                     result.success(null)
                 }
-                "cctvAdvertising" -> {
+                "bellAdvertising" -> {
                 val data1 = call.argument<String?>("data1")
                 val data2 = call.argument<String?>("data2")
                 
                 if (data1 != null && data2 != null) {
-                    cctvAdvertising(data1, data2)
+                    bellAdvertising(data1, data2)
                     result.success(null)
                 } else {
                     result.error("NO_DATA", "Data1 or Data2 missing", null)
@@ -208,7 +202,7 @@ class MainActivity: FlutterActivity() {
         advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
     }
 
-    private fun cctvAdvertising(data1: String, data2: String) {
+    private fun bellAdvertising(data1: String, data2: String) {
         bluetoothAdapter.startDiscovery()
 
         val byteArray = data1.toByteArray(Charsets.UTF_8) + data2.toByteArray(Charsets.UTF_8)
