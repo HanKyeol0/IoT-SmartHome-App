@@ -35,10 +35,10 @@ class MainActivity: FlutterActivity() {
             call, result ->
             Log.i("MethodChannel", "Method ${call.method} invoked")
             when(call.method) {
-                "startAdvertising" -> {
+                "gateAdvertising" -> {
                     val passedData = call.argument<String?>("data")
                     if (passedData != null) {
-                        startAdvertising(passedData)
+                        gateAdvertising(passedData)
                         result.success(null)
                     } else {
                         result.error("NO_DATA", "No data passed", null)
@@ -69,10 +69,6 @@ class MainActivity: FlutterActivity() {
                     } else {
                         result.error("NO_DATA", "Data1 or Data2 missing", null)
                     }
-                }
-                "bellAdvertisingTest" -> {
-                    bellAdvertisingTest()
-                    result.success(null)
                 }
                 else -> result.notImplemented()
             }       
@@ -140,10 +136,22 @@ class MainActivity: FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
-    private fun startAdvertising(data: String) {
+    private fun gateAdvertising(data1: String) {
+        Log.d("steave", "gateAdvertising function called at here: ${System.currentTimeMillis()}")
+
+        if(bluetoothAdapter == null) {
+            Log.e("steave", "Bluetooth Adapter is null")
+            return
+        }
+
+        if (!bluetoothAdapter.isEnabled) {
+            Log.e("steave", "Bluetooth is not enabled")
+            return
+        }
+
         bluetoothAdapter.startDiscovery()
 
-        val byteArray = data.toByteArray(Charsets.UTF_8)
+        val dataByte = hexStringToByteArray(data1)
 
         val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
             0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
@@ -152,7 +160,7 @@ class MainActivity: FlutterActivity() {
 
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
-            addManufacturerData(0x4C54, customData)
+            addManufacturerData(0x4C55, customData)
             //addManufacturerData(0x4C55, byteArray)
         }
 
@@ -208,9 +216,7 @@ private fun bellAdvertising(data1: String, data2: String) {
     val data1Bytes = hexStringToByteArray(data1)
     val data2Bytes = hexStringToByteArray(data2)
 
-    val byteArray = byteArrayOf(0x42) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0xFF.toByte(), 0x00, 0x3B)
-
-    //byteArray should be transformed into byteArrayThatChatGPThelpedME here
+    val byteArray = byteArrayOf(0x44) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0xFF.toByte(), 0x00, 0x3B)
 
     val dataBuilder = AdvertiseData.Builder().apply {
         setIncludeDeviceName(false)
@@ -265,62 +271,6 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val dataBuilder = AdvertiseData.Builder().apply {
         setIncludeDeviceName(false)
         addManufacturerData(0x4C55, byteArray)
-    }
-
-    val settingsBuilder = AdvertiseSettings.Builder().apply {
-        setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
-        setConnectable(false)
-        setTimeout(0)
-    }
-
-    val advertiseCallback = object : AdvertiseCallback() {
-        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-            super.onStartSuccess(settingsInEffect)
-            Log.i("steave", "onStartSuccess: $settingsInEffect")
-            isAdvertiser = true
-        }
-
-        override fun onStartFailure(errorCode: Int) {
-            super.onStartFailure(errorCode)
-            Log.e("steave", "onStartFailure: $errorCode, Error description: ${getStartFailureDescription(errorCode)}")
-            isAdvertiser = false
-        }
-    }
-
-    advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
-}
-
-private fun bellAdvertisingTest() {
-    Log.d("steave", "bellAdvertising function called at: ${System.currentTimeMillis()}")
-
-    if(bluetoothAdapter == null) {
-        Log.e("steave", "Bluetooth Adapter is null")
-        return
-    }
-
-    if (!bluetoothAdapter.isEnabled) {
-        Log.e("steave", "Bluetooth is not enabled")
-        return
-    }
-
-    bluetoothAdapter.startDiscovery()
-/*
-    val customData = byteArrayOf(0x02.toByte(), 0x46.toByte(), 0xCF.toByte(), 0x82.toByte(),
-        0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte())
-
-    val customData = byteArrayOf(0x42, 0xCF.toByte(), 0x82.toByte(),
-        0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x34, 0xB4.toByte(),
-        0x72.toByte(), 0x94.toByte(), 0x76, 0x06, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAC.toByte()
-    )
-*/
-    val customData = byteArrayOf(0x42.toByte(), 0xCF.toByte(), 0x82.toByte(),
-            0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x34.toByte(), 0xB4.toByte(),
-            0x72.toByte(), 0x94.toByte(), 0x0A.toByte(), 0x76.toByte(), 0x06.toByte(), 0x3B.toByte(),
-        )
-
-    val dataBuilder = AdvertiseData.Builder().apply {
-        setIncludeDeviceName(false)
-        addManufacturerData(0x4C55, customData)
     }
 
     val settingsBuilder = AdvertiseSettings.Builder().apply {

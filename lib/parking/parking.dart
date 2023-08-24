@@ -170,11 +170,11 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     } else {
       print('here is the user mac: ${userData!.mac}');
 
-      BLEPlatformChannel.parkingAdvertising('CF826A1ED065', cctvId);
+      BLEPlatformChannel.parkingAdvertising('CF826A1ED064', cctvId);
       print('parking test advertising in bell page');
       print('start');
 
-      Future.delayed(Duration(seconds: 7), () {
+      Future.delayed(Duration(seconds: 5), () {
         BLEPlatformChannel.stopAdvertising();
         print('end');
       });

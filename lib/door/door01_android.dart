@@ -42,7 +42,7 @@ class _Door01AndroidState extends State<Door01Android> {
       BLEPlatformChannel.startAdvertising(userData!.mac);
       print('start');
 
-      Future.delayed(Duration(seconds: 7), () {
+      Future.delayed(Duration(seconds: 5), () {
         BLEPlatformChannel.stopAdvertising();
         print('end');
       });

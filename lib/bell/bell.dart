@@ -101,12 +101,12 @@ class _BellState extends State<Bell> {
     } else {
       print('here is the user mac: ${userData!.mac}');
 
-      BLEPlatformChannel.bellAdvertising('CF826A1ED065', cctvId);
+      BLEPlatformChannel.bellAdvertising(userData!.mac, cctvId);
       //BLEPlatformChannel.bellAdvertisingTest();
       print('bell test advertising in bell page');
       print('start');
 
-      Future.delayed(Duration(seconds: 7), () {
+      Future.delayed(Duration(seconds: 5), () {
         BLEPlatformChannel.stopAdvertising();
         print('end');
       });
