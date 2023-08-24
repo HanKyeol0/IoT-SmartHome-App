@@ -42,7 +42,7 @@ class BLEPlatformChannel {
 
   static Future<void> parkingAdvertising(String? uuid, String? cctvId) async {
     try {
-      await platform.invokeMethod('cctvAdvertising', {
+      await platform.invokeMethod('parkingAdvertising', {
         'data1': uuid,
         'data2': cctvId,
       });

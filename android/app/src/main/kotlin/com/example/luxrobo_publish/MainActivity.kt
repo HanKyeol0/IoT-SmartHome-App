@@ -59,6 +59,17 @@ class MainActivity: FlutterActivity() {
                         result.error("NO_DATA", "Data1 or Data2 missing", null)
                     }
                 }
+                "parkingAdvertising" -> {
+                val data1 = call.argument<String?>("data1")
+                val data2 = call.argument<String?>("data2")
+                
+                    if (data1 != null && data2 != null) {
+                        parkingAdvertising(data1, data2)
+                        result.success(null)
+                    } else {
+                        result.error("NO_DATA", "Data1 or Data2 missing", null)
+                    }
+                }
                 "bellAdvertisingTest" -> {
                     bellAdvertisingTest()
                     result.success(null)
@@ -168,8 +179,19 @@ class MainActivity: FlutterActivity() {
         advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
     }
 
+private fun hexStringToByteArray(s: String): ByteArray {
+    val len = s.length
+    val data = ByteArray(len / 2)
+    var i = 0
+    while (i < len) {
+        data[i / 2] = ((Character.digit(s[i], 16) shl 4) + Character.digit(s[i + 1], 16)).toByte()
+        i += 2
+    }
+    return data
+}
+
 private fun bellAdvertising(data1: String, data2: String) {
-    Log.d("steave", "bellAdvertising function called at: ${System.currentTimeMillis()}")
+    Log.d("steave", "bellAdvertising function called at here: ${System.currentTimeMillis()}")
 
     if(bluetoothAdapter == null) {
         Log.e("steave", "Bluetooth Adapter is null")
@@ -183,20 +205,66 @@ private fun bellAdvertising(data1: String, data2: String) {
 
     bluetoothAdapter.startDiscovery()
 
-    val byteArray = byteArrayOf(0x44.toByte()) + data1.toByteArray(Charsets.UTF_8) + data2.toByteArray(Charsets.UTF_8)
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
 
-    Log.d("steave", "Advertising byteArray: ${byteArray.joinToString(", ") { it.toString() }}")
+    val byteArray = byteArrayOf(0x42) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0xFF.toByte(), 0x00, 0x3B)
 
-    val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
-        0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
-        0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAC.toByte()
-    )
-
-    Log.d("steave", "Custom Advertising Data: ${customData.joinToString(", ") { it.toString() }}")
+    //byteArray should be transformed into byteArrayThatChatGPThelpedME here
 
     val dataBuilder = AdvertiseData.Builder().apply {
         setIncludeDeviceName(false)
-        addManufacturerData(0x4C54, customData)
+        addManufacturerData(0x4C55, byteArray)
+    }
+
+    val settingsBuilder = AdvertiseSettings.Builder().apply {
+        setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        setConnectable(false)
+        setTimeout(0)
+    }
+
+    val advertiseCallback = object : AdvertiseCallback() {
+        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+            super.onStartSuccess(settingsInEffect)
+            Log.i("steave", "onStartSuccess: $settingsInEffect")
+            isAdvertiser = true
+        }
+
+        override fun onStartFailure(errorCode: Int) {
+            super.onStartFailure(errorCode)
+            Log.e("steave", "onStartFailure: $errorCode, Error description: ${getStartFailureDescription(errorCode)}")
+            isAdvertiser = false
+        }
+    }
+
+    advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+}
+
+private fun parkingAdvertising(data1: String, data2: String) {
+    Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
+
+    if(bluetoothAdapter == null) {
+        Log.e("steave", "Bluetooth Adapter is null")
+        return
+    }
+
+    if (!bluetoothAdapter.isEnabled) {
+        Log.e("steave", "Bluetooth is not enabled")
+        return
+    }
+
+    bluetoothAdapter.startDiscovery()
+
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
+
+    val byteArray = byteArrayOf(0x42) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0x3B)
+
+    //byteArray should be transformed into byteArrayThatChatGPThelpedME here
+
+    val dataBuilder = AdvertiseData.Builder().apply {
+        setIncludeDeviceName(false)
+        addManufacturerData(0x4C55, byteArray)
     }
 
     val settingsBuilder = AdvertiseSettings.Builder().apply {
@@ -236,23 +304,23 @@ private fun bellAdvertisingTest() {
     }
 
     bluetoothAdapter.startDiscovery()
-
+/*
     val customData = byteArrayOf(0x02.toByte(), 0x46.toByte(), 0xCF.toByte(), 0x82.toByte(),
         0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte())
-/*
+
     val customData = byteArrayOf(0x42, 0xCF.toByte(), 0x82.toByte(),
         0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x34, 0xB4.toByte(),
         0x72.toByte(), 0x94.toByte(), 0x76, 0x06, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAC.toByte()
     )
-
-    val customData = byteArrayOf(0x42, 0x00, 0x21.toByte(), 0x04.toByte(),
-            0xB0.toByte(), 0x00.toByte(), 0x00.toByte(), 0x04.toByte(), 0x43, 0x00,
-            0xB1.toByte(), 0x41, 0x0A, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAC.toByte()
-        )
 */
+    val customData = byteArrayOf(0x42.toByte(), 0xCF.toByte(), 0x82.toByte(),
+            0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x34.toByte(), 0xB4.toByte(),
+            0x72.toByte(), 0x94.toByte(), 0x0A.toByte(), 0x76.toByte(), 0x06.toByte(), 0x3B.toByte(),
+        )
+
     val dataBuilder = AdvertiseData.Builder().apply {
         setIncludeDeviceName(false)
-        addManufacturerData(0x5D03, customData)
+        addManufacturerData(0x4C55, customData)
     }
 
     val settingsBuilder = AdvertiseSettings.Builder().apply {

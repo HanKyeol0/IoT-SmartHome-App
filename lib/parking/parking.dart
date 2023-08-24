@@ -8,6 +8,8 @@ import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
 import 'package:luxrobo/widgets/field.dart';
 
+import '../ble_platform_channel.dart';
+
 class Parking extends StatefulWidget {
   const Parking({super.key});
 
@@ -42,6 +44,8 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   List<BleDevice> devices = [];
   StreamSubscription<List<ScanResult>>? scanSubscription;
   int? apartmentID = GlobalData().getApartmentID;
+  UserData? userData = GlobalData().userData;
+  String? cctvId;
 
   Future<List<CarList>?> cars = ApiService.getUserCar();
 
@@ -112,7 +116,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> findNearestCCTV() async {
+  Future<String?> findNearestCCTV() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
@@ -129,6 +133,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
             if (result.rssi > maxRssi) {
               // only store the device if its RSSI is greater than the current max
               maxRssi = result.rssi;
+              //print(id);
               maxRssiDevice = BleDevice(
                   deviceId: "${result.device.id}",
                   manufacturerSpecificData: hexData,
@@ -139,13 +144,36 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       }
     });
 
-    if (maxRssiDevice != null) {
+    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+      if (maxRssiDevice != null) {
+        print('here is the device: $maxRssiDevice');
+        final deviceIdString = maxRssiDevice!.deviceId;
+        setState(() {
+          cctvId = deviceIdString.replaceAll(":", "");
+        });
+      } else {
+        // ignore: avoid_print
+        print("No device found");
+      }
+    });
+    return null;
+  }
+
+  void parkingBellAdvertising(cctvId) {
+    if (userData == null) {
       // ignore: avoid_print
-      //gateDetection();
-      print(maxRssiDevice);
+      print('User data is not set - mac address');
     } else {
-      // ignore: avoid_print
-      print("No device found");
+      print('here is the user mac: ${userData!.mac}');
+
+      BLEPlatformChannel.parkingAdvertising('CF826A1ED065', cctvId);
+      print('parking test advertising in bell page');
+      print('start');
+
+      Future.delayed(Duration(seconds: 7), () {
+        BLEPlatformChannel.stopAdvertising();
+        print('end');
+      });
     }
   }
 
