@@ -45,7 +45,7 @@ class _BellState extends State<Bell> {
     Future.delayed(Duration(seconds: 7), () {
       print('hello this is cctvID : $cctvId');
     });
-    //startScan();
+    FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   }
 
   Future<String?> findNearestCCTV() async {
@@ -79,8 +79,9 @@ class _BellState extends State<Bell> {
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
       if (maxRssiDevice != null) {
         print('here is the device: $maxRssiDevice');
+        final deviceIdString = maxRssiDevice!.deviceId;
         setState(() {
-          cctvId = maxRssiDevice!.deviceId;
+          cctvId = deviceIdString.replaceAll(":", "");
         });
       } else {
         // ignore: avoid_print
@@ -134,15 +135,18 @@ class _BellState extends State<Bell> {
       // ignore: avoid_print
       print('User data is not set - mac address');
     } else {
-      print(userData!.mac);
-    }
-    BLEPlatformChannel.bellAdvertising(userData!.mac, cctvId);
-    print('start');
+      print('here is the user mac: ${userData!.mac}');
 
-    Future.delayed(Duration(seconds: 10), () {
-      BLEPlatformChannel.stopAdvertising();
-      print('end');
-    });
+      //BLEPlatformChannel.bellAdvertising(userData!.mac, cctvId);
+      BLEPlatformChannel.bellAdvertisingTest();
+      print('bell test advertising in bell page');
+      print('start');
+
+      Future.delayed(Duration(seconds: 7), () {
+        BLEPlatformChannel.stopAdvertising();
+        print('end');
+      });
+    }
   }
 
   void cctvDetectionFailed(BuildContext context) {
@@ -228,7 +232,7 @@ class _BellState extends State<Bell> {
                       print(cctvId);
                     } else {
                       print('cctv not found');
-                      cctvDetectionFailed;
+                      cctvDetectionFailed(context);
                     }
                   }),
                   const SizedBox(height: 50),

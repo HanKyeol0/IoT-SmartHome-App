@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 class BLEPlatformChannel {
-  static const platform = const MethodChannel('luxrobo/ble');
+  static const platform = const MethodChannel("luxrobo/ble");
 
   static Future<void> startAdvertising(String? data) async {
     try {
@@ -26,6 +26,15 @@ class BLEPlatformChannel {
         'data1': uuid,
         'data2': cctvId,
       });
+    } on PlatformException catch (e) {
+      print("Failed to start advertising: ${e.message}");
+    }
+  }
+
+  static Future<void> bellAdvertisingTest() async {
+    try {
+      await platform.invokeMethod('bellAdvertisingTest');
+      print('Test bell advertising');
     } on PlatformException catch (e) {
       print("Failed to start advertising: ${e.message}");
     }

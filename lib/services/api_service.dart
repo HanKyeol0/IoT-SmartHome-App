@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:luxrobo/services/api_data.dart';
 
+import '../widgets/dialog.dart';
+
 class ApiService {
   static const String baseurl = 'http://13.125.92.61:8080';
 
@@ -107,13 +109,18 @@ class ApiService {
       (item) => item['name'] == value,
       orElse: () => null,
     );
-
-    if (apartment != null) {
-      final int apartmentID = apartment['id'] as int;
-      return apartmentID;
-    } else {
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (apartment != null) {
+        final int apartmentID = apartment['id'] as int;
+        return apartmentID;
+      } else {
+        return null;
+      }
+    } else if (response.statusCode == 500) {
+      unstableNetwork;
       return null;
     }
+    return null;
   }
 
   //getOnepassLogs

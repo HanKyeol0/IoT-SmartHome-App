@@ -14,26 +14,18 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-//import com.example.luxrobo.databinding.ActivityMainBinding
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-//import io.reactivex.android.schedulers.AndroidSchedulers
-//import io.reactivex.disposables.Disposable
-//import io.reactivex.subjects.PublishSubject
 import java.util.*
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "luxrobo/ble"
-    //private lateinit var binding: ActivityMainBinding
 
     private lateinit var bluetoothAdapter: BluetoothAdapter
-    //private val isScanning: Boolean get() = scanDisposable != null
-    //private var scanDisposable: Disposable? = null
     private lateinit var advertiser: BluetoothLeAdvertiser
     private var isAdvertiser = false
     private var imei = "3962"
-    //private val resultsAdapter = ScanResultsAdapter()
     private var scanData = byteArrayOf()
     private var keyCodeString = StringBuilder()
 
@@ -41,6 +33,7 @@ class MainActivity: FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { 
             call, result ->
+            Log.i("MethodChannel", "Method ${call.method} invoked")
             when(call.method) {
                 "startAdvertising" -> {
                     val passedData = call.argument<String?>("data")
@@ -59,13 +52,17 @@ class MainActivity: FlutterActivity() {
                 val data1 = call.argument<String?>("data1")
                 val data2 = call.argument<String?>("data2")
                 
-                if (data1 != null && data2 != null) {
-                    bellAdvertising(data1, data2)
-                    result.success(null)
-                } else {
-                    result.error("NO_DATA", "Data1 or Data2 missing", null)
+                    if (data1 != null && data2 != null) {
+                        bellAdvertising(data1, data2)
+                        result.success(null)
+                    } else {
+                        result.error("NO_DATA", "Data1 or Data2 missing", null)
+                    }
                 }
-            }
+                "bellAdvertisingTest" -> {
+                    bellAdvertisingTest()
+                    result.success(null)
+                }
                 else -> result.notImplemented()
             }       
     }
@@ -75,9 +72,6 @@ class MainActivity: FlutterActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //binding = ActivityMainBinding.inflate(layoutInflater)
-        //setContentView(binding.root)
-        //configureResultList()
         permissionCheck()
         bleInit()
     }
@@ -133,34 +127,6 @@ class MainActivity: FlutterActivity() {
         }
     }
 
-    /*private fun configureResultList() {
-        with(binding.scanResults) {
-            setHasFixedSize(true)
-            itemAnimator = null
-            adapter = resultsAdapter
-        }
-    }*/
-/* 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.d("steave", "keyCode $keyCode")
-        when (keyCode) {
-            in 7..16 -> keyCodeString.append(keyCode - 7)
-            66 -> { // Enter
-                if (keyCodeString.length == 15) {
-                    stopAdvertising()
-                    imei = keyCodeString.toString()
-                    binding.scanMsg.text = "scan = $keyCodeString"
-                    keyCodeString.clear()
-                    startAdvertising()
-                } else {
-                    keyCodeString.clear()
-                }
-            }
-        }
-        return super.onKeyDown(keyCode, event)
-    }*/
-
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
     private fun startAdvertising(data: String) {
@@ -168,14 +134,14 @@ class MainActivity: FlutterActivity() {
 
         val byteArray = data.toByteArray(Charsets.UTF_8)
 
-        val customData = byteArrayOf(0x43, 0x00, 0x99.toByte(), 0x99.toByte(),
+        val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
             0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
-            0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAF.toByte()
+            0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAC.toByte()
         )
 
         val dataBuilder = AdvertiseData.Builder().apply {
             setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, customData)
+            addManufacturerData(0x4C54, customData)
             //addManufacturerData(0x4C55, byteArray)
         }
 
@@ -202,71 +168,128 @@ class MainActivity: FlutterActivity() {
         advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
     }
 
-    private fun bellAdvertising(data1: String, data2: String) {
-        bluetoothAdapter.startDiscovery()
+private fun bellAdvertising(data1: String, data2: String) {
+    Log.d("steave", "bellAdvertising function called at: ${System.currentTimeMillis()}")
 
-        val byteArray = data1.toByteArray(Charsets.UTF_8) + data2.toByteArray(Charsets.UTF_8)
-
-        val dataBuilder = AdvertiseData.Builder().apply {
-            setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, byteArray)
-        }
-
-        val settingsBuilder = AdvertiseSettings.Builder().apply {
-            setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
-            setConnectable(false)
-            setTimeout(0)
-        }
-
-        val advertiseCallback = object : AdvertiseCallback() {
-            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-                super.onStartSuccess(settingsInEffect)
-                Log.i("steave", "onStartSuccess: $settingsInEffect")
-                isAdvertiser = true
-            }
-
-            override fun onStartFailure(errorCode: Int) {
-                super.onStartFailure(errorCode)
-                Log.e("steave", "onStartFailure: $errorCode")
-                isAdvertiser = false
-            }
-        }
-
-        advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+    if(bluetoothAdapter == null) {
+        Log.e("steave", "Bluetooth Adapter is null")
+        return
     }
+
+    if (!bluetoothAdapter.isEnabled) {
+        Log.e("steave", "Bluetooth is not enabled")
+        return
+    }
+
+    bluetoothAdapter.startDiscovery()
+
+    val byteArray = byteArrayOf(0x44.toByte()) + data1.toByteArray(Charsets.UTF_8) + data2.toByteArray(Charsets.UTF_8)
+
+    Log.d("steave", "Advertising byteArray: ${byteArray.joinToString(", ") { it.toString() }}")
+
+    val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
+        0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
+        0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAC.toByte()
+    )
+
+    Log.d("steave", "Custom Advertising Data: ${customData.joinToString(", ") { it.toString() }}")
+
+    val dataBuilder = AdvertiseData.Builder().apply {
+        setIncludeDeviceName(false)
+        addManufacturerData(0x4C54, customData)
+    }
+
+    val settingsBuilder = AdvertiseSettings.Builder().apply {
+        setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        setConnectable(false)
+        setTimeout(0)
+    }
+
+    val advertiseCallback = object : AdvertiseCallback() {
+        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+            super.onStartSuccess(settingsInEffect)
+            Log.i("steave", "onStartSuccess: $settingsInEffect")
+            isAdvertiser = true
+        }
+
+        override fun onStartFailure(errorCode: Int) {
+            super.onStartFailure(errorCode)
+            Log.e("steave", "onStartFailure: $errorCode, Error description: ${getStartFailureDescription(errorCode)}")
+            isAdvertiser = false
+        }
+    }
+
+    advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+}
+
+private fun bellAdvertisingTest() {
+    Log.d("steave", "bellAdvertising function called at: ${System.currentTimeMillis()}")
+
+    if(bluetoothAdapter == null) {
+        Log.e("steave", "Bluetooth Adapter is null")
+        return
+    }
+
+    if (!bluetoothAdapter.isEnabled) {
+        Log.e("steave", "Bluetooth is not enabled")
+        return
+    }
+
+    bluetoothAdapter.startDiscovery()
+
+    val customData = byteArrayOf(0x02.toByte(), 0x46.toByte(), 0xCF.toByte(), 0x82.toByte(),
+        0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte())
 /*
-    private fun gateAccessAdvertising() {
-        bluetoothAdapter.startDiscovery()
+    val customData = byteArrayOf(0x42, 0xCF.toByte(), 0x82.toByte(),
+        0x6A.toByte(), 0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x34, 0xB4.toByte(),
+        0x72.toByte(), 0x94.toByte(), 0x76, 0x06, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAC.toByte()
+    )
 
-        AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
+    val customData = byteArrayOf(0x42, 0x00, 0x21.toByte(), 0x04.toByte(),
+            0xB0.toByte(), 0x00.toByte(), 0x00.toByte(), 0x04.toByte(), 0x43, 0x00,
+            0xB1.toByte(), 0x41, 0x0A, 0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0xAC.toByte()
+        )
+*/
+    val dataBuilder = AdvertiseData.Builder().apply {
+        setIncludeDeviceName(false)
+        addManufacturerData(0x5D03, customData)
+    }
 
-        ParcelUuid temp = new ParcelUuid(UUID.fromString("44002104B00000044300B1410A4F504100010000"));
+    val settingsBuilder = AdvertiseSettings.Builder().apply {
+        setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        setConnectable(false)
+        setTimeout(0)
+    }
 
-        dataBuilder.addServiceUuid(temp)
-
-        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
-        settingsBuilder.setConnectable(false);
-
-        AdvertiseData ad = dataBuilder.build();
-
-        val advertiseCallback = object : AdvertiseCallback() {
-            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-                super.onStartSuccess(settingsInEffect)
-                Log.i("steave", "onStartSuccess: $settingsInEffect")
-                isAdvertiser = true
-            }
-
-            override fun onStartFailure(errorCode: Int) {
-                super.onStartFailure(errorCode)
-                Log.e("steave", "onStartFailure: $errorCode")
-                isAdvertiser = false
-            }
+    val advertiseCallback = object : AdvertiseCallback() {
+        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+            super.onStartSuccess(settingsInEffect)
+            Log.i("steave", "onStartSuccess: $settingsInEffect")
+            isAdvertiser = true
         }
 
-        bluetoothLeAdvertiser.startAdvertising(settingsBuilder.build(), ad, null, advertiseCallback);
+        override fun onStartFailure(errorCode: Int) {
+            super.onStartFailure(errorCode)
+            Log.e("steave", "onStartFailure: $errorCode, Error description: ${getStartFailureDescription(errorCode)}")
+            isAdvertiser = false
+        }
     }
-*/
+
+    advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+}
+
+private fun getStartFailureDescription(errorCode: Int): String {
+    return when(errorCode) {
+        AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED -> "ADVERTISE_FAILED_ALREADY_STARTED"
+        AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE -> "ADVERTISE_FAILED_DATA_TOO_LARGE"
+        AdvertiseCallback.ADVERTISE_FAILED_FEATURE_UNSUPPORTED -> "ADVERTISE_FAILED_FEATURE_UNSUPPORTED"
+        AdvertiseCallback.ADVERTISE_FAILED_INTERNAL_ERROR -> "ADVERTISE_FAILED_INTERNAL_ERROR"
+        AdvertiseCallback.ADVERTISE_FAILED_TOO_MANY_ADVERTISERS -> "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS"
+        else -> "UNKNOWN_ERROR"
+    }
+}
+
+
     private fun stopAdvertising() {
         advertiser.stopAdvertising(advertiseCallback)
         bluetoothAdapter.cancelDiscovery()
