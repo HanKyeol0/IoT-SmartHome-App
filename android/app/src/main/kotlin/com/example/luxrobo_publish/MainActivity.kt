@@ -258,7 +258,7 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val data1Bytes = hexStringToByteArray(data1)
     val data2Bytes = hexStringToByteArray(data2)
 
-    val byteArray = byteArrayOf(0x42) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0x3B)
+    val byteArray = byteArrayOf(0x44) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0x3B)
 
     //byteArray should be transformed into byteArrayThatChatGPThelpedME here
 

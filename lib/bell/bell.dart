@@ -45,12 +45,15 @@ class _BellState extends State<Bell> {
     Future.delayed(Duration(seconds: 7), () {
       print('hello this is cctvID : $cctvId');
     });
-    FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   }
 
   Future<String?> findNearestCCTV() async {
+    await flutterBlue.stopScan();
+
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
+
+    scanSubscription?.cancel();
 
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
@@ -89,45 +92,6 @@ class _BellState extends State<Bell> {
       }
     });
     return null;
-  }
-
-  Future<void> startScan() async {
-    int maxRssi = -999; // a large negative value to compare with actual RSSI
-    BleDevice? maxRssiDevice;
-
-    scanSubscription = flutterBlue.scanResults.listen((results) {
-      for (var result in results) {
-        //print(result);
-        result.advertisementData.manufacturerData
-            .forEach((id, manufacturerSpecificData) {
-          var hexData = manufacturerSpecificData
-              .map((data) => data.toRadixString(16).padLeft(2, '0'))
-              .join();
-          if (hexData.contains("4c4354")) {
-            // Lux device code
-            if (result.rssi > maxRssi) {
-              // only store the device if its RSSI is greater than the current max
-              maxRssi = result.rssi;
-              maxRssiDevice = BleDevice(
-                  deviceId: "${result.device.id}",
-                  manufacturerSpecificData: hexData,
-                  rssi: result.rssi);
-            }
-          }
-        });
-      }
-    });
-
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
-      if (maxRssiDevice != null) {
-        print('here is the device: $maxRssiDevice');
-        setState(() {
-          cctvId = maxRssiDevice!.deviceId;
-        });
-      } else {
-        print("No device found");
-      }
-    });
   }
 
   void cctvBellAdvertising(cctvId) {
@@ -170,7 +134,7 @@ class _BellState extends State<Bell> {
               children: <Widget>[
                 Text(
                   'CCTV BLE가 감지되지 않습니다.',
-                  style: contentText(),
+                  style: titleText(),
                 ),
                 const SizedBox(
                   height: 39,

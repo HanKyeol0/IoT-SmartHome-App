@@ -117,8 +117,12 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   }
 
   Future<String?> findNearestCCTV() async {
+    await flutterBlue.stopScan();
+
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
+
+    scanSubscription?.cancel();
 
     scanSubscription = flutterBlue.scanResults.listen((results) {
       for (var result in results) {
@@ -159,7 +163,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     return null;
   }
 
-  void parkingBellAdvertising(cctvId) {
+  void parkingAdvertising(cctvId) {
     if (userData == null) {
       // ignore: avoid_print
       print('User data is not set - mac address');
@@ -175,6 +179,53 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
         print('end');
       });
     }
+  }
+
+  void cctvDetectionFailed(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: darkGrey,
+          elevation: 0.0, // No shadow
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.only(
+              top: 40,
+              bottom: 30,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'CCTV BLE가 감지되지 않습니다.',
+                  style: titleText(),
+                ),
+                const SizedBox(
+                  height: 39,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RoundButton(
+                      text: '확인',
+                      bgColor: bColor,
+                      textColor: black,
+                      buttonWidth: MediaQuery.of(context).size.width * 0.3,
+                      buttonHeight: 46,
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -546,7 +597,18 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                         },
                       ),
                       const SizedBox(height: 74),
-                      const Expanded(child: TouchParking()),
+                      Expanded(
+                        child: TouchParking(onPressed: () {
+                          if (cctvId != null) {
+                            print('cctv found');
+                            parkingAdvertising(cctvId);
+                            print(cctvId);
+                          } else {
+                            print('cctv not found');
+                            cctvDetectionFailed(context);
+                          }
+                        }),
+                      ),
                     ],
                   ),
                 ),

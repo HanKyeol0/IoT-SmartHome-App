@@ -39,7 +39,6 @@ class _Door01AndroidState extends State<Door01Android> {
       print('User data is not set - mac address');
     } else {
       print(userData!.mac);
-      print(userData!.mac);
       BLEPlatformChannel.startAdvertising(userData!.mac);
       print('start');
 

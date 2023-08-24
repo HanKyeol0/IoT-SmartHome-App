@@ -336,38 +336,43 @@ class GateAccess extends StatelessWidget {
 }
 
 class TouchParking extends StatelessWidget {
-  const TouchParking({super.key});
+  final VoidCallback onPressed;
+
+  const TouchParking({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          Container(
-            //padding: const EdgeInsets.all(33.5),
-            height: 118,
-            width: 118,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
+      child: InkWell(
+        onTap: onPressed,
+        child: Column(
+          children: [
+            Container(
+              //padding: const EdgeInsets.all(33.5),
+              height: 118,
+              width: 118,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: bColor,
+                ),
+              ),
+              child: const Icon(
+                Icons.local_parking_rounded,
                 color: bColor,
+                size: 51,
               ),
             ),
-            child: const Icon(
-              Icons.local_parking_rounded,
-              color: bColor,
-              size: 51,
+            const SizedBox(height: 20),
+            Text(
+              '터치해서 주차하기',
+              style: fieldTitle(
+                fontSize: 16,
+                color: wColor,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '터치해서 주차하기',
-            style: fieldTitle(
-              fontSize: 16,
-              color: wColor,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
