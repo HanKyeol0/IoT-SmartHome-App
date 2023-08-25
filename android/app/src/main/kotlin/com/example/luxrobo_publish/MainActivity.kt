@@ -18,6 +18,8 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.*
+import android.os.ParcelUuid
+import java.nio.ByteBuffer
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "luxrobo/ble"
@@ -245,7 +247,7 @@ private fun bellAdvertising(data1: String, data2: String) {
 
     advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
 }
-
+/*
 private fun parkingAdvertising(data1: String, data2: String) {
     Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
 
@@ -266,11 +268,70 @@ private fun parkingAdvertising(data1: String, data2: String) {
 
     val byteArray = byteArrayOf(0x44) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0x3B)
 
-    //byteArray should be transformed into byteArrayThatChatGPThelpedME here
-
     val dataBuilder = AdvertiseData.Builder().apply {
         setIncludeDeviceName(false)
         addManufacturerData(0x4C55, byteArray)
+    }
+
+    val settingsBuilder = AdvertiseSettings.Builder().apply {
+        setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        setConnectable(false)
+        setTimeout(0)
+    }
+
+    val advertiseCallback = object : AdvertiseCallback() {
+        override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
+            super.onStartSuccess(settingsInEffect)
+            Log.i("steave", "onStartSuccess: $settingsInEffect")
+            isAdvertiser = true
+        }
+
+        override fun onStartFailure(errorCode: Int) {
+            super.onStartFailure(errorCode)
+            Log.e("steave", "onStartFailure: $errorCode, Error description: ${getStartFailureDescription(errorCode)}")
+            isAdvertiser = false
+        }
+    }
+
+    advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+}
+*/
+private fun parkingAdvertising(data1: String, data2: String) {
+    Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
+
+    if(bluetoothAdapter == null) {
+        Log.e("steave", "Bluetooth Adapter is null")
+        return
+    }
+
+    if (!bluetoothAdapter.isEnabled) {
+        Log.e("steave", "Bluetooth is not enabled")
+        return
+    }
+
+    bluetoothAdapter.startDiscovery()
+
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
+
+    val byteArray = byteArrayOf(0x44) + data1Bytes + data2Bytes + byteArrayOf(0x4F, 0x50, 0x41, 0x00, 0x01, 0x00, 0x3B)
+
+    if (byteArray.size < 16) {
+        Log.e("steave", "byteArray length should be at least 16 bytes for UUID")
+        return
+    }
+
+    val byteBuffer = ByteBuffer.wrap(byteArray)
+    val high = byteBuffer.long
+    val low = byteBuffer.long
+    val customUuid = UUID(high, low)
+
+    val parcelUuid = ParcelUuid(customUuid)
+
+    val dataBuilder = AdvertiseData.Builder().apply {
+        setIncludeDeviceName(false)
+        addManufacturerData(0x4C00)
+        addServiceUuid("4446CF826A1ED0654300B1410B4F504100013B") //parcelUuid
     }
 
     val settingsBuilder = AdvertiseSettings.Builder().apply {

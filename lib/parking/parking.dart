@@ -151,7 +151,8 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
       if (maxRssiDevice != null) {
         print('here is the device: $maxRssiDevice');
-        final deviceIdString = maxRssiDevice!.deviceId;
+        final deviceIdString =
+            maxRssiDevice!.manufacturerSpecificData.substring(0, 10);
         setState(() {
           cctvId = deviceIdString.replaceAll(":", "");
         });
@@ -170,7 +171,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     } else {
       print('here is the user mac: ${userData!.mac}');
 
-      BLEPlatformChannel.parkingAdvertising('CF826A1ED064', cctvId);
+      BLEPlatformChannel.parkingAdvertising(userData!.mac, cctvId);
       print('parking test advertising in bell page');
       print('start');
 

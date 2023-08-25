@@ -382,7 +382,7 @@ class _Door01State extends State<Door01> {
     );
   }
 }
-
+/*
 void advertiseToCCTV(String macAddress, String deviceId) {
   List<int> macAddressBytes =
       macAddress.split("-").map((e) => int.parse(e, radix: 16)).toList();
@@ -414,7 +414,7 @@ void advertiseToCCTV(String macAddress, String deviceId) {
 
 
 
-/*
+
 Future<void> startScan() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
@@ -443,12 +443,12 @@ Future<void> startScan() async {
     });
 
     flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
-      /*beaconBroadcast
+      beaconBroadcast
           .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
           .setMajorId(1)
           .setMinorId(100)
           .start();
-      print('start');*/
+      print('start');
       try {
         await FlutterBlePeripheral()
             .start(
@@ -479,4 +479,4 @@ Future<void> startScan() async {
       });
     });
   }
-  */
+*/

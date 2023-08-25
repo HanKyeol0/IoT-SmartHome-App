@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:beacon_broadcast/beacon_broadcast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:luxrobo/ble_platform_channel.dart';
@@ -37,6 +38,7 @@ class _BellState extends State<Bell> {
   GlobalData globalData = GlobalData();
   UserData? userData = GlobalData().userData;
   String? cctvId;
+  BeaconBroadcast beaconBroadcast = BeaconBroadcast();
 
   @override
   void initState() {
@@ -92,6 +94,32 @@ class _BellState extends State<Bell> {
       }
     });
     return null;
+  }
+
+  Future<void> beaconBroadcastUuid() async {
+    beaconBroadcast.stop();
+
+    flutterBlue.startScan(timeout: const Duration(seconds: 1)).then((_) async {
+      beaconBroadcast
+          //.setManufacturerId(44)
+          //.setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
+          .setUUID('4C004446CF826A1ED0654300B1410B4F5041')
+          .setMajorId(1)
+          .setMinorId(100)
+          .start();
+      /*
+          .setManufacturerId(0x4C00)
+          .setLayout('s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-21v')
+          .setUUID('4446CF826A1ED0654300B1410B4F5041')
+          .setMajorId(0001)
+          .setMinorId(0x3B)
+          .start();*/
+
+      Future.delayed(Duration(seconds: 5), () {
+        beaconBroadcast.stop();
+        print('end');
+      });
+    });
   }
 
   void cctvBellAdvertising(cctvId) {
@@ -189,7 +217,10 @@ class _BellState extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(longPressed: () {
+                  EmergencyBell(longPressed: beaconBroadcastUuid
+
+                      /*
+                  () {
                     if (cctvId != null) {
                       print('cctv found');
                       cctvBellAdvertising(cctvId);
@@ -198,7 +229,8 @@ class _BellState extends State<Bell> {
                       print('cctv not found');
                       cctvDetectionFailed(context);
                     }
-                  }),
+                  }*/
+                      ),
                   const SizedBox(height: 50),
                   Text(
                     '비상 시 1초간 꾹 눌러주세요.',
