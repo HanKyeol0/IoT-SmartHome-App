@@ -117,7 +117,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   }
 
   Future<String?> findNearestCCTV() async {
-    await flutterBlue.stopScan();
+    //await flutterBlue.stopScan();
 
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;

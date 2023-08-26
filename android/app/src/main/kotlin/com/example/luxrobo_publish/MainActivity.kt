@@ -296,6 +296,8 @@ private fun parkingAdvertising(data1: String, data2: String) {
     advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
 }
 */
+
+/*
 private fun parkingAdvertising(data1: String, data2: String) {
     Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
 
@@ -328,10 +330,13 @@ private fun parkingAdvertising(data1: String, data2: String) {
 
     val parcelUuid = ParcelUuid(customUuid)
 
+    ParcelUuid pUuid = new ParcelUuid(UUID.fromString("4446CF826A1ED0654300B1410B4F504100013B"));
+
     val dataBuilder = AdvertiseData.Builder().apply {
+        
         setIncludeDeviceName(false)
         addManufacturerData(0x4C00)
-        addServiceUuid("4446CF826A1ED0654300B1410B4F504100013B") //parcelUuid
+        addServiceUuid(pUuid)
     }
 
     val settingsBuilder = AdvertiseSettings.Builder().apply {
@@ -356,6 +361,77 @@ private fun parkingAdvertising(data1: String, data2: String) {
 
     advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
 }
+*/
+
+val callback = object : AdvertiseCallback() {
+    override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
+        super.onStartSuccess(settingsInEffect)
+        println("Advertise Successful")
+    }
+
+    override fun onStartFailure(errorCode: Int) {
+        super.onStartFailure(errorCode)
+        println("Advertise Failed: Error Code: $errorCode")
+    }
+}
+
+private fun parkingAdvertising(data1: String, data2: String) {
+
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
+
+    Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
+
+    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    val bluetoothAdapter = bluetoothManager.adapter
+    val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
+
+    // iBeacon Prefix
+    val advFlags = byteArrayOf(0x02, 0x01, 0x06)
+    val advHeader = byteArrayOf(0x1A.toByte(), 0xFF.toByte())
+    val companyId = byteArrayOf(0x4C, 0x00)
+    val type = byteArrayOf(0x02, 0x15)
+
+    // UUID
+    val uuid = UUID.fromString("4446CF826A1ED0654300B1410B4F504100013B")
+    val uuidBytes = ByteBuffer.wrap(ByteArray(16))
+        .putLong(uuid.mostSignificantBits)
+        .putLong(uuid.leastSignificantBits)
+        .array()
+
+    // Major and Minor
+    val major = byteArrayOf(0x00, 0x01)
+    val minor = byteArrayOf(0x00, 0x02)
+
+    // TX Power
+    val txPower = byteArrayOf(0xC3.toByte())
+
+    val manufacturerData = ByteBuffer.allocate(30)
+    manufacturerData.put(advFlags)
+    manufacturerData.put(advHeader)
+    manufacturerData.put(companyId)
+    manufacturerData.put(type)
+    manufacturerData.put(uuidBytes)
+    manufacturerData.put(major)
+    manufacturerData.put(minor)
+    manufacturerData.put(txPower)
+
+    val advertiseSettings = AdvertiseSettings.Builder()
+        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+        .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+        .setConnectable(false)
+        .build()
+
+    val advertiseData = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .setIncludeTxPowerLevel(false)
+        .addManufacturerData(0x004C, manufacturerData.array())  // 0x004C is for Apple Inc.
+        .build()
+
+        bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback)
+}
+
+//------------------------------------------------------------------------------
 
 private fun getStartFailureDescription(errorCode: Int): String {
     return when(errorCode) {
