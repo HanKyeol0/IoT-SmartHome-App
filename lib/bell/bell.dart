@@ -33,7 +33,7 @@ class Bell extends StatefulWidget {
 }
 
 class _BellState extends State<Bell> {
-  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  //FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
   GlobalData globalData = GlobalData();
   UserData? userData = GlobalData().userData;
@@ -44,20 +44,20 @@ class _BellState extends State<Bell> {
   void initState() {
     super.initState();
     findNearestCCTV();
-    Future.delayed(Duration(seconds: 7), () {
+    Future.delayed(Duration(seconds: 5), () {
       print('hello this is cctvID : $cctvId');
     });
   }
 
   Future<String?> findNearestCCTV() async {
-    await flutterBlue.stopScan();
+    await FlutterBluePlus.stopScan();
 
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
     scanSubscription?.cancel();
 
-    scanSubscription = flutterBlue.scanResults.listen((results) {
+    scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (var result in results) {
         //print(result);
         result.advertisementData.manufacturerData
@@ -72,7 +72,7 @@ class _BellState extends State<Bell> {
               maxRssi = result.rssi;
               //print(id);
               maxRssiDevice = BleDevice(
-                  deviceId: "${result.device.id}",
+                  deviceId: "${result.device.remoteId}",
                   manufacturerSpecificData: hexData,
                   rssi: result.rssi);
             }
@@ -81,7 +81,8 @@ class _BellState extends State<Bell> {
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 3))
+        .then((_) async {
       if (maxRssiDevice != null) {
         print('here is the device: $maxRssiDevice');
         final deviceIdString = maxRssiDevice!.deviceId;
@@ -97,13 +98,15 @@ class _BellState extends State<Bell> {
   }
 
   Future<void> beaconBroadcastUuid() async {
+    await FlutterBluePlus.stopScan();
     beaconBroadcast.stop();
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 1)).then((_) async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 1))
+        .then((_) async {
       beaconBroadcast
-          //.setManufacturerId(44)
-          //.setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
-          .setUUID('4C004446CF826A1ED0654300B1410B4F5041')
+          .setManufacturerId(0x4C00)
+          .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
+          .setUUID('44002104-B000-0044-3000-B1410A4F5041')
           .setMajorId(1)
           .setMinorId(100)
           .start();
@@ -191,7 +194,7 @@ class _BellState extends State<Bell> {
   @override
   void dispose() {
     scanSubscription?.cancel();
-    flutterBlue.stopScan();
+    FlutterBluePlus.stopScan();
     super.dispose();
   }
 

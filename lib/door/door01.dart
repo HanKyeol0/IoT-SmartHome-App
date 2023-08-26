@@ -54,7 +54,7 @@ class Door01 extends StatefulWidget {
 }
 
 class _Door01State extends State<Door01> {
-  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  //FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   //FlutterBlePeripheral blePeripheral = FlutterBlePeripheral();
   StreamSubscription<List<ScanResult>>? scanSubscription;
   bool isGateDetected = true;
@@ -154,16 +154,12 @@ class _Door01State extends State<Door01> {
     });
   }
 
-  Future<void> turnBluetooth() async {
-    if (!await flutterBlue.isOn) {}
-  }
-
   // scan BLE devices and pick one that has the highest RSSI
   Future<void> startScan() async {
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
-    scanSubscription = flutterBlue.scanResults.listen((results) {
+    scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (var result in results) {
         //print(result);
         result.advertisementData.manufacturerData
@@ -177,7 +173,7 @@ class _Door01State extends State<Door01> {
               // only store the device if its RSSI is greater than the current max
               maxRssi = result.rssi;
               maxRssiDevice = BleDevice(
-                  deviceId: "${result.device.id}",
+                  deviceId: "${result.device.remoteId}",
                   manufacturerSpecificData: hexData,
                   rssi: result.rssi);
             }
@@ -186,7 +182,8 @@ class _Door01State extends State<Door01> {
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 3))
+        .then((_) async {
       beaconBroadcast
           .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
           .setMajorId(1)
@@ -225,7 +222,8 @@ class _Door01State extends State<Door01> {
   }
 
   Future<void> beaconBroadCastUsing() async {
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 3))
+        .then((_) async {
       beaconBroadcast
           .setUUID('4C554200B4A94F5E07174300B1410C4F504100010000')
           .setMajorId(1)

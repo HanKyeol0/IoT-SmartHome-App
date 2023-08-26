@@ -387,13 +387,12 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
 
     // iBeacon Prefix
-    val advFlags = byteArrayOf(0x02, 0x01, 0x06)
     val advHeader = byteArrayOf(0x1A.toByte(), 0xFF.toByte())
     val companyId = byteArrayOf(0x4C, 0x00)
     val type = byteArrayOf(0x02, 0x15)
 
     // UUID
-    val uuid = UUID.fromString("4446CF826A1ED0654300B1410B4F504100013B")
+    val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
     val uuidBytes = ByteBuffer.wrap(ByteArray(16))
         .putLong(uuid.mostSignificantBits)
         .putLong(uuid.leastSignificantBits)
@@ -407,14 +406,13 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val txPower = byteArrayOf(0xC3.toByte())
 
     val manufacturerData = ByteBuffer.allocate(30)
-    manufacturerData.put(advFlags)
-    manufacturerData.put(advHeader)
-    manufacturerData.put(companyId)
-    manufacturerData.put(type)
+    //manufacturerData.put(advHeader)
+    //manufacturerData.put(companyId)
+    //manufacturerData.put(type)
     manufacturerData.put(uuidBytes)
-    manufacturerData.put(major)
-    manufacturerData.put(minor)
-    manufacturerData.put(txPower)
+    //manufacturerData.put(major)
+    //manufacturerData.put(minor)
+    //manufacturerData.put(txPower)
 
     val advertiseSettings = AdvertiseSettings.Builder()
         .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
@@ -425,10 +423,16 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val advertiseData = AdvertiseData.Builder()
         .setIncludeDeviceName(false)
         .setIncludeTxPowerLevel(false)
-        .addManufacturerData(0x004C, manufacturerData.array())  // 0x004C is for Apple Inc.
+        .addManufacturerData(0x4C00, manufacturerData.array())  // Note: 0x004C instead of 0x4C00
+        //.addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041")) // Optional: Change this to your service UUID
         .build()
 
-        bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback)
+    val scanResponse = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .setIncludeTxPowerLevel(false)
+        .build()
+
+    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, scanResponse, callback)
 }
 
 //------------------------------------------------------------------------------

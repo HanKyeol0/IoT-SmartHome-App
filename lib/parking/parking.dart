@@ -35,7 +35,7 @@ class BleDevice {
 }
 
 class _ParkingState extends State<Parking> with TickerProviderStateMixin {
-  FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  //FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   TextEditingController parkingCarController = TextEditingController();
   TextEditingController preferredParkingLotController = TextEditingController();
   bool isCarTextEmpty = true;
@@ -66,6 +66,9 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     loadParkingPlaceMap();
     findNearestCCTV();
     loadCurrentCar();
+    Future.delayed(Duration(seconds: 5), () {
+      print('hello this is cctvID : $cctvId');
+    });
   }
 
   Future<List<String>> loadCarList() async {
@@ -117,14 +120,14 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
   }
 
   Future<String?> findNearestCCTV() async {
-    //await flutterBlue.stopScan();
+    await FlutterBluePlus.stopScan();
 
     int maxRssi = -999; // a large negative value to compare with actual RSSI
     BleDevice? maxRssiDevice;
 
     scanSubscription?.cancel();
 
-    scanSubscription = flutterBlue.scanResults.listen((results) {
+    scanSubscription = FlutterBluePlus.scanResults.listen((results) {
       for (var result in results) {
         //print(result);
         result.advertisementData.manufacturerData
@@ -139,7 +142,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
               maxRssi = result.rssi;
               //print(id);
               maxRssiDevice = BleDevice(
-                  deviceId: "${result.device.id}",
+                  deviceId: "${result.device.remoteId}",
                   manufacturerSpecificData: hexData,
                   rssi: result.rssi);
             }
@@ -148,7 +151,8 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       }
     });
 
-    flutterBlue.startScan(timeout: const Duration(seconds: 3)).then((_) async {
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 3))
+        .then((_) async {
       if (maxRssiDevice != null) {
         print('here is the device: $maxRssiDevice');
         final deviceIdString =
@@ -557,60 +561,66 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                 //위치 저장 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '주차 차량',
-                          style: fieldTitle(),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      FutureBuilder<List<dynamic>>(
-                        future: Future.wait([loadCarList(), loadCurrentCar()]),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<dynamic>> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                                child: CircularProgressIndicator(
-                              color: bColor,
-                            ));
-                          }
+                  child: Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '주차 차량',
+                              style: fieldTitle(),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          FutureBuilder<List<dynamic>>(
+                            future:
+                                Future.wait([loadCarList(), loadCurrentCar()]),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<dynamic>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                  color: bColor,
+                                ));
+                              }
 
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
 
-                          List<String> loadedCarList = List<String>.from(
-                              snapshot
-                                  .data![0]); // Explicitly cast to List<String>
-                          String currentCarValue = snapshot.data![1];
-                          return CarInput(
-                            items: loadedCarList,
-                            placeholder: currentCarValue,
-                            onTextChanged: onCarChanged,
-                            textEditingController: parkingCarController,
-                            onItemSelected: registerCurrentCar,
-                            placeholderColor: wColor,
-                          );
-                        },
+                              List<String> loadedCarList = List<String>.from(
+                                  snapshot.data![
+                                      0]); // Explicitly cast to List<String>
+                              String currentCarValue = snapshot.data![1];
+                              return CarInput(
+                                items: loadedCarList,
+                                placeholder: currentCarValue,
+                                onTextChanged: onCarChanged,
+                                textEditingController: parkingCarController,
+                                onItemSelected: registerCurrentCar,
+                                placeholderColor: wColor,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 74),
+                          TouchParking(onPressed: () {
+                            if (cctvId != null) {
+                              print('cctv found');
+                              parkingAdvertising(cctvId);
+                              print(cctvId);
+                            } else {
+                              print('cctv not found');
+                              cctvDetectionFailed(context);
+                            }
+                          }),
+                          SizedBox(
+                            height: 40,
+                          )
+                        ],
                       ),
-                      const SizedBox(height: 74),
-                      Expanded(
-                        child: TouchParking(onPressed: () {
-                          if (cctvId != null) {
-                            print('cctv found');
-                            parkingAdvertising(cctvId);
-                            print(cctvId);
-                          } else {
-                            print('cctv not found');
-                            cctvDetectionFailed(context);
-                          }
-                        }),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 //위치 확인 tab
