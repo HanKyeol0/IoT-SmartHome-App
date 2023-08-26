@@ -386,11 +386,6 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val bluetoothAdapter = bluetoothManager.adapter
     val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
 
-    // iBeacon Prefix
-    val advHeader = byteArrayOf(0x1A.toByte(), 0xFF.toByte())
-    val companyId = byteArrayOf(0x4C, 0x00)
-    val type = byteArrayOf(0x02, 0x15)
-
     // UUID
     val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
     val uuidBytes = ByteBuffer.wrap(ByteArray(16))
@@ -398,21 +393,12 @@ private fun parkingAdvertising(data1: String, data2: String) {
         .putLong(uuid.leastSignificantBits)
         .array()
 
-    // Major and Minor
-    val major = byteArrayOf(0x00, 0x01)
-    val minor = byteArrayOf(0x00, 0x02)
+    //val parcelUuid = UUID(uuidBytes)
 
-    // TX Power
-    val txPower = byteArrayOf(0xC3.toByte())
-
-    val manufacturerData = ByteBuffer.allocate(30)
-    //manufacturerData.put(advHeader)
-    //manufacturerData.put(companyId)
-    //manufacturerData.put(type)
-    manufacturerData.put(uuidBytes)
-    //manufacturerData.put(major)
-    //manufacturerData.put(minor)
-    //manufacturerData.put(txPower)
+    val manufacturerData = ByteBuffer.allocate(4)
+    manufacturerData.put(byteArrayOf(0x4C, 0x00)) // Company ID
+    manufacturerData.put(byteArrayOf(0x02, 0x15)) // iBeacon type
+    //manufacturerData.put(uuidBytes)               // UUID
 
     val advertiseSettings = AdvertiseSettings.Builder()
         .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
@@ -420,11 +406,15 @@ private fun parkingAdvertising(data1: String, data2: String) {
         .setConnectable(false)
         .build()
 
+    val serviceData = ByteBuffer.allocate(2)
+        serviceData.put(byteArrayOf(0x4C, 0x00))
+
     val advertiseData = AdvertiseData.Builder()
         .setIncludeDeviceName(false)
         .setIncludeTxPowerLevel(false)
-        .addManufacturerData(0x4C00, manufacturerData.array())  // Note: 0x004C instead of 0x4C00
-        //.addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041")) // Optional: Change this to your service UUID
+        .addManufacturerData(0x4C00, manufacturerData.array())
+        //.addServiceData(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041"), serviceData.array())
+        .addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000B-1410A4F5041"))
         .build()
 
     val scanResponse = AdvertiseData.Builder()

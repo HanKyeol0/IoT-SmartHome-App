@@ -7,6 +7,7 @@ import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
+import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
 class BleDevice {
   String deviceId;
@@ -40,12 +41,38 @@ class _BellState extends State<Bell> {
   String? cctvId;
   BeaconBroadcast beaconBroadcast = BeaconBroadcast();
 
+  bool _isSupported = false;
+
   @override
   void initState() {
     super.initState();
+    initPlatformState();
     findNearestCCTV();
     Future.delayed(Duration(seconds: 5), () {
       print('hello this is cctvID : $cctvId');
+    });
+  }
+
+  Future<void> initPlatformState() async {
+    final isSupported = await FlutterBlePeripheral().isSupported;
+    setState(() {
+      _isSupported = isSupported;
+    });
+  }
+
+  final AdvertiseData advertiseData = AdvertiseData(
+    manufacturerId: 0x4C00,
+    serviceUuid: '44002104-B000-0044-3000B-1410A4F5041',
+    //serviceDataUuid: '44002104-B000-0044-3000B-1410A4F5041',
+    //manufacturerData: Uint8List.fromList([1, 2, 3, 4, 5, 6]),
+  );
+
+  Future<void> toggleAdvertise() async {
+    await FlutterBlePeripheral().stop();
+    Future.delayed(Duration(seconds: 5), () async {
+      await FlutterBlePeripheral().start(
+        advertiseData: advertiseData,
+      );
     });
   }
 
@@ -107,8 +134,8 @@ class _BellState extends State<Bell> {
           .setManufacturerId(0x4C00)
           .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
           .setUUID('44002104-B000-0044-3000-B1410A4F5041')
-          .setMajorId(1)
-          .setMinorId(100)
+          .setMajorId(0x0001)
+          .setMinorId(0x3B)
           .start();
       /*
           .setManufacturerId(0x4C00)
@@ -220,7 +247,7 @@ class _BellState extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(longPressed: beaconBroadcastUuid
+                  EmergencyBell(longPressed: toggleAdvertise
 
                       /*
                   () {

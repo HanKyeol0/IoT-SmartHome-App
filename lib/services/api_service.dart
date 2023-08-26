@@ -40,6 +40,9 @@ class ApiService {
   //get user's current car
   static const String getCurrentCar = 'api/user/car';
 
+  //get preferred parking location
+  static const String getUserParkingMap = 'api/userParkingMap';
+
   //getApartment - fetch Apartment list
   static Future<List<ApartmentList>?> getApartmentList(searchWord) async {
     List<ApartmentList> apartmentList = [];
@@ -65,36 +68,6 @@ class ApiService {
     }
 
     return null;
-  }
-
-  static Future<String?> getParkingPlaceMap() async {
-    UserData? userData = GlobalData().userData;
-
-    if (userData == null) {
-      // ignore: avoid_print
-      print('User data is not set');
-      return null;
-    }
-
-    final url = Uri.parse('$baseurl/$getParkingPlace');
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${userData.accessToken}',
-      },
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final parkingPlaceData = jsonDecode(response.body);
-      final mapImageUrl = parkingPlaceData['data']['parkingMap']['mapImage'];
-      print(mapImageUrl);
-      return mapImageUrl;
-    } else if (response.statusCode == 404) {
-      return 'no data';
-    } else {
-      return 'bad internet';
-    }
   }
 
   //getApartment - check Apartment ID
@@ -163,6 +136,82 @@ class ApiService {
       print('${response.statusCode}: this is why it is 500.. ${response.body}');
     }
     return null;
+  }
+
+  //get parking place map
+  static Future<ParkingPlace> getParkingPlaceMap() async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return ParkingPlace(mapImage: '3', place: '3');
+    }
+
+    final url = Uri.parse('$baseurl/$getParkingPlace');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final parkingPlaceData = jsonDecode(response.body);
+      final parkingPlace = parkingPlaceData['data']['parkingMap'];
+      print(parkingPlace);
+      return parkingPlace;
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await getParkingPlaceMap();
+    } else if (response.statusCode == 404) {
+      return ParkingPlace(mapImage: '0', place: '주차 위치 조회 실패');
+    } else {
+      return ParkingPlace(mapImage: '1', place: '1');
+    }
+  }
+
+  //get parking place map
+  static Future<PreferredLocation> getPreferredLocation() async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return PreferredLocation(id: -1, mapImage: '3', place: '3');
+    }
+
+    final url = Uri.parse('$baseurl/$getUserParkingMap');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final locationData = jsonDecode(response.body);
+      final userLocation = locationData['data']['parkingMap'];
+      print(userLocation);
+      return PreferredLocation.fromJson(userLocation);
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('${response.statusCode}: ${response.body}');
+      await globalData.userData?.updateTokens();
+      return await getPreferredLocation();
+    } else if (response.statusCode == 404) {
+      return PreferredLocation(id: -1, mapImage: '0', place: '선호 주차장을 선택해주세요.');
+    } else {
+      return PreferredLocation(id: -1, mapImage: '0', place: '선호구역 조회 실패');
+    }
   }
 
   //postReissueToken

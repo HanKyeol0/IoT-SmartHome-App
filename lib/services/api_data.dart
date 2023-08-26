@@ -161,13 +161,60 @@ class CarList {
   }
 }
 
+//선호 주차장 리스트
 class ParkingLotList {
+  final int id;
   final String parkingLot;
 
-  ParkingLotList({required this.parkingLot});
+  ParkingLotList({
+    required this.id,
+    required this.parkingLot,
+  });
 
-  factory ParkingLotList.fromJson(Map<String, dynamic> json) {
-    return ParkingLotList(parkingLot: json['place']);
+  factory ParkingLotList.fromJson(Map<String, dynamic> lot) {
+    return ParkingLotList(
+      id: lot['id'],
+      parkingLot: lot['place'],
+    );
+  }
+}
+
+//parking place
+class ParkingPlace {
+  final String mapImage;
+  final String place;
+
+  ParkingPlace({
+    required this.mapImage,
+    required this.place,
+  });
+
+  factory ParkingPlace.fromJson(Map<String, dynamic> place) {
+    return ParkingPlace(
+      mapImage: place['mapImage'],
+      place: place['place'],
+    );
+  }
+}
+
+//현재 선호 주차장
+class PreferredLocation {
+  final int id;
+  final String mapImage;
+  final String place;
+
+  PreferredLocation({
+    required this.id,
+    required this.mapImage,
+    required this.place,
+  });
+
+  factory PreferredLocation.fromJson(Map<String, dynamic> location) {
+    return PreferredLocation(
+      id: location['id'],
+      mapImage: location['mapImage'],
+      place: location['place'],
+    );
   }
 }
 

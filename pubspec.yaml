@@ -38,7 +38,7 @@ dependencies:
   network_info_plus: ^4.0.2
   shared_preferences: ^2.2.0
   beacon_broadcast: ^0.3.1
-  #flutter_ble_peripheral: ^1.2.1
+  flutter_ble_peripheral: ^1.2.1
   flutter_native_splash: ^2.3.1
   flutter_device_identifier: ^0.0.1
   flutter_beacon: ^0.5.1

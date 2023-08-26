@@ -24,9 +24,6 @@ class _Door01AndroidState extends State<Door01Android> {
   @override
   void initState() {
     super.initState();
-    ApiService.getAccessLogs();
-    //FlutterBluePlus.startScan(timeout: Duration(seconds: 5));
-    //await FlutterBluePlus.stopScan();
   }
 
   void gateDetection() {
