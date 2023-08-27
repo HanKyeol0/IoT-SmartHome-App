@@ -20,6 +20,13 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.*
 import android.os.ParcelUuid
 import java.nio.ByteBuffer
+import android.bluetooth.le.AdvertiseData
+import android.bluetooth.le.AdvertiseSettings
+import android.bluetooth.le.BluetoothLeAdvertiser
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.os.Handler
+import android.os.Looper
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "luxrobo/ble"
@@ -374,7 +381,7 @@ val callback = object : AdvertiseCallback() {
         println("Advertise Failed: Error Code: $errorCode")
     }
 }
-
+/*
 private fun parkingAdvertising(data1: String, data2: String) {
 
     val data1Bytes = hexStringToByteArray(data1)
@@ -386,12 +393,30 @@ private fun parkingAdvertising(data1: String, data2: String) {
     val bluetoothAdapter = bluetoothManager.adapter
     val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
 
+    fun byteArrayToUUID(bytes: ByteArray): UUID {
+        val bb = ByteBuffer.wrap(bytes)
+        val high = bb.long
+        val low = bb.long
+        return UUID(high, low)
+    }
+    
+    val customData = byteArrayOf(
+        0x44, 0x00, 0x21.toByte(), 0x04.toByte(),
+        0xB0.toByte(), 0x00.toByte(), 0x00.toByte(), 0x44.toByte(),
+        0x30, 0x00, 0xB1.toByte(), 0x41, 0x0A, 0x4F, 0x50, 0x41
+    )
+    
+    val uuid = byteArrayToUUID(customData)
+    val parcelUuid = ParcelUuid(uuid)
+
     // UUID
-    val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
-    val uuidBytes = ByteBuffer.wrap(ByteArray(16))
-        .putLong(uuid.mostSignificantBits)
-        .putLong(uuid.leastSignificantBits)
-        .array()
+    
+    //val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
+    //val uuidBytes = ByteBuffer.wrap(ByteArray(16))
+    //    .putLong(uuid.mostSignificantBits)
+    //    .putLong(uuid.leastSignificantBits)
+    //    .array()
+        
 
     //val parcelUuid = UUID(uuidBytes)
 
@@ -407,14 +432,15 @@ private fun parkingAdvertising(data1: String, data2: String) {
         .build()
 
     val serviceData = ByteBuffer.allocate(2)
-        serviceData.put(byteArrayOf(0x4C, 0x00))
+        serviceData.put(byteArrayOf(0x004C, 0x00))
 
     val advertiseData = AdvertiseData.Builder()
         .setIncludeDeviceName(false)
         .setIncludeTxPowerLevel(false)
-        .addManufacturerData(0x4C00, manufacturerData.array())
+        .addManufacturerData(0x004C, manufacturerData.array())
         //.addServiceData(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041"), serviceData.array())
         .addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000B-1410A4F5041"))
+        //.addServiceUuid(parcelUuid)
         .build()
 
     val scanResponse = AdvertiseData.Builder()
@@ -422,7 +448,59 @@ private fun parkingAdvertising(data1: String, data2: String) {
         .setIncludeTxPowerLevel(false)
         .build()
 
-    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, scanResponse, callback)
+    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback) //scanResponse, 
+}
+*/
+//----------------------------------------------------
+
+private fun parkingAdvertising(data1: String, data2: String) {
+
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
+
+    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    val bluetoothAdapter = bluetoothManager.adapter
+    val bluetoothLeAdvertiser = bluetoothAdapter.bluetoothLeAdvertiser
+
+    bluetoothLeAdvertiser?.stopAdvertising(callback)
+
+    val manufacturerData = ByteBuffer.allocate(23)
+    manufacturerData.put(0, 0x02.toByte())  // Beacon identifier
+    manufacturerData.put(1, 0x15.toByte())  // Beacon type
+    // 16-byte UUID
+    val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
+    val uuidBytes = ByteBuffer.wrap(ByteArray(16))
+        .putLong(uuid.mostSignificantBits)
+        .putLong(uuid.leastSignificantBits)
+        .array()
+    manufacturerData.put(uuidBytes, 0, 16)
+    // Major number
+    manufacturerData.put(17, 0.toByte())
+    manufacturerData.put(18, 1.toByte())
+    // Minor number
+    manufacturerData.put(19, 0.toByte())
+    manufacturerData.put(20, 2.toByte())
+    // Tx power
+    manufacturerData.put(21, (-59).toByte())
+
+    val advertiseSettings = AdvertiseSettings.Builder()
+        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+        .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+        .setConnectable(false)
+        .build()
+
+    val advertiseData = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .setIncludeTxPowerLevel(false)
+        .addManufacturerData(0x004C, manufacturerData.array())  // Apple's company ID is 0x004C
+        .build()
+
+    val scanResponse = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .setIncludeTxPowerLevel(false)
+        .build()
+
+    bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, scanResponse, callback)
 }
 
 //------------------------------------------------------------------------------

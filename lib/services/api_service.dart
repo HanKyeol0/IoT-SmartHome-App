@@ -161,9 +161,9 @@ class ApiService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       final parkingPlaceData = jsonDecode(response.body);
-      final parkingPlace = parkingPlaceData['data']['parkingMap'];
-      print(parkingPlace);
-      return parkingPlace;
+      final parkingPlaceMap =
+          parkingPlaceData['data']['parkingMap'] as Map<String, dynamic>;
+      return ParkingPlace.fromJson(parkingPlaceMap);
     } else if (response.statusCode == 401) {
       // ignore: avoid_print
       print('${response.statusCode}: ${response.body}');
