@@ -27,6 +27,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "luxrobo/ble"
@@ -155,17 +156,19 @@ class MainActivity: FlutterActivity() {
 
         bluetoothAdapter.startDiscovery()
 
-        //val dataByte = hexStringToByteArray(data1)
+        //val dataByte = hexStringToByteArray(data1) C98A6B189955
 
-        val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
-            0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
-            0xB2.toByte(), 0x01, 0x05, 0x00, 0x50, 0x50, 0x00, 0x01, 0x00, 0xAC.toByte()
-        )
+        val uniqueCode = byteArrayOf(0x46.toByte(), 0xCF.toByte(), 0x82.toByte(), 0x6A.toByte(),
+            0x1E.toByte(), 0xD0.toByte(), 0x65.toByte())
+
+        val encodingData = Base64.decode("XQMa", Base64.DEFAULT)
+
+        val customData = uniqueCode + encodingData
 
         val dataBuilder = AdvertiseData.Builder().apply {
-            setIncludeDeviceName(false)
-            addManufacturerData(0x4C55, customData)
-            //addManufacturerData(0x4C55, byteArray)
+            .setIncludeDeviceName(true)
+            //.addManufacturerData(0x4C55, customData)
+            .addServiceUuid(ParcelUuid.fromString("46CF826A1ED065"))
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {

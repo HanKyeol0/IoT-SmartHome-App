@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 class BLEPlatformChannel {
   static const platform = const MethodChannel("luxrobo/ble");
 
-  static Future<void> startAdvertising(String? data) async {
+  static Future<void> gateAdvertising(String? data) async {
     try {
-      await platform.invokeMethod('startAdvertising', {'data': data});
+      await platform.invokeMethod('gateAdvertising', {'data': data});
     } on PlatformException catch (e) {
       print("Failed to start advertising: ${e.message}");
     }
   }
 
-  static Future<void> gateAccessAdvertising() async {
+  static Future<void> gateAccessAdvertising(String? data) async {
     try {
-      await platform.invokeMethod('gateAccessAdvertising');
+      await platform.invokeMethod('gateAccessAdvertising', {'data': data});
     } on PlatformException catch (e) {
       print("Failed to start advertising: ${e.message}");
     }

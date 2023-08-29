@@ -38,7 +38,7 @@ class _Door01AndroidState extends State<Door01Android> {
       print('User data is not set - mac address');
     } else {
       print(userData!.mac);
-      BLEPlatformChannel.startAdvertising(userData!.mac);
+      BLEPlatformChannel.gateAdvertising(userData!.mac);
       print('start');
 
       Future.delayed(Duration(seconds: 5), () {
@@ -46,6 +46,10 @@ class _Door01AndroidState extends State<Door01Android> {
         print('end');
       });
     }
+  }
+
+  void print1() {
+    print('1');
   }
 
   @override
