@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/services/api_service.dart';
@@ -84,12 +85,12 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     return loadedCarList;
   }
 
-  Future<List<String>> loadParkingLotList() async {
+  Future<List<Map<int, String>>> loadParkingLotList() async {
     final fetchedLots = await lots;
-    List<String> parkingLotList = [];
+    List<Map<int, String>> parkingLotList = [];
     if (fetchedLots != null) {
       for (var lot in fetchedLots) {
-        final userLot = lot.parkingLot;
+        final userLot = lot.parkinglot;
         parkingLotList.add(userLot);
       }
     }
@@ -705,7 +706,27 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          const InfoField(value: '22년 12월 29일 (수) 18시 02분'),
+                          FutureBuilder<ParkingPlace>(
+                            future: parkingPlace,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(color: bColor);
+                              } else if (snapshot.hasData &&
+                                  snapshot.data != null) {
+                                if (snapshot.data!.place == 0 ||
+                                    snapshot.data!.place == 1) {
+                                  return InfoField(value: '주차 시간 조회 실패');
+                                } else {
+                                  return InfoField(
+                                    value: formatDateTime(snapshot.data!.time),
+                                  );
+                                }
+                              } else {
+                                return InfoField(value: '주차 시간 조회 실패');
+                              }
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -745,9 +766,10 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                                 }
                                 PreferredLocation userParkingLot =
                                     snapshot.data![0];
-                                List<String> parkingLotList =
-                                    List<String>.from(snapshot.data![1]);
-                                return CarInput(
+                                List<Map<int, String>> parkingLotList =
+                                    List<Map<int, String>>.from(
+                                        snapshot.data![1]);
+                                return PreferredCarInput(
                                   placeholder: userParkingLot.place,
                                   items: parkingLotList,
                                   textEditingController:
@@ -800,4 +822,14 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+String formatDateTime(DateTime dateTime) {
+  String year = DateFormat('y').format(dateTime);
+  String month = DateFormat('MM').format(dateTime);
+  String day = DateFormat('dd').format(dateTime);
+  String hour = DateFormat('HH').format(dateTime);
+  String minute = DateFormat('mm').format(dateTime);
+
+  return "${year.substring(2)}년 ${month}월 ${day}일 ${hour}시 ${minute}분";
 }

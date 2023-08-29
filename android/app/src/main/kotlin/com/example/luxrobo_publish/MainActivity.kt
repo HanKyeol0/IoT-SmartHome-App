@@ -148,11 +148,6 @@ class MainActivity: FlutterActivity() {
     private fun gateAdvertising(data1: String) {
         Log.d("steave", "gateAdvertising function called at here: ${System.currentTimeMillis()}")
 
-        if(bluetoothAdapter == null) {
-            Log.e("steave", "Bluetooth Adapter is null")
-            return
-        }
-
         if (!bluetoothAdapter.isEnabled) {
             Log.e("steave", "Bluetooth is not enabled")
             return
@@ -160,7 +155,7 @@ class MainActivity: FlutterActivity() {
 
         bluetoothAdapter.startDiscovery()
 
-        val dataByte = hexStringToByteArray(data1)
+        //val dataByte = hexStringToByteArray(data1)
 
         val customData = byteArrayOf(0x43, 0x00, 0x11.toByte(), 0x99.toByte(),
             0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x99.toByte(), 0x41, 0x00,
@@ -209,11 +204,6 @@ private fun hexStringToByteArray(s: String): ByteArray {
 
 private fun bellAdvertising(data1: String, data2: String) {
     Log.d("steave", "bellAdvertising function called at here: ${System.currentTimeMillis()}")
-
-    if(bluetoothAdapter == null) {
-        Log.e("steave", "Bluetooth Adapter is null")
-        return
-    }
 
     if (!bluetoothAdapter.isEnabled) {
         Log.e("steave", "Bluetooth is not enabled")
@@ -406,24 +396,29 @@ private fun parkingAdvertising(data1: String, data2: String) {
         0x30, 0x00, 0xB1.toByte(), 0x41, 0x0A, 0x4F, 0x50, 0x41
     )
     
-    val uuid = byteArrayToUUID(customData)
-    val parcelUuid = ParcelUuid(uuid)
+    //val uuid = byteArrayToUUID(customData)
+    //val parcelUuid = ParcelUuid(uuid)
 
     // UUID
     
-    //val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
-    //val uuidBytes = ByteBuffer.wrap(ByteArray(16))
-    //    .putLong(uuid.mostSignificantBits)
-    //    .putLong(uuid.leastSignificantBits)
-    //    .array()
+    val uuid = UUID.fromString("44002104-B000-0044-3000-B1410A4F5041")
+    val uuidBytes = ByteBuffer.wrap(ByteArray(16))
+        .putLong(uuid.mostSignificantBits)
+        .putLong(uuid.leastSignificantBits)
+        .array()
         
 
     //val parcelUuid = UUID(uuidBytes)
 
-    val manufacturerData = ByteBuffer.allocate(4)
-    manufacturerData.put(byteArrayOf(0x4C, 0x00)) // Company ID
+    val manufacturerData = ByteBuffer.allocate(9)
+    manufacturerData.put(byteArrayOf(0x02, 0x01, 0x06))
+    manufacturerData.put(byteArrayOf(0x1A.toByte(), 0xFF.toByte()))
+    manufacturerData.put(byteArrayOf(0x00, 0x4C)) // Company ID
     manufacturerData.put(byteArrayOf(0x02, 0x15)) // iBeacon type
     //manufacturerData.put(uuidBytes)               // UUID
+    //manufacturerData.put(byteArrayOf(0x00, 0x01))
+    //manufacturerData.put(byteArrayOf(0x02, 0x03))
+    //manufacturerData.put(byteArrayOf(0xC3.toByte()))
 
     val advertiseSettings = AdvertiseSettings.Builder()
         .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
@@ -431,15 +426,18 @@ private fun parkingAdvertising(data1: String, data2: String) {
         .setConnectable(false)
         .build()
 
-    val serviceData = ByteBuffer.allocate(2)
-        serviceData.put(byteArrayOf(0x004C, 0x00))
+    val serviceData = ByteBuffer.allocate(5)
+        serviceData.put(byteArrayOf(0x00, 0x01))
+        serviceData.put(byteArrayOf(0x02, 0x03))
+        serviceData.put(byteArrayOf(0xC3.toByte()))
 
     val advertiseData = AdvertiseData.Builder()
         .setIncludeDeviceName(false)
         .setIncludeTxPowerLevel(false)
         .addManufacturerData(0x004C, manufacturerData.array())
-        //.addServiceData(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041"), serviceData.array())
-        .addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000B-1410A4F5041"))
+        .addServiceData(ParcelUuid.fromString("44002104-B000-0044-3000-B1410A4F5041"), serviceData.array())
+        //.addServiceUuid(ParcelUuid.fromString("44002104-B000-0044-3000B-1410A4F5041"))
+        //.addManufacturerData(manufacturerData2.array())
         //.addServiceUuid(parcelUuid)
         .build()
 
@@ -451,8 +449,46 @@ private fun parkingAdvertising(data1: String, data2: String) {
     bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback) //scanResponse, 
 }
 */
-//----------------------------------------------------
 
+private fun parkingAdvertising(data1: String, data2: String) {
+
+    //val data1Bytes = hexStringToByteArray(data1)
+    //val data2Bytes = hexStringToByteArray(data2)
+
+    Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
+
+    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    val bluetoothAdapter = bluetoothManager.adapter
+    val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
+
+    val customData = byteArrayOf(
+        0x02, 0x15, 0x44.toByte(), 
+        0x00, 0x21, 0x04, 0xB0.toByte(), 
+        0x00, 0x00, 0x04, 0x43, 0x00, 0xB1.toByte(), 
+        0x41, 0x0A.toByte(), 0x4F.toByte(), 0x50, 0x41, 
+        0x00, 0x01, 0x00, 0x00, 0xC3.toByte()
+        )
+
+    val advertiseSettings = AdvertiseSettings.Builder()
+    .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+    .setConnectable(false)
+    .build()
+
+    val advertiseData = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .addManufacturerData(0x004C, customData)
+        .build()
+
+    //val scanResponse = AdvertiseData.Builder()
+    //    .setIncludeDeviceName(false)
+    //    .setIncludeTxPowerLevel(false)
+    //    .build()
+
+    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback) //scanResponse, 
+}
+
+//----------------------------------------------------
+/*
 private fun parkingAdvertising(data1: String, data2: String) {
 
     val data1Bytes = hexStringToByteArray(data1)
@@ -502,7 +538,7 @@ private fun parkingAdvertising(data1: String, data2: String) {
 
     bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, scanResponse, callback)
 }
-
+*/
 //------------------------------------------------------------------------------
 
 private fun getStartFailureDescription(errorCode: Int): String {

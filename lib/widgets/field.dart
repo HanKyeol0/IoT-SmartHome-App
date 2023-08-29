@@ -499,7 +499,7 @@ class _CarInputState extends State<CarInput> {
                     hintText: widget.placeholder,
                     hintStyle: contentText(color: widget.placeholderColor),
                     contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
+                      vertical: 15,
                       horizontal: 15,
                     ),
                     border: InputBorder.none,
@@ -510,8 +510,8 @@ class _CarInputState extends State<CarInput> {
                           shape: BoxShape.circle,
                           color: showDropdown ? lightGrey : bColor,
                         ),
-                        height: 20,
-                        width: 20,
+                        height: 10,
+                        width: 10,
                         child: Icon(
                           showDropdown
                               ? Icons.keyboard_arrow_up
@@ -552,9 +552,12 @@ class _CarInputState extends State<CarInput> {
                   child: ListTile(
                     title: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        item,
-                        style: contentText(color: wColor),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          item,
+                          style: contentText(color: wColor),
+                        ),
                       ),
                     ),
                     onTap: () {
@@ -563,7 +566,6 @@ class _CarInputState extends State<CarInput> {
                         widget.textEditingController.text = item;
                         showDropdown = false;
                       });
-
                       if (widget.onItemSelected != null) {
                         widget.onItemSelected!(context);
                       }
@@ -578,16 +580,15 @@ class _CarInputState extends State<CarInput> {
   }
 }
 
-/*
-class CarInput extends StatefulWidget {
+class PreferredCarInput extends StatefulWidget {
   final String placeholder;
-  final List<dynamic> items;
+  final List<Map<int, String>> items;
   final TextEditingController textEditingController;
   final Function(String) onTextChanged;
   final Function(BuildContext)? onItemSelected;
   final Color placeholderColor;
 
-  const CarInput({
+  const PreferredCarInput({
     Key? key,
     required this.placeholder,
     required this.items,
@@ -598,12 +599,11 @@ class CarInput extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CarInput> createState() => _CarInputState();
+  State<PreferredCarInput> createState() => _PreferredCarInputState();
 }
 
-class _CarInputState extends State<CarInput> {
+class _PreferredCarInputState extends State<PreferredCarInput> {
   late String? selectedValue;
-  late String? firstCar;
   bool showDropdown = false;
 
   @override
@@ -618,10 +618,9 @@ class _CarInputState extends State<CarInput> {
     });
   }
 
-  void setPlaceholder() async {
-    setState(await () {
+  void setPlaceholder() {
+    setState(() {
       selectedValue = widget.placeholder;
-      firstCar = widget.placeholder;
     });
   }
 
@@ -651,7 +650,7 @@ class _CarInputState extends State<CarInput> {
                     hintText: widget.placeholder,
                     hintStyle: contentText(color: widget.placeholderColor),
                     contentPadding: const EdgeInsets.symmetric(
-                      vertical: 16,
+                      vertical: 15,
                       horizontal: 15,
                     ),
                     border: InputBorder.none,
@@ -662,8 +661,8 @@ class _CarInputState extends State<CarInput> {
                           shape: BoxShape.circle,
                           color: showDropdown ? lightGrey : bColor,
                         ),
-                        height: 20,
-                        width: 20,
+                        height: 10,
+                        width: 10,
                         child: Icon(
                           showDropdown
                               ? Icons.keyboard_arrow_up
@@ -683,37 +682,43 @@ class _CarInputState extends State<CarInput> {
           ),
           if (showDropdown)
             ListView.separated(
-              padding: EdgeInsets.only(top: 0, bottom: 0),
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 0,
+              ),
               shrinkWrap: true,
-              itemCount: widget.items
-                  .where((item) => (item != firstCar && item != selectedValue))
-                  .length,
+              itemCount:
+                  widget.items.where((item) => (item != selectedValue)).length,
               separatorBuilder: (context, index) => const Divider(
                 color: lightGrey,
                 thickness: 0.5,
               ),
               itemBuilder: (context, index) {
                 final filteredItems = widget.items
-                    .where(
-                        (item) => (item != firstCar && item != selectedValue))
+                    .where((item) => (item != selectedValue))
                     .toList();
                 final item = filteredItems[index];
+                final itemValue = item.values.first;
+                final itemId = item.keys.first;
                 return SizedBox(
                   height: 56,
                   child: ListTile(
                     title: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        item,
-                        style: contentText(color: wColor),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          itemValue,
+                          style: contentText(color: wColor),
+                        ),
                       ),
                     ),
                     onTap: () {
+                      ApiService.postUserParkingLot(itemId);
                       setState(() {
-                        selectedValue = item;
-                        widget.textEditingController.text = item;
+                        selectedValue = itemValue;
+                        widget.textEditingController.text = itemValue;
                         showDropdown = false;
-                        firstCar = null;
                       });
                       if (widget.onItemSelected != null) {
                         widget.onItemSelected!(context);
@@ -728,7 +733,6 @@ class _CarInputState extends State<CarInput> {
     );
   }
 }
-*/
 
 class InfoField extends StatelessWidget {
   final String value;

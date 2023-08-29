@@ -43,6 +43,9 @@ class ApiService {
   //get preferred parking location
   static const String getUserParkingMap = 'api/userParkingMap';
 
+  //post parking map
+  static const String postParkingLot = 'api/userParkingMap';
+
   //getApartment - fetch Apartment list
   static Future<List<ApartmentList>?> getApartmentList(searchWord) async {
     List<ApartmentList> apartmentList = [];
@@ -146,7 +149,8 @@ class ApiService {
     if (userData == null) {
       // ignore: avoid_print
       print('User data is not set');
-      return ParkingPlace(mapImage: '3', place: '3');
+      return ParkingPlace(
+          mapImage: '2', place: '2', time: DateTime(2, 2, 2, 2, 2));
     }
 
     final url = Uri.parse('$baseurl/$getParkingPlace');
@@ -170,9 +174,11 @@ class ApiService {
       await globalData.userData?.updateTokens();
       return await getParkingPlaceMap();
     } else if (response.statusCode == 404) {
-      return ParkingPlace(mapImage: '0', place: '주차 위치 조회 실패');
+      return ParkingPlace(
+          mapImage: '0', place: '주차 위치 조회 실패', time: DateTime(0, 0, 0, 0, 0));
     } else {
-      return ParkingPlace(mapImage: '1', place: '1');
+      return ParkingPlace(
+          mapImage: '1', place: '네트워크 오류', time: DateTime(1, 1, 1, 1, 1));
     }
   }
 
@@ -273,6 +279,40 @@ class ApiService {
       print(response.statusCode);
       // ignore: avoid_print
       print(response.body);
+    }
+  }
+
+  static Future<void> postUserParkingLot(int parkingMapId) async {
+    GlobalData globalData = GlobalData();
+    UserData? userData = GlobalData().userData;
+    if (userData == null) {
+      // ignore: avoid_print
+      print('User data is not set');
+      return;
+    }
+
+    final url = Uri.parse('$baseurl/$postParkingLot');
+
+    final requestBody = jsonEncode({'parkingMapId': parkingMapId});
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${userData.accessToken}',
+      },
+      body: requestBody,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('200: ${response.body}');
+    } else if (response.statusCode == 401) {
+      // ignore: avoid_print
+      print('401: ${response.body}');
+      await globalData.userData?.updateTokens();
+      await postUserParkingLot(parkingMapId);
+    } else {
+      unstableNetwork;
     }
   }
 

@@ -163,19 +163,16 @@ class CarList {
 
 //선호 주차장 리스트
 class ParkingLotList {
-  final int id;
-  final String parkingLot;
+  final Map<int, String> parkinglot;
 
   ParkingLotList({
-    required this.id,
-    required this.parkingLot,
+    required this.parkinglot,
   });
 
   factory ParkingLotList.fromJson(Map<String, dynamic> lot) {
-    return ParkingLotList(
-      id: lot['id'],
-      parkingLot: lot['place'],
-    );
+    return ParkingLotList(parkinglot: {
+      lot['id']: lot['place'],
+    });
   }
 }
 
@@ -183,16 +180,19 @@ class ParkingLotList {
 class ParkingPlace {
   final String mapImage;
   final String place;
+  final DateTime time;
 
   ParkingPlace({
     required this.mapImage,
     required this.place,
+    required this.time,
   });
 
   factory ParkingPlace.fromJson(Map<String, dynamic> place) {
     return ParkingPlace(
       mapImage: place['mapImage'],
       place: place['place'],
+      time: DateTime.parse(place['updatedAt'] as String),
     );
   }
 }
