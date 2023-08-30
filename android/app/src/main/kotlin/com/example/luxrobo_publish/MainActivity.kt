@@ -166,9 +166,9 @@ class MainActivity: FlutterActivity() {
         val customData = uniqueCode + encodingData
 
         val dataBuilder = AdvertiseData.Builder().apply {
-            .setIncludeDeviceName(true)
+            setIncludeDeviceName(true)
             //.addManufacturerData(0x4C55, customData)
-            .addServiceUuid(ParcelUuid.fromString("46CF826A1ED065"))
+            addServiceUuid(ParcelUuid.fromString("46CF826A1ED065"))
         }
 
         val settingsBuilder = AdvertiseSettings.Builder().apply {
@@ -474,7 +474,7 @@ private fun parkingAdvertising(data1: String, data2: String) {
 
     val advertiseSettings = AdvertiseSettings.Builder()
     .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-    .setConnectable(false)
+    .setConnectable(true)
     .build()
 
     val advertiseData = AdvertiseData.Builder()

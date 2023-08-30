@@ -181,11 +181,19 @@ class ParkingPlace {
   final String mapImage;
   final String place;
   final DateTime time;
+  final int upperLeftX;
+  final int upperLeftY;
+  final int lowRightX;
+  final int lowRightY;
 
   ParkingPlace({
     required this.mapImage,
     required this.place,
     required this.time,
+    required this.upperLeftX,
+    required this.upperLeftY,
+    required this.lowRightX,
+    required this.lowRightY,
   });
 
   factory ParkingPlace.fromJson(Map<String, dynamic> place) {
@@ -193,6 +201,10 @@ class ParkingPlace {
       mapImage: place['mapImage'],
       place: place['place'],
       time: DateTime.parse(place['updatedAt'] as String),
+      upperLeftX: place['cctv'][0]['upperLeftX'],
+      upperLeftY: place['cctv'][0]['upperLeftY'],
+      lowRightX: place['cctv'][0]['lowRightX'],
+      lowRightY: place['cctv'][0]['lowRightY'],
     );
   }
 }

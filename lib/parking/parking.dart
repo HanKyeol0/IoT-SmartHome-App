@@ -469,6 +469,16 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     );
   }
 
+  String formatDateTime(DateTime dateTime) {
+    String year = DateFormat('y').format(dateTime);
+    String month = DateFormat('MM').format(dateTime);
+    String day = DateFormat('dd').format(dateTime);
+    String hour = DateFormat('HH').format(dateTime);
+    String minute = DateFormat('mm').format(dateTime);
+
+    return "${year.substring(2)}년 ${month}월 ${day}일 ${hour}시 ${minute}분";
+  }
+
   @override
   Widget build(BuildContext context) {
     return LuxroboScaffold(
@@ -551,109 +561,111 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
               controller: tabController,
               children: [
                 //위치 저장 tab
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '주차 차량',
-                              style: fieldTitle(),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '주차 차량',
+                                style: fieldTitle(),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<List<dynamic>>(
-                            future:
-                                Future.wait([loadCarList(), loadCurrentCar()]),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<List<dynamic>> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                    child: CircularProgressIndicator(
-                                  color: bColor,
-                                ));
-                              }
+                            const SizedBox(height: 10),
+                            FutureBuilder<List<dynamic>>(
+                              future: Future.wait(
+                                  [loadCarList(), loadCurrentCar()]),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<dynamic>> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator(
+                                    color: bColor,
+                                  ));
+                                }
 
-                              if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              }
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
 
-                              List<String> loadedCarList =
-                                  List<String>.from(snapshot.data![0]);
-                              String currentCarValue = snapshot.data![1];
-                              return CarInput(
-                                items: loadedCarList,
-                                placeholder: currentCarValue,
-                                onTextChanged: onCarChanged,
-                                textEditingController: parkingCarController,
-                                onItemSelected: registerCurrentCar,
-                                placeholderColor: wColor,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 74),
-                          TouchParking(onPressed: () {
-                            if (cctvId != null) {
-                              print('cctv found');
-                              parkingAdvertising(cctvId);
-                              print(cctvId);
-                            } else {
-                              print('cctv not found');
-                              cctvDetectionFailed(context);
-                            }
-                          }),
-                          SizedBox(
-                            height: 40,
-                          ),
-                        ],
+                                List<String> loadedCarList =
+                                    List<String>.from(snapshot.data![0]);
+                                String currentCarValue = snapshot.data![1];
+                                return CarInput(
+                                  items: loadedCarList,
+                                  placeholder: currentCarValue,
+                                  onTextChanged: onCarChanged,
+                                  textEditingController: parkingCarController,
+                                  onItemSelected: registerCurrentCar,
+                                  placeholderColor: wColor,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 74),
+                            TouchParking(onPressed: () {
+                              if (cctvId != null) {
+                                print('cctv found');
+                                parkingAdvertising(cctvId);
+                                print(cctvId);
+                              } else {
+                                print('cctv not found');
+                                cctvDetectionFailed(context);
+                              }
+                            }),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
                 //위치 확인 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '주차 차량',
-                              style: fieldTitle(),
-                            ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 차량',
+                            style: fieldTitle(),
                           ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<String?>(
-                            future: loadCurrentCar(),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String?> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator(color: bColor);
-                              } else if (snapshot.hasData &&
-                                  snapshot.data != null) {
-                                return InfoField(value: snapshot.data!);
-                              } else {
-                                return InfoField(value: '주차 차량 조회 실패');
-                              }
-                            },
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<String?>(
+                          future: loadCurrentCar(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              return InfoField(value: snapshot.data!);
+                            } else {
+                              return InfoField(value: '주차 차량 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '차량 위치',
+                            style: fieldTitle(),
                           ),
-                          const SizedBox(height: 30),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '차량 위치',
-                              style: fieldTitle(),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<ParkingPlace>(
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          child: FutureBuilder<ParkingPlace>(
                             future: parkingPlace,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -661,157 +673,158 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                                 return CircularProgressIndicator(color: bColor);
                               } else if (snapshot.hasData &&
                                   snapshot.data != null) {
-                                return Image.network(
-                                  snapshot.data!.mapImage,
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    print('Error loading image: $exception');
-                                    return InfoField(value: '주차 위치 조회 실패');
-                                  },
+                                return Stack(
+                                  children: <Widget>[
+                                    Image.network(
+                                      snapshot.data!.mapImage,
+                                      errorBuilder: (BuildContext context,
+                                          Object exception,
+                                          StackTrace? stackTrace) {
+                                        print(
+                                            'Error loading image: $exception');
+                                        return InfoField(value: '주차 위치 조회 실패');
+                                      },
+                                    ),
+                                    Positioned(
+                                      top: snapshot.data!.upperLeftY.toDouble(),
+                                      left:
+                                          snapshot.data!.upperLeftX.toDouble(),
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 2,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                        child: Container(
+                                          width: (snapshot.data!.lowRightX -
+                                                  snapshot.data!.upperLeftX)
+                                              .toDouble(),
+                                          height: (snapshot.data!.upperLeftY -
+                                                  snapshot.data!.lowRightY)
+                                              .toDouble(),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 );
                               } else {
                                 return InfoField(value: '주차 위치 조회 실패');
                               }
                             },
                           ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<ParkingPlace>(
-                            future: parkingPlace,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator(color: bColor);
-                              } else if (snapshot.hasData &&
-                                  snapshot.data != null) {
-                                if (snapshot.data!.place == 0 ||
-                                    snapshot.data!.place == 1) {
-                                  return SizedBox();
-                                } else {
-                                  return InfoField(
-                                    value: snapshot.data!.place,
-                                  );
-                                }
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              if (snapshot.data!.place == 0 ||
+                                  snapshot.data!.place == 1) {
+                                return SizedBox();
                               } else {
-                                return InfoField(value: '주차 위치 조회 실패');
+                                return InfoField(
+                                  value: snapshot.data!.place,
+                                );
                               }
-                            },
+                            } else {
+                              return InfoField(value: '주차 위치 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 시간',
+                            style: fieldTitle(),
                           ),
-                          const SizedBox(height: 30),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '주차 시간',
-                              style: fieldTitle(),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<ParkingPlace>(
-                            future: parkingPlace,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator(color: bColor);
-                              } else if (snapshot.hasData &&
-                                  snapshot.data != null) {
-                                if (snapshot.data!.place == 0 ||
-                                    snapshot.data!.place == 1) {
-                                  return InfoField(value: '주차 시간 조회 실패');
-                                } else {
-                                  return InfoField(
-                                    value: formatDateTime(snapshot.data!.time),
-                                  );
-                                }
-                              } else {
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              if (snapshot.data!.place == 0 ||
+                                  snapshot.data!.place == 1) {
                                 return InfoField(value: '주차 시간 조회 실패');
+                              } else {
+                                return InfoField(
+                                  value: formatDateTime(snapshot.data!.time),
+                                );
                               }
-                            },
-                          ),
-                        ],
-                      ),
+                            } else {
+                              return InfoField(value: '주차 시간 조회 실패');
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ),
                 //선호 구역 tab
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '주차장 선택',
-                              style: fieldTitle(),
-                            ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차장 선택',
+                            style: fieldTitle(),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          FutureBuilder<List<dynamic>>(
-                              future: Future.wait([
-                                userLocation,
-                                loadParkingLotList(),
-                              ]),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<List<dynamic>> snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      color: bColor,
-                                    ),
-                                  );
-                                }
-                                PreferredLocation userParkingLot =
-                                    snapshot.data![0];
-                                List<Map<int, String>> parkingLotList =
-                                    List<Map<int, String>>.from(
-                                        snapshot.data![1]);
-                                return PreferredCarInput(
-                                  placeholder: userParkingLot.place,
-                                  items: parkingLotList,
-                                  textEditingController:
-                                      preferredParkingLotController,
-                                  onTextChanged: onParkingLotChanged,
-                                  placeholderColor: wColor,
-                                );
-                              }),
-                          const SizedBox(height: 30),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '선호구역',
-                              style: fieldTitle(),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          FutureBuilder<PreferredLocation>(
-                            future: userLocation,
-                            builder: (context, snapshot) {
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        FutureBuilder<List<dynamic>>(
+                            future: Future.wait([
+                              userLocation,
+                              loadParkingLotList(),
+                            ]),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<dynamic>> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return CircularProgressIndicator(color: bColor);
-                              } else if (snapshot.hasData &&
-                                  snapshot.data != null) {
-                                return Image.network(
-                                  snapshot.data!.mapImage,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (BuildContext context,
-                                      Object exception,
-                                      StackTrace? stackTrace) {
-                                    print('Error loading image: $exception');
-                                    return InfoField(value: '선호구역 조회 실패');
-                                  },
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: bColor,
+                                  ),
                                 );
-                              } else {
-                                return InfoField(value: '선호구역 조회 실패');
                               }
-                            },
+                              PreferredLocation userParkingLot =
+                                  snapshot.data![0];
+                              List<Map<int, String>> parkingLotList =
+                                  List<Map<int, String>>.from(
+                                      snapshot.data![1]);
+                              return PreferredCarInput(
+                                placeholder: userParkingLot.place,
+                                items: parkingLotList,
+                                textEditingController:
+                                    preferredParkingLotController,
+                                onTextChanged: onParkingLotChanged,
+                                placeholderColor: wColor,
+                              );
+                            }),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '선호구역',
+                            style: fieldTitle(),
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
                     ),
                   ),
                 ),
@@ -823,13 +836,593 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     );
   }
 }
-
-String formatDateTime(DateTime dateTime) {
-  String year = DateFormat('y').format(dateTime);
-  String month = DateFormat('MM').format(dateTime);
-  String day = DateFormat('dd').format(dateTime);
-  String hour = DateFormat('HH').format(dateTime);
-  String minute = DateFormat('mm').format(dateTime);
-
-  return "${year.substring(2)}년 ${month}월 ${day}일 ${hour}시 ${minute}분";
+/*
+  Widget build(BuildContext context) {
+    return LuxroboScaffold(
+      currentIndex: 1,
+      body: Column(
+        children: [
+          const SizedBox(height: 91),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25),
+              child: Text(
+                '주차 위치',
+                style: titleText(fontSize: 20),
+              ),
+            ),
+          ),
+          const SizedBox(height: 46),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+              child: Container(
+                height: 41,
+                decoration: BoxDecoration(
+                  color: darkGrey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TabBar(
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: bColor,
+                  ),
+                  controller: tabController,
+                  isScrollable: false,
+                  tabs: const [
+                    Tab(
+                      child: Text(
+                        '위치 저장',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        '위치 확인',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        '선호 구역',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                  labelColor: black,
+                  unselectedLabelColor: lightGrey,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                //위치 저장 tab
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '주차 차량',
+                                style: fieldTitle(),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            const SizedBox(height: 74),
+                            TouchParking(onPressed: () {
+                              if (cctvId != null) {
+                                print('cctv found');
+                                parkingAdvertising(cctvId);
+                                print(cctvId);
+                              } else {
+                                print('cctv not found');
+                                cctvDetectionFailed(context);
+                              }
+                            }),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                //위치 확인 tab
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 차량',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '차량 위치',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              if (snapshot.data!.place == 0 ||
+                                  snapshot.data!.place == 1) {
+                                return SizedBox();
+                              } else {
+                                return InfoField(
+                                  value: snapshot.data!.place,
+                                );
+                              }
+                            } else {
+                              return InfoField(value: '주차 위치 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 시간',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ),
+                //선호 구역 tab
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차장 선택',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '선호구역',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+*/
+
+/*
+@override
+  Widget build(BuildContext context) {
+    return LuxroboScaffold(
+      currentIndex: 1,
+      body: Column(
+        children: [
+          const SizedBox(height: 91),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 25),
+              child: Text(
+                '주차 위치',
+                style: titleText(fontSize: 20),
+              ),
+            ),
+          ),
+          const SizedBox(height: 46),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+              child: Container(
+                height: 41,
+                decoration: BoxDecoration(
+                  color: darkGrey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TabBar(
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: bColor,
+                  ),
+                  controller: tabController,
+                  isScrollable: false,
+                  tabs: const [
+                    Tab(
+                      child: Text(
+                        '위치 저장',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        '위치 확인',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        '선호 구역',
+                        style: TextStyle(
+                          fontFamily: 'luxFont',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                  labelColor: black,
+                  unselectedLabelColor: lightGrey,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                //위치 저장 tab
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '주차 차량',
+                                style: fieldTitle(),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            FutureBuilder<List<dynamic>>(
+                              future: Future.wait(
+                                  [loadCarList(), loadCurrentCar()]),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<dynamic>> snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator(
+                                    color: bColor,
+                                  ));
+                                }
+
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                List<String> loadedCarList =
+                                    List<String>.from(snapshot.data![0]);
+                                String currentCarValue = snapshot.data![1];
+                                return CarInput(
+                                  items: loadedCarList,
+                                  placeholder: currentCarValue,
+                                  onTextChanged: onCarChanged,
+                                  textEditingController: parkingCarController,
+                                  onItemSelected: registerCurrentCar,
+                                  placeholderColor: wColor,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 74),
+                            TouchParking(onPressed: () {
+                              if (cctvId != null) {
+                                print('cctv found');
+                                parkingAdvertising(cctvId);
+                                print(cctvId);
+                              } else {
+                                print('cctv not found');
+                                cctvDetectionFailed(context);
+                              }
+                            }),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                //위치 확인 tab
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 차량',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<String?>(
+                          future: loadCurrentCar(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              return InfoField(value: snapshot.data!);
+                            } else {
+                              return InfoField(value: '주차 차량 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '차량 위치',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              return Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    snapshot.data!.mapImage,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      print('Error loading image: $exception');
+                                      return InfoField(value: '주차 위치 조회 실패');
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: snapshot.data!.upperLeftY.toDouble(),
+                                    left: snapshot.data!.upperLeftX.toDouble(),
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 2,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      child: Container(
+                                        width: (snapshot.data!.lowRightX -
+                                                snapshot.data!.upperLeftX)
+                                            .toDouble(),
+                                        height: (snapshot.data!.upperLeftY -
+                                                snapshot.data!.lowRightY)
+                                            .toDouble(),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            } else {
+                              return InfoField(value: '주차 위치 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              if (snapshot.data!.place == 0 ||
+                                  snapshot.data!.place == 1) {
+                                return SizedBox();
+                              } else {
+                                return InfoField(
+                                  value: snapshot.data!.place,
+                                );
+                              }
+                            } else {
+                              return InfoField(value: '주차 위치 조회 실패');
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차 시간',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<ParkingPlace>(
+                          future: parkingPlace,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              if (snapshot.data!.place == 0 ||
+                                  snapshot.data!.place == 1) {
+                                return InfoField(value: '주차 시간 조회 실패');
+                              } else {
+                                return InfoField(
+                                  value: formatDateTime(snapshot.data!.time),
+                                );
+                              }
+                            } else {
+                              return InfoField(value: '주차 시간 조회 실패');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                //선호 구역 tab
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '주차장 선택',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        FutureBuilder<List<dynamic>>(
+                            future: Future.wait([
+                              userLocation,
+                              loadParkingLotList(),
+                            ]),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<dynamic>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: bColor,
+                                  ),
+                                );
+                              }
+                              PreferredLocation userParkingLot =
+                                  snapshot.data![0];
+                              List<Map<int, String>> parkingLotList =
+                                  List<Map<int, String>>.from(
+                                      snapshot.data![1]);
+                              return PreferredCarInput(
+                                placeholder: userParkingLot.place,
+                                items: parkingLotList,
+                                textEditingController:
+                                    preferredParkingLotController,
+                                onTextChanged: onParkingLotChanged,
+                                placeholderColor: wColor,
+                              );
+                            }),
+                        const SizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '선호구역',
+                            style: fieldTitle(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        FutureBuilder<PreferredLocation>(
+                          future: userLocation,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return CircularProgressIndicator(color: bColor);
+                            } else if (snapshot.hasData &&
+                                snapshot.data != null) {
+                              return Image.network(
+                                snapshot.data!.mapImage,
+                                fit: BoxFit.cover,
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  print('Error loading image: $exception');
+                                  return InfoField(value: '선호구역 조회 실패');
+                                },
+                              );
+                            } else {
+                              return InfoField(value: '선호구역 조회 실패');
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  */

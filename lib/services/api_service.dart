@@ -150,7 +150,14 @@ class ApiService {
       // ignore: avoid_print
       print('User data is not set');
       return ParkingPlace(
-          mapImage: '2', place: '2', time: DateTime(2, 2, 2, 2, 2));
+        mapImage: '2',
+        place: '2',
+        time: DateTime(2, 2, 2, 2, 2),
+        lowRightX: 2,
+        lowRightY: 2,
+        upperLeftX: 2,
+        upperLeftY: 2,
+      );
     }
 
     final url = Uri.parse('$baseurl/$getParkingPlace');
@@ -175,10 +182,24 @@ class ApiService {
       return await getParkingPlaceMap();
     } else if (response.statusCode == 404) {
       return ParkingPlace(
-          mapImage: '0', place: '주차 위치 조회 실패', time: DateTime(0, 0, 0, 0, 0));
+        mapImage: '0',
+        place: '주차 위치 조회 실패',
+        time: DateTime(0, 0, 0, 0, 0),
+        lowRightX: 0,
+        lowRightY: 0,
+        upperLeftX: 0,
+        upperLeftY: 0,
+      );
     } else {
       return ParkingPlace(
-          mapImage: '1', place: '네트워크 오류', time: DateTime(1, 1, 1, 1, 1));
+        mapImage: '1',
+        place: '네트워크 오류',
+        time: DateTime(1, 1, 1, 1, 1),
+        lowRightX: 1,
+        lowRightY: 1,
+        upperLeftX: 1,
+        upperLeftY: 1,
+      );
     }
   }
 
