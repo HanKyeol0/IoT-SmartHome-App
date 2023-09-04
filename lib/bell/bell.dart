@@ -7,7 +7,6 @@ import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/button.dart';
-import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
 class BleDevice {
   String deviceId;
@@ -34,45 +33,18 @@ class Bell extends StatefulWidget {
 }
 
 class _BellState extends State<Bell> {
-  //FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   StreamSubscription<List<ScanResult>>? scanSubscription;
   GlobalData globalData = GlobalData();
   UserData? userData = GlobalData().userData;
   String? cctvId;
   BeaconBroadcast beaconBroadcast = BeaconBroadcast();
 
-  bool _isSupported = false;
-
   @override
   void initState() {
     super.initState();
-    initPlatformState();
     findNearestCCTV();
     Future.delayed(Duration(seconds: 5), () {
-      print('hello this is cctvID : $cctvId');
-    });
-  }
-
-  Future<void> initPlatformState() async {
-    final isSupported = await FlutterBlePeripheral().isSupported;
-    setState(() {
-      _isSupported = isSupported;
-    });
-  }
-
-  final AdvertiseData advertiseData = AdvertiseData(
-    manufacturerId: 0x4C00,
-    serviceUuid: '44002104-B000-0044-3000B-1410A4F5041',
-    //serviceDataUuid: '44002104-B000-0044-3000B-1410A4F5041',
-    //manufacturerData: Uint8List.fromList([1, 2, 3, 4, 5, 6]),
-  );
-
-  Future<void> toggleAdvertise() async {
-    await FlutterBlePeripheral().stop();
-    Future.delayed(Duration(seconds: 5), () async {
-      await FlutterBlePeripheral().start(
-        advertiseData: advertiseData,
-      );
+      print('hello this is the cctvID : $cctvId');
     });
   }
 
@@ -112,9 +84,8 @@ class _BellState extends State<Bell> {
         .then((_) async {
       if (maxRssiDevice != null) {
         print('here is the device: $maxRssiDevice');
-        final deviceIdString = maxRssiDevice!.deviceId;
         setState(() {
-          cctvId = deviceIdString.replaceAll(":", "");
+          cctvId = maxRssiDevice!.manufacturerSpecificData.substring(0, 10);
         });
       } else {
         // ignore: avoid_print
@@ -122,34 +93,6 @@ class _BellState extends State<Bell> {
       }
     });
     return null;
-  }
-
-  Future<void> beaconBroadcastUuid() async {
-    await FlutterBluePlus.stopScan();
-    beaconBroadcast.stop();
-
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 1))
-        .then((_) async {
-      beaconBroadcast
-          .setManufacturerId(0x4C00)
-          .setLayout('m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24')
-          .setUUID('44002104-B000-0044-3000-B1410A4F5041')
-          .setMajorId(0x0001)
-          .setMinorId(0x3B)
-          .start();
-      /*
-          .setManufacturerId(0x4C00)
-          .setLayout('s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-21v')
-          .setUUID('4446CF826A1ED0654300B1410B4F5041')
-          .setMajorId(0001)
-          .setMinorId(0x3B)
-          .start();*/
-
-      Future.delayed(Duration(seconds: 5), () {
-        beaconBroadcast.stop();
-        print('end');
-      });
-    });
   }
 
   void cctvBellAdvertising(cctvId) {
@@ -247,10 +190,7 @@ class _BellState extends State<Bell> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmergencyBell(longPressed: toggleAdvertise
-
-                      /*
-                  () {
+                  EmergencyBell(longPressed: () {
                     if (cctvId != null) {
                       print('cctv found');
                       cctvBellAdvertising(cctvId);
@@ -259,8 +199,7 @@ class _BellState extends State<Bell> {
                       print('cctv not found');
                       cctvDetectionFailed(context);
                     }
-                  }*/
-                      ),
+                  }),
                   const SizedBox(height: 50),
                   Text(
                     '비상 시 1초간 꾹 눌러주세요.',
