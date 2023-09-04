@@ -21,7 +21,7 @@ class BLEPlatformChannel {
 
   static Future<void> bellAdvertising(String? uuid, String? cctvId) async {
     try {
-      print('bell advertising started');
+      await platform.invokeMethod('stopAdvertising');
       await platform.invokeMethod('bellAdvertising', {
         'data1': uuid,
         'data2': cctvId,
@@ -31,17 +31,9 @@ class BLEPlatformChannel {
     }
   }
 
-  static Future<void> bellAdvertisingTest() async {
-    try {
-      await platform.invokeMethod('bellAdvertisingTest');
-      print('Test bell advertising');
-    } on PlatformException catch (e) {
-      print("Failed to start advertising: ${e.message}");
-    }
-  }
-
   static Future<void> parkingAdvertising(String? uuid, String? cctvId) async {
     try {
+      await platform.invokeMethod('stopAdvertising');
       await platform.invokeMethod('parkingAdvertising', {
         'data1': uuid,
         'data2': cctvId,

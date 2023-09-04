@@ -38,6 +38,8 @@ class MainActivity: FlutterActivity() {
     private var imei = "3962"
     private var scanData = byteArrayOf()
     private var keyCodeString = StringBuilder()
+    private var bluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
+    private var isAdvertising = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -205,22 +207,6 @@ private fun hexStringToByteArray(s: String): ByteArray {
     return data
 }
 
-fun calculateCRC8(data: ByteArray): Byte {
-    var crc: Byte = 0
-    for (byte in data) {
-        var inbyte = byte.toInt()
-        for (i in 0 until 8) {
-            val mix = (crc.toInt() xor inbyte) and 0x01
-            crc = (crc.toInt() ushr 1).toByte()
-            if (mix != 0) {
-                crc = (crc.toInt() xor 0x8C).toByte()
-            }
-            inbyte = inbyte ushr 1
-        }
-    }
-    return crc
-}
-
 fun calculateCRC16BUYPASS(data: ByteArray): ByteArray {
     var crc = 0x0000 // Initial value
     val polynomial = 0x8005 // Polynomial value
@@ -247,7 +233,7 @@ fun calculateCRC16BUYPASS(data: ByteArray): ByteArray {
     )
 }
 
-private fun bellAdvertising(data1: String, data2: String) {
+private fun parkingAdvertising(data1: String, data2: String) {
 
     advertiser.stopAdvertising(advertiseCallback)
     bluetoothAdapter.cancelDiscovery()
@@ -269,10 +255,41 @@ private fun bellAdvertising(data1: String, data2: String) {
     Log.d("steave", "data1Bytes: ${data1Bytes.joinToString(", ") { it.toString() }}")
     Log.d("steave", "data2Bytes: ${data2Bytes.joinToString(", ") { it.toString() }}")
 
-    val uuidToMajor = byteArrayOf(0x44.toByte()) + data1Bytes + data2Bytes + byteArrayOf(0x4F.toByte(), 0x50.toByte(), 0x41.toByte(), 0x00.toByte(), 0xFF.toByte())
+    val uuidToMajor = byteArrayOf(0x44.toByte()) + data1Bytes + data2Bytes + byteArrayOf(0x4F.toByte(), 0x50.toByte(), 0x41.toByte(), 0x00.toByte(), 0x01.toByte())
 
     val crcValue = calculateCRC16BUYPASS(uuidToMajor)
 
+    val bellData = byteArrayOf(0x02.toByte(), 0x15.toByte()) + uuidToMajor + crcValue + byteArrayOf(0xC3.toByte())
+
+    val advertiseSettings = AdvertiseSettings.Builder()
+    .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+    .setConnectable(true)
+    .setTimeout(0)
+    .build()
+
+    val advertiseData = AdvertiseData.Builder()
+        .setIncludeDeviceName(false)
+        .addManufacturerData(0x004C, bellData)
+        .build()
+
+    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback)
+}
+
+private fun bellAdvertising(data1: String, data2: String) {
+
+    Log.d("steave", "bellAdvertising function called at here: ${System.currentTimeMillis()}")
+
+    if (bluetoothLeAdvertiser == null) {
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = bluetoothManager.adapter
+        bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
+    }
+
+    val data1Bytes = hexStringToByteArray(data1)
+    val data2Bytes = hexStringToByteArray(data2)
+
+    val uuidToMajor = byteArrayOf(0x44.toByte()) + data1Bytes + data2Bytes + byteArrayOf(0x4F.toByte(), 0x50.toByte(), 0x41.toByte(), 0x00.toByte(), 0xFF.toByte())
+    val crcValue = calculateCRC16BUYPASS(uuidToMajor)
     val bellData = byteArrayOf(0x02.toByte(), 0x15.toByte()) + uuidToMajor + crcValue + byteArrayOf(0xC3.toByte())
 
     val advertiseSettings = AdvertiseSettings.Builder()
@@ -301,43 +318,6 @@ val callback = object : AdvertiseCallback() {
     }
 }
 
-private fun parkingAdvertising(data1: String, data2: String) {
-
-    //val data1Bytes = hexStringToByteArray(data1)
-    //val data2Bytes = hexStringToByteArray(data2)
-
-    Log.d("steave", "parkingAdvertising function called at here: ${System.currentTimeMillis()}")
-
-    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-    val bluetoothAdapter = bluetoothManager.adapter
-    val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
-
-    val customData = byteArrayOf(
-        0x02, 0x15, 0x44.toByte(), 
-        0x00, 0x21, 0x04, 0xB0.toByte(), 
-        0x00, 0x00, 0x04, 0x43, 0x00, 0xB1.toByte(), 
-        0x41, 0x0A.toByte(), 0x4F.toByte(), 0x50, 0x41, 
-        0x00, 0x01, 0x00, 0x00, 0xC3.toByte()
-        )
-
-    val advertiseSettings = AdvertiseSettings.Builder()
-    .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-    .setConnectable(true)
-    .build()
-
-    val advertiseData = AdvertiseData.Builder()
-        .setIncludeDeviceName(false)
-        .addManufacturerData(0x004C, customData)
-        .build()
-
-    //val scanResponse = AdvertiseData.Builder()
-    //    .setIncludeDeviceName(false)
-    //    .setIncludeTxPowerLevel(false)
-    //    .build()
-
-    bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback) //scanResponse, 
-}
-
 private fun getStartFailureDescription(errorCode: Int): String {
     return when(errorCode) {
         AdvertiseCallback.ADVERTISE_FAILED_ALREADY_STARTED -> "ADVERTISE_FAILED_ALREADY_STARTED"
@@ -353,9 +333,10 @@ private fun getStartFailureDescription(errorCode: Int): String {
     private fun stopAdvertising() {
         Log.d("steave", "stopAdvertising function called at here: ${System.currentTimeMillis()}")
 
-        advertiser.stopAdvertising(advertiseCallback)
+        advertiser.stopAdvertising(callback)
         bluetoothAdapter.cancelDiscovery()
         isAdvertiser = false
+        isAdvertising = false
     }
 
     private fun setBluetoothAdapter() {
@@ -373,11 +354,13 @@ private fun getStartFailureDescription(errorCode: Int): String {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
             super.onStartSuccess(settingsInEffect)
             Log.i("steave", "onStartSuccess: $settingsInEffect")
+            isAdvertising = true
         }
 
         override fun onStartFailure(errorCode: Int) {
             super.onStartFailure(errorCode)
             Log.e("steave", "onStartFailure: $errorCode")
+            isAdvertising = false
         }
     }
 }
