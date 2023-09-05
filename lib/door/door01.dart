@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:luxrobo/device_storage.dart';
 import 'package:luxrobo/main.dart';
 import 'package:luxrobo/services/api_data.dart';
@@ -28,6 +29,7 @@ class _Door01State extends State<Door01> {
     super.initState();
     _loadSavedAutoAccess();
     automaticGateAccess();
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 1));
   }
 
   void gateDetection() {
@@ -78,6 +80,10 @@ class _Door01State extends State<Door01> {
         autoGateAccess = false;
       });
     }
+  }
+
+  void checkBluetoothState() async {
+    final isOn = await FlutterBluePlus.turnOn();
   }
 
   @override
