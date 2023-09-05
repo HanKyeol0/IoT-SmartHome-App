@@ -74,12 +74,18 @@ class _Login02State extends State<Login02> {
       });
     }
     if (loginInfo[LoginInfoService.keySave] == true) {
-      isSaved = true;
+      setState(() {
+        isSaved = true;
+      });
     } else {
-      isSaved = false;
+      setState(() {
+        isSaved = false;
+      });
     }
     if (loginInfo[LoginInfoService.keyAutoLogin] == true) {
-      isAutoLogin = true;
+      setState(() {
+        isAutoLogin = true;
+      });
       onPressedLogin();
     }
   }
@@ -132,7 +138,7 @@ class _Login02State extends State<Login02> {
       _saveLoginData();
 
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacementNamed(context, '/door01_android');
+      Navigator.pushReplacementNamed(context, '/door01');
 
       return userData;
     } else if (response.statusCode == 400) {

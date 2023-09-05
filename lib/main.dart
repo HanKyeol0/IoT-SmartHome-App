@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:luxrobo/bell/bell.dart';
 import 'package:luxrobo/parking/parking.dart';
 import 'package:luxrobo/setting/setting01.dart';
@@ -7,7 +6,6 @@ import 'package:luxrobo/setting/setting02.dart';
 import 'package:luxrobo/splash/splash_screen.dart';
 import 'package:luxrobo/styles.dart';
 import 'package:luxrobo/widgets/dialog.dart';
-import 'door/door01_android.dart';
 import 'door/door01.dart';
 import 'door/door02.dart';
 import 'login/login01.dart';
@@ -30,7 +28,6 @@ class MyApp extends StatelessWidget {
         '/login01': (context) => const Login01(),
         '/login02': (context) => const Login02(),
         '/door01': (context) => const Door01(),
-        '/door01_android': (context) => const Door01Android(),
         '/door02': (context) => const Door02(),
         '/parking': (context) => const Parking(),
         '/bell': (context) => const Bell(),
@@ -112,16 +109,3 @@ class LuxroboScaffold extends StatelessWidget {
     );
   }
 }
-
-/*
-Future main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-
-  await Future.delayed(const Duration(seconds: 3));
-
-  runApp(const MyApp());
-
-  FlutterNativeSplash.remove();
-}
-*/

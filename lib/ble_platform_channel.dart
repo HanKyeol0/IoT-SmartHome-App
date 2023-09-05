@@ -5,6 +5,7 @@ class BLEPlatformChannel {
 
   static Future<void> gateAdvertising(String? data) async {
     try {
+      await platform.invokeMethod('stopAdvertising');
       await platform.invokeMethod('gateAdvertising', {'data': data});
     } on PlatformException catch (e) {
       print("Failed to start advertising: ${e.message}");

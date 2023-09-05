@@ -59,3 +59,21 @@ class ApartmentInfoService {
     };
   }
 }
+
+class AutoGateAccess {
+  static final keyAutoAccess = 'autoAccess';
+
+  Future<void> saveAutoAccess({
+    required bool autoGate,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(keyAutoAccess, autoGate);
+  }
+
+  Future<Map<String, dynamic>> retrieveAutoAccess() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      keyAutoAccess: prefs.getBool(keyAutoAccess),
+    };
+  }
+}

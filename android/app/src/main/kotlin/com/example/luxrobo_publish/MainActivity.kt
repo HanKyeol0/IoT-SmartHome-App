@@ -156,44 +156,28 @@ class MainActivity: FlutterActivity() {
             return
         }
 
-        bluetoothAdapter.startDiscovery()
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothAdapter = bluetoothManager.adapter
+        val bluetoothLeAdvertiser = bluetoothAdapter?.bluetoothLeAdvertiser
 
-        //val dataByte = hexStringToByteArray(data1) C98A6B189955
-
-        val uniqueCode = byteArrayOf(0x46.toByte(), 0xCF.toByte(), 0x82.toByte(), 0x6A.toByte(),
-            0x1E.toByte(), 0xD0.toByte(), 0x65.toByte())
+        val uniqueCode = byteArrayOf(0x02, 0x15, 0x46.toByte(), 0xCF.toByte(), 0x82.toByte(), 0x6A.toByte(),
+            0x1E.toByte(), 0xD0.toByte(), 0x65.toByte(), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04)
 
         val encodingData = Base64.decode("XQMa", Base64.DEFAULT)
 
         val customData = uniqueCode + encodingData
 
-        val dataBuilder = AdvertiseData.Builder().apply {
-            setIncludeDeviceName(true)
-            //.addManufacturerData(0x4C55, customData)
-            addServiceUuid(ParcelUuid.fromString("46CF826A1ED065"))
-        }
+        val advertiseSettings = AdvertiseSettings.Builder()
+        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
+        .setTimeout(0)
+        .build()
 
-        val settingsBuilder = AdvertiseSettings.Builder().apply {
-            setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER)
-            setConnectable(false)
-            setTimeout(0)
-        }
+        val advertiseData = AdvertiseData.Builder()
+            .setIncludeDeviceName(false)
+            .addServiceData(ParcelUuid.fromString("46CF826A-1ED0-6500-0000-000000000000"), byteArrayOf(0x01, 0x02, 0x03, 0x04))
+            .build()
 
-        val advertiseCallback = object : AdvertiseCallback() {
-            override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
-                super.onStartSuccess(settingsInEffect)
-                Log.i("steave", "onStartSuccess: $settingsInEffect")
-                isAdvertiser = true
-            }
-
-            override fun onStartFailure(errorCode: Int) {
-                super.onStartFailure(errorCode)
-                Log.e("steave", "onStartFailure: $errorCode")
-                isAdvertiser = false
-            }
-        }
-
-        advertiser.startAdvertising(settingsBuilder.build(), dataBuilder.build(), advertiseCallback)
+        bluetoothLeAdvertiser?.startAdvertising(advertiseSettings, advertiseData, callback)
     }
 
 private fun hexStringToByteArray(s: String): ByteArray {
@@ -234,10 +218,6 @@ fun calculateCRC16BUYPASS(data: ByteArray): ByteArray {
 }
 
 private fun parkingAdvertising(data1: String, data2: String) {
-
-    advertiser.stopAdvertising(advertiseCallback)
-    bluetoothAdapter.cancelDiscovery()
-    isAdvertiser = false
 
     Log.d("steave", "bellAdvertising function called at here: ${System.currentTimeMillis()}")
 
