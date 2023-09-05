@@ -107,6 +107,7 @@ class _Setting01State extends State<Setting01> {
                           height: 1,
                           color: darkGrey,
                         ),
+                        /*
                         InkWell(
                           onTap: () => terminateAllFunctions(context),
                           child: SizedBox(
@@ -124,6 +125,7 @@ class _Setting01State extends State<Setting01> {
                           height: 1,
                           color: darkGrey,
                         ),
+                        */
                         InkWell(
                           onTap: () => showLogoutDialog(context),
                           child: SizedBox(

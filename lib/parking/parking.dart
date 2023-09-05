@@ -476,7 +476,7 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
     String hour = DateFormat('HH').format(dateTime);
     String minute = DateFormat('mm').format(dateTime);
 
-    return "${year.substring(2)}년 ${month}월 ${day}일 ${hour}시 ${minute}분";
+    return "20${year.substring(2)}년 ${month}월 ${day}일 ${hour}시 ${minute}분";
   }
 
   @override
@@ -822,6 +822,9 @@ class _ParkingState extends State<Parking> with TickerProviderStateMixin {
                             '선호구역',
                             style: fieldTitle(),
                           ),
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         FutureBuilder<PreferredLocation>(
                           future: userLocation,

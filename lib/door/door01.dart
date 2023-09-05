@@ -29,7 +29,6 @@ class _Door01State extends State<Door01> {
     super.initState();
     _loadSavedAutoAccess();
     automaticGateAccess();
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 1));
   }
 
   void gateDetection() {
@@ -119,6 +118,7 @@ class _Door01State extends State<Door01> {
                               setState(() {
                                 autoGateAccess = !autoGateAccess;
                               });
+                              automaticGateAccess();
                             },
                             child: Container(
                               width: 45,
