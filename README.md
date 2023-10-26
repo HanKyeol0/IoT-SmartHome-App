@@ -1,16 +1,38 @@
-# luxrobo_publish
+# Iot SmartHome App
 
-A new Flutter project.
+IoT Smart Home Application project.
+The app was made from Flutter,
+except for BLE(Bluetooth Low Energy) data advertising functions,
+which was developed from Native part(AOS, iOS).
 
-## Getting Started
+(The entire code is at "develop" branch)
 
-This project is a starting point for a Flutter application.
+# Summary
 
-A few resources to get you started if this is your first Flutter project:
+This app was desinged to be used by certain apartments' residents.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+1. Login
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Users can verify themselves by entering pre-registered user info,
+including apartment name, address, and user name.
+
+2. Gate Access
+
+Users can access gates using the app.
+When you press "터치해서 현관문 출입(Automatic Access)" button while you are around the BLE module device,
+the app sends BLE(Bluetooth Low Energy) data that contains the user's UUID, to the BLE module attached to a gate.
+Then the server verifies the UUID and open the gate.
+
+3. Parking Lot check
+
+Users can save the location where they parked cars.
+When you press "터치해서 주차하기(Press to park)" button,
+the app sends BLE data to the nearest BLE module installed at a parking lot.
+After that, you can view the car location marked on the parking lot's map.
+
+4. Emergency Bell
+
+You can call an administrator of apartment (such as janitors) using the app.
+When you press "터치해서 비상벨 울리기(Press to call emergency bell)" button for 1 second,
+the app advertises BLE data, and a BLE module that receives the data transfer it to the server.
+Then the administrator can call with the user on admin site, through a CCTV.
