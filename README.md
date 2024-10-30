@@ -1,6 +1,6 @@
-# Iot SmartHome App
+# Iot SmartHome Mobile App
 
-An IoT Smart Home Application project developed primarily in Flutter,
+An IoT Smart Home Mobile Application project developed primarily in Flutter,
 with BLE (Bluetooth Low Energy) data advertising functionality
 implemented natively for Android and iOS.
 
