@@ -1,38 +1,27 @@
 # Iot SmartHome App
 
-IoT Smart Home Application project.
-The app was made by Flutter,
-except for BLE(Bluetooth Low Energy) data advertising functions,
-which was developed from Native part(AOS, iOS).
+An IoT Smart Home Application project developed primarily in Flutter,
+with BLE (Bluetooth Low Energy) data advertising functionality
+implemented natively for Android and iOS.
 
-(The entire code is at "develop" branch)
+The complete code is available on the "develop" branch.
 
 # Summary
 
-This app was desinged to be used by certain apartments' residents.
+This app is designed for residents of specific apartment complexes.
 
 1. Login
 
-Users can verify themselves by entering pre-registered user info,
-including apartment name, address, and user name.
+Users can verify their identity by entering pre-registered information, including the apartment name, address, and username.
 
 2. Gate Access
 
-Users can access gates using the app.
-When you press "터치해서 현관문 출입(Automatic Access)" button while you are around the BLE module device,
-the app sends BLE(Bluetooth Low Energy) data that contains the user's UUID, to the BLE module attached to a gate.
-Then the server verifies the UUID and open the gate.
+Users can access gates through the app. When the "터치해서 현관문 출입 (Automatic Access)" button is pressed near a BLE module device, the app sends BLE data containing the user's UUID to the BLE module attached to the gate. The server then verifies the UUID and opens the gate.
 
 3. Parking Lot check
 
-Users can save the location where they parked cars.
-When you press "터치해서 주차하기(Press to park)" button,
-the app sends BLE data to the nearest BLE module installed at a parking lot.
-After that, you can view the car location marked on the parking lot's map.
+Users can save the location of their parked cars. When the "터치해서 주차하기 (Press to Park)" button is pressed, the app sends BLE data to the nearest BLE module in the parking lot. Afterward, users can view the car's location on the parking lot map.
 
 4. Emergency Bell
 
-You can call an administrator of apartment (such as janitors) using the app.
-When you press "터치해서 비상벨 울리기(Press to call emergency bell)" button for 1 second,
-the app advertises BLE data, and a BLE module that receives the data transfer it to the server.
-Then the administrator can call with the user on admin site, through a CCTV.
+Users can contact apartment administrators (such as janitors) via the app. Pressing the "터치해서 비상벨 울리기 (Press to Call Emergency Bell)" button for one second activates the BLE data broadcast, which is then received by a BLE module and sent to the server. The administrator can initiate a call with the user via CCTV on the admin site.
