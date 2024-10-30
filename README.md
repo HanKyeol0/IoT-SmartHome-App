@@ -1,7 +1,7 @@
 # Iot SmartHome App
 
 IoT Smart Home Application project.
-The app was made from Flutter,
+The app was made by Flutter,
 except for BLE(Bluetooth Low Energy) data advertising functions,
 which was developed from Native part(AOS, iOS).
 
